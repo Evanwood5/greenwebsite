@@ -84,7 +84,7 @@ export default function DashboardPage() {
               gridColumn: "span 2",
             }}
           >
-            analytics 3
+            analytics 3 123456
           </div>
         </div>
       </div>
