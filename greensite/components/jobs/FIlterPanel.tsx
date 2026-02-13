@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 export interface FilterOptions {
   jobType: string
@@ -22,16 +22,26 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
     searchTerm: ''
   })
 
+  const [searchInput, setSearchInput] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
+
+  // Debounce search input
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (filters.searchTerm !== searchInput) {
+        const newFilters = { ...filters, searchTerm: searchInput }
+        setFilters(newFilters)
+        onFiltersChange(newFilters)
+      }
+    }, 300) // Wait 300ms after user stops typing
+
+    return () => clearTimeout(debounceTimer)
+  }, [searchInput, filters, onFiltersChange])
 
   // Common job types and states for filters
   const jobTypes = [
-    'Full-time',
-    'Part-time', 
-    'Contract',
-    'Temporary',
-    'Internship',
-    'Freelance'
+    'Full Time',
+    'Part Time'
   ]
 
   const states = [
@@ -56,10 +66,11 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
       searchTerm: ''
     }
     setFilters(clearedFilters)
+    setSearchInput('') // Clear search input as well
     onFiltersChange(clearedFilters)
   }
 
-  const hasActiveFilters = Object.values(filters).some(value => value !== '')
+  const hasActiveFilters = Object.values({...filters, searchTerm: searchInput}).some(value => value !== '')
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
@@ -97,8 +108,8 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
               id="search"
               type="text"
               placeholder="Job title, company, keywords..."
-              value={filters.searchTerm}
-              onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               disabled={loading}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
             />
@@ -166,9 +177,9 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
             <div className="pt-3 border-t border-gray-200">
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm text-gray-600">Active filters:</span>
-                {filters.searchTerm && (
+                {searchInput && (
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Search: {filters.searchTerm}
+                    Search: {searchInput}
                   </span>
                 )}
                 {filters.jobType && (

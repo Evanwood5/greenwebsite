@@ -16,7 +16,7 @@ interface Job {
   job_type: string | null
   city: string | null
   state: string | null
-  is_remote: string | null
+  is_remote: boolean | null
 }
 
 export default function JobsPage() {
@@ -48,7 +48,7 @@ export default function JobsPage() {
     }
 
     if (filters.jobType) {
-      query = query.ilike('job_type', `%${filters.jobType}%`)
+      query = query.eq('job_type', filters.jobType)
     }
 
     if (filters.state) {
@@ -56,9 +56,9 @@ export default function JobsPage() {
     }
 
     if (filters.isRemote === 'remote') {
-      query = query.or('is_remote.eq.true,is_remote.ilike.%yes%')
+      query = query.eq('is_remote', true)
     } else if (filters.isRemote === 'onsite') {
-      query = query.not('is_remote', 'eq', 'true').not('is_remote', 'ilike', '%yes%')
+      query = query.eq('is_remote', false)
     }
 
     return query

@@ -7,7 +7,7 @@ interface Job {
   job_type: string | null
   city: string | null
   state: string | null
-  is_remote: string | null
+  is_remote: boolean | null
 }
 
 interface JobListProps {
@@ -80,11 +80,11 @@ function JobCard({ job }: { job: Job }) {
             </div>
           )}
           
-          {(job.city || job.state || job.is_remote) && (
+          {(job.city || job.state || job.is_remote !== null) && (
             <div className="flex items-center text-sm text-gray-600">
               <span className="font-medium mr-2">Location:</span>
               <span>
-                {job.is_remote === 'true' || job.is_remote === 'Yes' ? (
+                {job.is_remote ? (
                   <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
                     Remote
                   </span>
