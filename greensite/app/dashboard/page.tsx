@@ -1,15 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const [field, setField] = useState("tech");
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect via useEffect
+  }
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
-        Greenify Dashboard
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50" style={{ padding: 24 }}>
+      <div className="mb-6">
+        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
+          Greenify Dashboard
+        </h1>
+      </div>
+
+      <div className="mb-4 text-sm text-gray-600">
+        You are successfully authenticated and can access all dashboard features.
+      </div>
 
       {/* Field Selector */}
       <select
@@ -51,7 +79,7 @@ export default function DashboardPage() {
               fontWeight: 600,
             }}
           >
-            analytics 1
+            Analytics 1 - {field}
           </div>
 
           <div
@@ -67,7 +95,7 @@ export default function DashboardPage() {
               fontWeight: 600,
             }}
           >
-            analytics 2
+            Analytics 2 - User Data
           </div>
 
           <div
@@ -84,7 +112,7 @@ export default function DashboardPage() {
               gridColumn: "span 2",
             }}
           >
-            analytics 3 123456
+            Protected Content for {user.email}
           </div>
         </div>
       </div>
