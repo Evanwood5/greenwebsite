@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 interface JobMatchDashboardProps {
     formData: {
         resume: File | null;
@@ -44,12 +46,18 @@ export default function JobMatchDashboard({ formData }: JobMatchDashboardProps) 
 
                     {/* Action Buttons */}
                     <div className="flex gap-4 justify-center">
-                        <button className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">
+                        <Link
+                            href="/custom_jobs/edit_preferences"
+                            className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 inline-block"
+                        >
                             Edit Preferences
-                        </button>
-                        <button className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700">
+                        </Link>
+                        <Link
+                            href="/custom_jobs/matches"
+                            className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 inline-block"
+                        >
                             View Matches
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
