@@ -1,18 +1,19 @@
 // app/api/classify-jobs/route.ts
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { classifyJobCategory, classifyExperienceLevel } from '@/lib/jobClassifier';
 
 export async function POST() {
     try {
         console.log('Starting job classification...');
 
-        // Get unclassified jobs (where category is NULL)
+
+        // Get unclassified jobs (where category is NULL OR experience_level is N/A)
         const { data: jobs, error } = await supabaseAdmin
             .from('job_postings_ingest_test')
-            .select('job_id, job_title, job_posting_text, job_type')
-            .is('category', null)
-            .limit(100); // Process in batches of 100
+            .select('*')
+            .or('category.is.null,experience_level.eq.N/A')
+            .limit(200);
 
         if (error) {
             console.error('Error fetching jobs:', error);

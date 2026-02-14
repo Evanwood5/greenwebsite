@@ -27,17 +27,14 @@ export function classifyJobCategory(
 
     return 'N/A'; // Changed from null to 'N/A'
 }
-
 export function classifyExperienceLevel(
     jobTitle: string,
     jobDescription: string,
     jobType: string
-): string | null {
-    // Only classify full-time jobs
-    if (jobType !== 'full-time') return 'N/A'; // Changed from null to 'N/A'
-
+): string {
     const text = `${jobTitle} ${jobDescription}`.toLowerCase();
 
+    // Check for advanced indicators
     if (
         /(senior|sr\.|lead|principal|staff|architect|manager|director|vp|vice president|head of|chief|expert|\d+\+?\s*years?|5\s*years|6\s*years|7\s*years|8\s*years|9\s*years|10\s*years|experienced|advanced|\bii\b|\biii\b|\biv\b)/i.test(
             text
@@ -46,5 +43,6 @@ export function classifyExperienceLevel(
         return 'advanced';
     }
 
+    // Everything else is moderate (internships, entry-level, part-time, etc.)
     return 'moderate';
 }
