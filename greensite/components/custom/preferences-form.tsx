@@ -37,9 +37,6 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
 
     return (
         <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">🎯 Job Preferences</h2>
-            <p className="text-gray-600 mb-6">Tell us what kind of jobs you're looking for</p>
-
             {/* Job Types */}
             <div className="mb-6">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
