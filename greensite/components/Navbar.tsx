@@ -15,10 +15,13 @@ export default function Navbar() {
           </div>
           <span className="text-xl font-bold text-gray-900">Greenify</span>
         </Link>
-        
+
         <div className="flex items-center space-x-6">
           <Link href="/jobs" className="text-gray-600 hover:text-gray-900 transition-colors">
             Jobs
+          </Link>
+          <Link href="/custom_jobs" className="text-gray-600 hover:text-gray-900 transition-colors">
+            Custom Jobs
           </Link>
           {user ? (
             <div className="flex items-center space-x-4">
@@ -35,7 +38,7 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center space-x-3">
-              <Link 
+              <Link
                 href="/auth"
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
