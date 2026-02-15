@@ -14,10 +14,16 @@ export default function DashboardPage() {
   const currentData = fieldData[field];
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
-        Greenify Dashboard
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50" style={{ padding: 24 }}>
+      <div className="mb-6">
+        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>
+          Greenify Dashboard
+        </h1>
+      </div>
+
+      <div className="mb-4 text-sm text-gray-600">
+        You are successfully authenticated and can access all dashboard features.
+      </div>
 
       <FieldSelector value={field} onChange={setField} />
 
