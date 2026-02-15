@@ -21,8 +21,8 @@ export async function GET() {
         }, {});
 
         const topCompanies = Object.entries(companyCounts || {})
-            .map(([name, count]) => ({ name, jobs: count }))
-            .sort((a: any, b: any) => b.jobs - a.jobs)
+            .map(([company, jobCount]) => ({ company, jobCount }))
+            .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
 
         // Jobs by experience level
@@ -47,8 +47,8 @@ export async function GET() {
         }, {});
 
         const topCities = Object.entries(cityCounts || {})
-            .map(([name, count]) => ({ name, jobs: count }))
-            .sort((a: any, b: any) => b.jobs - a.jobs)
+            .map(([name, jobCount]) => ({ name, jobCount }))
+            .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
 
         // Month-over-month growth
