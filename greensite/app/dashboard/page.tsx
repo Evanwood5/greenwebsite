@@ -1,17 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FieldSelector from "./components/FieldSelector";
 import CompaniesChart from "./components/CompaniesChart";
 import TopHiringPieChart from "./components/TopHiringPieChart";
-import MonthlyStatsCard from "./components/MonthlyStatsCard";
-import { Field, fieldData } from "./data/dummyData";
+
+type Field = "tech" | "engineering" | "business" | "health";
 
 export default function DashboardPage() {
   const [field, setField] = useState<Field>("tech");
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Get data for selected field
-  const currentData = fieldData[field];
+  // Fetch data when field changes
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/analytics/${field}`);
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [field]); // Re-fetch when field changes
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50" style={{ padding: 24 }}>
@@ -27,37 +43,40 @@ export default function DashboardPage() {
 
       <FieldSelector value={field} onChange={setField} />
 
-      {/* Blue Container */}
-      <div
-        style={{
-          background: "#0b4fb3",
-          padding: 24,
-          borderRadius: 16,
-        }}
-      >
+      {loading ? (
+        <div className="text-center py-20 text-gray-600">Loading...</div>
+      ) : !data ? (
+        <div className="text-center py-20 text-red-600">Failed to load data</div>
+      ) : (
+        /* Blue Container */
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 24,
+            background: "#0b4fb3",
+            padding: 24,
+            borderRadius: 16,
           }}
         >
-          {/* Analytics 1 - Companies Producing Jobs (Bar Chart) */}
-          <CompaniesChart 
-            data={currentData.companiesProducingJobs}
-            title="Companies Producing Jobs"
-          />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 24,
+            }}
+          >
+            {/* Analytics 1 - Companies Producing Jobs (Bar Chart) */}
+            <CompaniesChart
+              data={data.topCompanies}
+              title="Companies Producing Jobs"
+            />
 
-          {/* Analytics 2 - Top Hiring Companies (Pie Chart) */}
-          <TopHiringPieChart 
-            data={currentData.topHiringCompanies}
-            title="Top Hiring Companies"
-          />
-
-          {/* Analytics 3 - Monthly Stats */}
-          <MonthlyStatsCard stats={currentData.monthlyStats} />
+            {/* Analytics 2 - Top Hiring Companies (Pie Chart) */}
+            <TopHiringPieChart
+              data={data.topCompanies}
+              title="Top Hiring Companies"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
