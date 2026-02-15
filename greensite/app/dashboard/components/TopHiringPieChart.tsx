@@ -1,6 +1,6 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, ResponsiveContainer, Tooltip, Legend, Cell } from "recharts";
 
 interface TopHiringPieChartProps {
   data: Array<{ company: string; jobCount: number }>;
@@ -8,7 +8,7 @@ interface TopHiringPieChartProps {
 }
 
 // Color palette for the pie slices
-const COLORS = ["#0b4fb3", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"];
+const COLORS = ["#0b4fb3", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"] as const;
 
 export default function TopHiringPieChart({ data, title }: TopHiringPieChartProps) {
   // Take only top 5 companies
@@ -39,12 +39,14 @@ export default function TopHiringPieChart({ data, title }: TopHiringPieChartProp
             cx="50%"
             cy="50%"
             outerRadius={80}
-            label={({ name, percent }: { name: string; percent: number }) =>
-              `${name?.split(' ')[0] || name} ${(percent * 100).toFixed(0)}%`
-            }
+            label={({ name, percent }: { name?: string; percent?: number }) => {
+              const displayPercent = typeof percent === 'number' ? (percent * 100).toFixed(0) : '0';
+              const displayName = name?.split(' ')[0] || name || 'Unknown';
+              return `${displayName} ${displayPercent}%`;
+            }}
             labelLine={false}
           >
-            {chartData.map((entry, index) => (
+            {chartData.map((_, index: number) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
@@ -55,7 +57,7 @@ export default function TopHiringPieChart({ data, title }: TopHiringPieChartProp
               borderRadius: 8,
               color: 'white'
             }}
-            formatter={(value: number) => [`${value} jobs`, 'Jobs'] as [string, string]}
+            formatter={(value: any) => [`${value} jobs`, 'Jobs']}
           />
           <Legend
             verticalAlign="bottom"
