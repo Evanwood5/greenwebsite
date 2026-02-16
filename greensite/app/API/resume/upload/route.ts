@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         pythonFormData.append('file', file);
 
         console.log('Sending to Python PII service...');
-        const pythonResponse = await fetch('http://localhost:8000/strip-pii', {
+        const pythonResponse = await fetch('https://greenify-pii-service.onrender.com/strip-pii', {
             method: 'POST',
             body: pythonFormData,
         });
@@ -33,7 +33,9 @@ export async function POST(request: Request) {
             throw new Error('PII stripping failed');
         }
 
-        const { cleaned_text } = await pythonResponse.json();
+        const result = await pythonResponse.json();
+        const cleaned_text = result.text;
+
         console.log('PII stripped successfully, text length:', cleaned_text.length);
 
         // Save to Supabase
