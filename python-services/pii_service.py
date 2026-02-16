@@ -104,11 +104,11 @@ def strip_resume_pii(pdf_bytes):
         
         cleaned_text = anonymized_result.text
         
-        print(f"[DEBUG] ✅ SUCCESS - Returning anonymized text")
+        print(f"[DEBUG] SUCCESS - Returning anonymized text")
         return cleaned_text
         
     except Exception as e:
-        print(f"[ERROR] ❌ Processing failed: {e}")
+        print(f"[ERROR] Processing failed: {e}")
         raise e
 
 @app.post("/strip-pii")
