@@ -319,12 +319,7 @@ app = FastAPI(title="PII Stripping Service")
 async def strip_pii_endpoint(file: UploadFile = File(...)):
     """
     Endpoint to strip PII from uploaded PDF resume.
-    
-    Args:
-        file: PDF file uploaded via multipart/form-data
-    
-    Returns:
-        Anonymized PDF file
+    Returns extracted text as JSON.
     """
     print(f"[API] Received file: {file.filename}")
     
@@ -335,12 +330,20 @@ async def strip_pii_endpoint(file: UploadFile = File(...)):
     # Process the PDF
     cleaned_pdf = strip_resume_pii(pdf_bytes)
     
-    # Return the cleaned PDF
-    return Response(
-        content=cleaned_pdf,
-        media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename=anonymized_{file.filename}"}
-    )
+    # Extract text from the cleaned PDF
+    doc = fitz.open(stream=cleaned_pdf, filetype="pdf")
+    cleaned_text = ""
+    for page in doc:
+        cleaned_text += page.get_text("text")
+    doc.close()
+    
+    print(f"[API] Returning {len(cleaned_text)} characters of text")
+    
+    # Return JSON with the cleaned text
+    return {
+        "text": cleaned_text,
+        "success": True
+    }
 
 @app.get("/")
 async def health_check():
