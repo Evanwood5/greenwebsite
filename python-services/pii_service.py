@@ -5,6 +5,8 @@ from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 import re
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import Response
 
 def strip_resume_pii(pdf_bytes):
     """
@@ -305,3 +307,51 @@ def strip_resume_pii(pdf_bytes):
         traceback.print_exc()
         print(f"[ERROR] Returning original PDF as fallback ({len(pdf_bytes)} bytes)")
         return pdf_bytes  # Return original instead of None
+
+
+# ============================================================
+# FASTAPI APPLICATION
+# ============================================================
+
+app = FastAPI(title="PII Stripping Service")
+
+@app.post("/strip-pii")
+async def strip_pii_endpoint(file: UploadFile = File(...)):
+    """
+    Endpoint to strip PII from uploaded PDF resume.
+    
+    Args:
+        file: PDF file uploaded via multipart/form-data
+    
+    Returns:
+        Anonymized PDF file
+    """
+    print(f"[API] Received file: {file.filename}")
+    
+    # Read the uploaded PDF
+    pdf_bytes = await file.read()
+    print(f"[API] File size: {len(pdf_bytes)} bytes")
+    
+    # Process the PDF
+    cleaned_pdf = strip_resume_pii(pdf_bytes)
+    
+    # Return the cleaned PDF
+    return Response(
+        content=cleaned_pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=anonymized_{file.filename}"}
+    )
+
+@app.get("/")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "service": "PII Stripping Service",
+        "version": "1.0.0"
+    }
+
+@app.get("/health")
+async def health():
+    """Alternative health check endpoint"""
+    return {"status": "ok"}
