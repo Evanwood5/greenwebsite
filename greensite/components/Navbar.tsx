@@ -23,11 +23,11 @@ export default function Navbar() {
           <Link href="/custom_jobs" className="text-gray-600 hover:text-gray-900 transition-colors">
             Custom Jobs
           </Link>
+          <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 transition-colors">
+            Dashboard
+          </Link>
           {user ? (
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 transition-colors">
-                Dashboard
-              </Link>
               <span className="text-sm text-gray-500">{user.email}</span>
               <button
                 onClick={signOut}
@@ -43,12 +43,6 @@ export default function Navbar() {
                 className="text-gray-600 hover:text-gray-900 transition-colors"
               >
                 Sign In
-              </Link>
-              <Link
-                href="/auth"
-                className="px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg hover:from-green-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                Get Started
               </Link>
             </div>
           )}
