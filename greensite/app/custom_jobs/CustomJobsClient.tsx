@@ -17,20 +17,18 @@ export default function CustomJobsClient() {
     const [matchedJobs, setMatchedJobs] = useState<any[]>([]);
     const [loadingJobs, setLoadingJobs] = useState(false);
 
-    // State for two separate job preferences
+    // State for two separate job preferences - NO DEFAULT LOCATION
     const [preference1, setPreference1] = useState({
         jobTypes: [] as string[],
         experienceLevel: 'any' as 'moderate' | 'advanced' | 'any',
-        location: 'East Lansing, MI',
-        maxDistance: 50,
+        location: '', // Empty string, no default
         includeRemote: true,
     });
 
     const [preference2, setPreference2] = useState({
         jobTypes: [] as string[],
         experienceLevel: 'any' as 'moderate' | 'advanced' | 'any',
-        location: 'East Lansing, MI',
-        maxDistance: 50,
+        location: '', // Empty string, no default
         includeRemote: true,
     });
 
@@ -48,7 +46,6 @@ export default function CustomJobsClient() {
 
         setLoadingJobs(true);
         try {
-            // First, let's try to get just the matches without the join to see if the table exists
             const { data: matchesData, error: matchesError } = await supabase
                 .from('user_job_matches')
                 .select('job_id, created_at')
@@ -60,17 +57,12 @@ export default function CustomJobsClient() {
                 throw matchesError;
             }
 
-            console.log('Matches found:', matchesData);
-
             if (!matchesData || matchesData.length === 0) {
                 setMatchedJobs([]);
                 return;
             }
 
-            // Now try to get job details for each match
             const jobIds = matchesData.map(match => match.job_id);
-            console.log('Looking for job IDs:', jobIds);
-
             const { data: jobsData, error: jobsError } = await supabase
                 .from('job_postings_ingest_test')
                 .select(`
@@ -88,8 +80,6 @@ export default function CustomJobsClient() {
 
             if (jobsError) {
                 console.error('Error loading job details:', jobsError);
-                console.log('Using basic match info due to error');
-                // If job details fail, still show basic match info
                 const basicJobs = matchesData.map(match => ({
                     job_id: match.job_id,
                     title: 'Job Details Unavailable',
@@ -101,7 +91,6 @@ export default function CustomJobsClient() {
                 return;
             }
 
-            // Transform the data to match our component interface
             const jobs = matchesData.map(match => {
                 const jobDetails = jobsData?.find(job => job.job_id === match.job_id);
                 if (!jobDetails) return null;
@@ -117,11 +106,9 @@ export default function CustomJobsClient() {
                     posted_date: jobDetails.created_at,
                     matched_at: match.created_at
                 };
-            }).filter(job => job !== null); // Remove any null entries
+            }).filter(job => job !== null);
 
-            console.log('Combined jobs data:', jobs);
             setMatchedJobs(jobs);
-
         } catch (error: any) {
             console.error('Error loading matched jobs:', error);
         } finally {
@@ -139,7 +126,7 @@ export default function CustomJobsClient() {
                 .eq('user_id', user.id)
                 .single();
 
-            if (error && error.code !== 'PGRST116') { // PGRST116 means no rows returned
+            if (error && error.code !== 'PGRST116') {
                 throw error;
             }
 
@@ -156,7 +143,6 @@ export default function CustomJobsClient() {
 
         setLoading(true);
         try {
-            // Update profiles table to remove resume
             const { error: updateError } = await supabase
                 .from('profiles')
                 .update({ resume: null })
@@ -164,7 +150,6 @@ export default function CustomJobsClient() {
 
             if (updateError) throw updateError;
 
-            // Update local state
             setResumeUploaded(false);
             setResumeUrl(null);
 
@@ -190,15 +175,16 @@ export default function CustomJobsClient() {
 
             if (error) throw error;
 
-            // Update state with loaded preferences
             data?.forEach(pref => {
+                // Join locations array back to comma-separated string for multi-select
+                const locationString = pref.locations?.join(',') || '';
+
                 const prefData = {
                     jobTypes: pref.job_types || [],
                     experienceLevel: (pref.job_types?.includes('full-time') && pref.experience_level)
                         ? (pref.experience_level as 'moderate' | 'advanced' | 'any')
                         : 'any',
-                    location: pref.locations?.[0] || 'East Lansing, MI',
-                    maxDistance: pref.max_distance_miles || 50,
+                    location: locationString,
                     includeRemote: pref.include_remote || false,
                 };
 
@@ -224,15 +210,22 @@ export default function CustomJobsClient() {
         setSaveStatus(null);
 
         try {
+            // FIXED: Split by comma and filter empty strings
+            // Location string format: "MI:Detroit,MI:Lansing,MI:Ann Arbor"
+            const locationsArray = prefData.location
+                .split(',')
+                .map(loc => loc.trim())  // Remove whitespace
+                .filter(loc => loc.startsWith('MI:'));  // Only keep valid MI:City format
+
             const { error } = await supabase
                 .from('user_job_preferences')
                 .upsert({
                     user_id: user.id,
                     preference_id: preferenceId,
                     job_types: prefData.jobTypes,
-                    max_distance_miles: prefData.maxDistance,
+                    max_distance_miles: 30,
                     include_remote: prefData.includeRemote,
-                    locations: [prefData.location], // Convert single location to array
+                    locations: locationsArray, // Clean array
                     experience_level: prefData.jobTypes.includes('full-time') ? prefData.experienceLevel : null,
                 }, {
                     onConflict: 'user_id,preference_id'
@@ -242,11 +235,10 @@ export default function CustomJobsClient() {
 
             setSaveStatus({ type: 'success', message: `Preference #${preferenceId} saved successfully!` });
             setTimeout(() => setSaveStatus(null), 3000);
-            // Refresh data after successful save
             await loadUserPreferences();
             await loadResumeStatus();
             await loadMatchedJobs();
-            setCurrentView('main'); // Return to main view after saving
+            setCurrentView('main');
         } catch (error: any) {
             console.error('Error saving preference:', error);
             setSaveStatus({ type: 'error', message: error.message || 'Failed to save preference' });
@@ -273,12 +265,10 @@ export default function CustomJobsClient() {
 
             if (error) throw error;
 
-            // Reset the preference state to defaults
             const defaultPreference = {
                 jobTypes: [] as string[],
                 experienceLevel: 'any' as 'moderate' | 'advanced' | 'any',
-                location: 'East Lansing, MI',
-                maxDistance: 50,
+                location: '', // No default
                 includeRemote: true,
             };
 
@@ -290,11 +280,10 @@ export default function CustomJobsClient() {
 
             setSaveStatus({ type: 'success', message: `Preference #${preferenceId} removed successfully!` });
             setTimeout(() => setSaveStatus(null), 3000);
-            // Refresh data after successful removal
             await loadUserPreferences();
             await loadResumeStatus();
             await loadMatchedJobs();
-            setCurrentView('main'); // Return to main view after removing
+            setCurrentView('main');
         } catch (error: any) {
             console.error('Error removing preference:', error);
             setSaveStatus({ type: 'error', message: error.message || 'Failed to remove preference' });
@@ -306,7 +295,6 @@ export default function CustomJobsClient() {
     const updatePreference1 = (field: string, value: any) => {
         setPreference1(prev => {
             const updated = { ...prev, [field]: value };
-            // Reset experience level if full-time is deselected
             if (field === 'jobTypes' && !value.includes('full-time')) {
                 updated.experienceLevel = 'any';
             }
@@ -317,12 +305,20 @@ export default function CustomJobsClient() {
     const updatePreference2 = (field: string, value: any) => {
         setPreference2(prev => {
             const updated = { ...prev, [field]: value };
-            // Reset experience level if full-time is deselected
             if (field === 'jobTypes' && !value.includes('full-time')) {
                 updated.experienceLevel = 'any';
             }
             return updated;
         });
+    };
+
+    // Helper function to display location nicely
+    const displayLocation = (locationString: string) => {
+        if (!locationString) return 'Not set';
+        const cities = locationString.split(',');
+        if (cities.includes('MI:all')) return 'All Michigan';
+        if (cities.length === 1) return cities[0].replace('MI:', '');
+        return `${cities.length} cities selected`;
     };
 
     // Render preference setup screens
@@ -348,8 +344,8 @@ export default function CustomJobsClient() {
                     <div className="bg-white rounded-2xl shadow-xl p-8">
                         {saveStatus && (
                             <div className={`mb-6 p-4 rounded-lg border ${saveStatus.type === 'success'
-                                    ? 'bg-green-50 border-green-200 text-green-700'
-                                    : 'bg-red-50 border-red-200 text-red-700'
+                                ? 'bg-green-50 border-green-200 text-green-700'
+                                : 'bg-red-50 border-red-200 text-red-700'
                                 }`}>
                                 {saveStatus.message}
                             </div>
@@ -365,8 +361,8 @@ export default function CustomJobsClient() {
                                     onClick={() => setCurrentView('main')}
                                     disabled={loading}
                                     className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-gray-500 text-white hover:bg-gray-600'
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-gray-500 text-white hover:bg-gray-600'
                                         }`}
                                 >
                                     Cancel
@@ -380,8 +376,8 @@ export default function CustomJobsClient() {
                                         }}
                                         disabled={loading}
                                         className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                : 'bg-red-600 text-white hover:bg-red-700'
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            : 'bg-red-600 text-white hover:bg-red-700'
                                             }`}
                                     >
                                         {loading ? '🔄 Deleting...' : '🗑️ Delete Preference'}
@@ -392,8 +388,8 @@ export default function CustomJobsClient() {
                                 onClick={() => savePreference(1)}
                                 disabled={loading}
                                 className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-green-600 text-white hover:bg-green-700'
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : 'bg-green-600 text-white hover:bg-green-700'
                                     }`}
                             >
                                 {loading ? '🔄 Saving...' : '💾 Save Preference #1'}
@@ -427,8 +423,8 @@ export default function CustomJobsClient() {
                     <div className="bg-white rounded-2xl shadow-xl p-8">
                         {saveStatus && (
                             <div className={`mb-6 p-4 rounded-lg border ${saveStatus.type === 'success'
-                                    ? 'bg-green-50 border-green-200 text-green-700'
-                                    : 'bg-red-50 border-red-200 text-red-700'
+                                ? 'bg-green-50 border-green-200 text-green-700'
+                                : 'bg-red-50 border-red-200 text-red-700'
                                 }`}>
                                 {saveStatus.message}
                             </div>
@@ -444,8 +440,8 @@ export default function CustomJobsClient() {
                                     onClick={() => setCurrentView('main')}
                                     disabled={loading}
                                     className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-gray-500 text-white hover:bg-gray-600'
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-gray-500 text-white hover:bg-gray-600'
                                         }`}
                                 >
                                     Cancel
@@ -459,8 +455,8 @@ export default function CustomJobsClient() {
                                         }}
                                         disabled={loading}
                                         className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                : 'bg-red-600 text-white hover:bg-red-700'
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            : 'bg-red-600 text-white hover:bg-red-700'
                                             }`}
                                     >
                                         {loading ? '🔄 Deleting...' : '🗑️ Delete Preference'}
@@ -471,8 +467,8 @@ export default function CustomJobsClient() {
                                 onClick={() => savePreference(2)}
                                 disabled={loading}
                                 className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-green-600 text-white hover:bg-green-700'
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : 'bg-green-600 text-white hover:bg-green-700'
                                     }`}
                             >
                                 {loading ? '🔄 Saving...' : '💾 Save Preference #2'}
@@ -501,8 +497,8 @@ export default function CustomJobsClient() {
                 {/* Success/Error Messages */}
                 {saveStatus && currentView === 'main' && (
                     <div className={`mb-6 p-4 rounded-lg border ${saveStatus.type === 'success'
-                            ? 'bg-green-50 border-green-200 text-green-700'
-                            : 'bg-red-50 border-red-200 text-red-700'
+                        ? 'bg-green-50 border-green-200 text-green-700'
+                        : 'bg-red-50 border-red-200 text-red-700'
                         }`}>
                         {saveStatus.message}
                     </div>
@@ -515,7 +511,7 @@ export default function CustomJobsClient() {
                         <ResumeUpload
                             onResumeUploaded={(uploaded) => {
                                 setResumeUploaded(uploaded);
-                                loadResumeStatus(); // Always refresh resume status
+                                loadResumeStatus();
                             }}
                             userId={user?.id}
                             existingResumeUrl={resumeUrl}
@@ -528,8 +524,8 @@ export default function CustomJobsClient() {
                                     onClick={() => document.getElementById('resume-upload-update')?.click()}
                                     disabled={loading}
                                     className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${loading
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-blue-600 text-white hover:bg-blue-700'
                                         }`}
                                 >
                                     {loading ? '🔄 Updating...' : '📝 Update Resume'}
@@ -538,8 +534,8 @@ export default function CustomJobsClient() {
                                     onClick={removeResume}
                                     disabled={loading}
                                     className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${loading
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-red-600 text-white hover:bg-red-700'
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-red-600 text-white hover:bg-red-700'
                                         }`}
                                 >
                                     {loading ? '🔄 Removing...' : '🗑️ Remove Resume'}
@@ -575,12 +571,7 @@ export default function CustomJobsClient() {
 
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-green-600 font-semibold">📍 Location:</span>
-                                                    <span className="text-gray-700">{preference1.location}</span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-600 font-semibold">📏 Distance:</span>
-                                                    <span className="text-gray-700">{preference1.maxDistance} miles</span>
+                                                    <span className="text-gray-700">{displayLocation(preference1.location)}</span>
                                                 </div>
 
                                                 {preference1.jobTypes.includes('full-time') && preference1.experienceLevel !== 'any' && (
@@ -604,7 +595,7 @@ export default function CustomJobsClient() {
                                 </div>
                             </div>
 
-                            {/* Delete button - positioned at bottom right */}
+                            {/* Delete button */}
                             {preference1.jobTypes.length > 0 && (
                                 <button
                                     onClick={(e) => {
@@ -647,12 +638,7 @@ export default function CustomJobsClient() {
 
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-green-600 font-semibold">📍 Location:</span>
-                                                    <span className="text-gray-700">{preference2.location}</span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-600 font-semibold">📏 Distance:</span>
-                                                    <span className="text-gray-700">{preference2.maxDistance} miles</span>
+                                                    <span className="text-gray-700">{displayLocation(preference2.location)}</span>
                                                 </div>
 
                                                 {preference2.jobTypes.includes('full-time') && preference2.experienceLevel !== 'any' && (
@@ -676,7 +662,7 @@ export default function CustomJobsClient() {
                                 </div>
                             </div>
 
-                            {/* Delete button - positioned at bottom right */}
+                            {/* Delete button */}
                             {preference2.jobTypes.length > 0 && (
                                 <button
                                     onClick={(e) => {
@@ -696,7 +682,7 @@ export default function CustomJobsClient() {
                     </div>
                 </div>
 
-                {/* Bottom Section: Matched Jobs (Full Width) */}
+                {/* Bottom Section: Matched Jobs */}
                 <div className="bg-white rounded-2xl shadow-xl p-8">
                     <div className="mb-6 flex justify-between items-start">
                         <div>
@@ -715,8 +701,8 @@ export default function CustomJobsClient() {
                             onClick={loadMatchedJobs}
                             disabled={loadingJobs}
                             className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${loadingJobs
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
                                 }`}
                         >
                             {loadingJobs ? '🔄 Refreshing...' : '🔄 Refresh Matches'}
