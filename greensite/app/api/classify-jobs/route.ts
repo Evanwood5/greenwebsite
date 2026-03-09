@@ -1,19 +1,18 @@
 // app/api/classify-jobs/route.ts
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { classifyJobCategory, classifyExperienceLevel } from '@/lib/jobClassifier';
+import { getJobFieldId, classifyExperienceLevel } from '@/lib/jobClassifier';
 
 export async function POST() {
     try {
-        console.log('Starting job classification...');
+        console.log('Starting job field categorization...');
 
-
-        // Get unclassified jobs (where category is NULL OR experience_level is N/A)
+        // Get jobs without job_field_id
         const { data: jobs, error } = await supabaseAdmin
             .from('job_postings_ingest_test')
-            .select('*')
-            .or('category.is.null,experience_level.eq.N/A')
-            .limit(200);
+            .select('job_id, job_title, job_type')
+            .is('job_field_id', null)
+            .limit(500);
 
         if (error) {
             console.error('Error fetching jobs:', error);
@@ -23,45 +22,42 @@ export async function POST() {
         if (!jobs || jobs.length === 0) {
             return Response.json({
                 success: true,
-                message: 'No unclassified jobs found',
-                classified: 0
+                message: 'No uncategorized jobs found',
+                classified: 0,
+                errors: 0,
+                total: 0
             });
         }
 
-        console.log(`Found ${jobs.length} unclassified jobs`);
+        console.log(`Found ${jobs.length} uncategorized jobs`);
 
-        // Classify each job
         let successCount = 0;
         let errorCount = 0;
+        let skippedCount = 0;
 
         for (const job of jobs) {
             try {
-                const category = classifyJobCategory(
-                    job.job_title || '',
-                    job.job_posting_text || ''
-                );
+                // Get job_field_id from Supabase
+                const fieldId = await getJobFieldId(job.job_title || '');
 
-                const experienceLevel = classifyExperienceLevel(
-                    job.job_title || '',
-                    job.job_posting_text || '',
-                    job.job_type || ''
-                );
+                if (fieldId) {
+                    // Update job with field_id
+                    const { error: updateError } = await supabaseAdmin
+                        .from('job_postings_ingest_test')
+                        .update({ job_field_id: fieldId })
+                        .eq('job_id', job.job_id);
 
-                // Update Supabase
-                const { error: updateError } = await supabaseAdmin
-                    .from('job_postings_ingest_test')
-                    .update({
-                        category: category,
-                        experience_level: experienceLevel
-                    })
-                    .eq('job_id', job.job_id);
-
-                if (updateError) {
-                    console.error(`Error updating job ${job.job_id}:`, updateError);
-                    errorCount++;
+                    if (updateError) {
+                        console.error(`Error updating job ${job.job_id}:`, updateError);
+                        errorCount++;
+                    } else {
+                        successCount++;
+                        console.log(`✓ Categorized: ${job.job_title} → field_id: ${fieldId}`);
+                    }
                 } else {
-                    successCount++;
-                    console.log(` Classified: ${job.job_title} → ${category} (${experienceLevel})`);
+                    // No matching category found - leave as null
+                    skippedCount++;
+                    console.log(`⊘ Skipped (no match): ${job.job_title}`);
                 }
             } catch (err) {
                 console.error(`Error processing job ${job.job_id}:`, err);
@@ -73,15 +69,16 @@ export async function POST() {
             success: true,
             classified: successCount,
             errors: errorCount,
+            skipped: skippedCount,
             total: jobs.length,
-            message: `Successfully classified ${successCount} jobs`
+            message: `Successfully categorized ${successCount} jobs (${skippedCount} had no match)`
         });
 
     } catch (error) {
-        console.error('Classification error:', error);
+        console.error('Categorization error:', error);
         return Response.json({
             success: false,
-            error: 'Classification failed',
+            error: 'Categorization failed',
             details: error instanceof Error ? error.message : 'Unknown error'
         }, { status: 500 });
     }
@@ -90,7 +87,7 @@ export async function POST() {
 // Also support GET for testing in browser
 export async function GET() {
     return Response.json({
-        message: 'Job classification endpoint. Use POST to trigger classification.',
+        message: 'Job field categorization endpoint. Use POST to trigger categorization.',
         status: 'ready'
     });
 }

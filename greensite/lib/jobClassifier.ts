@@ -1,32 +1,206 @@
 // lib/jobClassifier.ts
-// Updated regex lists based on a 1000-job-title sample from Supabase.
+// Classifies jobs into categories and fetches the corresponding job_field_id from Supabase
 
-const TECH_REGEX =
-    /(software|developer|programmer|web\s*dev|full\s*stack|front\s*end|back\s*end|data\s*scientist|data\s*engineer|machine\s*learning|ml\s*engineer|ai\s*(modeling|engineer|developer)?|\bai\b|devops|cloud\s*engineer|sre|qa|quality\s*assurance|automation(\s*engineer)?|ui\/ux|ux|ui|mobile\s*dev|ios|android|react|node\.?js|next\.?js|python|java\b|javascript|typescript|database|sql|api|cyber\s*security|cybersecurity|information\s*security|network(\s*engineer)?|it\s*support|help\s*desk|\bit\b|systems?\s*administrator|sysadmin|platform\s*engineer|site\s*reliability|technical\s*writer|technical\s*writing|digital\s*media|rpa|intelligent\s*automation|automation\s*developer|solutions\s*architect|enterprise\s*architect)/i;
+import { supabase } from '@/lib/supabase';
 
-const ENGINEERING_REGEX =
-    /(mechanical\s*engineer|electrical\s*engineer|civil\s*engineer|structural\s*engineer|chemical\s*engineer|aerospace|automotive|manufacturing\s*engineer|process\s*engineer|quality\s*engineer|controls\s*engineer|systems\s*engineer|hardware\s*engineer|firmware|industrial\s*engineer|\bengineer\b|engineering\s*technician|\btechnician\b|mechatronics|robotics|hvac|boiler|utility\s*worker|union\s*carpenter|carpenter|welder|pipefitter|millwright|maintenance(\s*(mechanic|technician))?|diesel\s*technician|electrician|lineman|power\s*engineer|substation|transmission\s*line|plant\s*operator|production\s*(operator|supervisor)|quality\s*control\s*technician|cnc|machine\s*operator|tool\s*and\s*die|material\s*handler|o&m|operations\s*technician)/i;
+// Job field mappings: (category, subcategory) - mirrors backend logic
+const JOB_FIELD_MAPPINGS: Record<string, [string, string]> = {
+    // TECH
+    'software engineer': ['Tech', 'Software Engineering'],
+    'software engineering': ['Tech', 'Software Engineering'],
+    'software developer': ['Tech', 'Software Engineering'],
+    'application developer': ['Tech', 'Software Engineering'],
+    'full stack': ['Tech', 'Software Engineering'],
+    'frontend': ['Tech', 'Software Engineering'],
+    'backend': ['Tech', 'Software Engineering'],
+    'web developer': ['Tech', 'Software Engineering'],
+    'mobile engineer': ['Tech', 'Software Engineering'],
+    'react native': ['Tech', 'Software Engineering'],
+    '.net developer': ['Tech', 'Software Engineering'],
+    'java developer': ['Tech', 'Software Engineering'],
 
-const HEALTH_REGEX =
-    /(nurse|rn\b|lpn\b|cna\b|doctor|physician|medical|health\s*care|healthcare|clinical|therapist|pharmacist|pharmacy|patient\s*care|hospital|health\s*services|medical\s*assistant|dental|veterinary|mental\s*health|counselor|nutritionist|radiologic|lab\s*technician|respiratory|emt\b|paramedic|caregiver|home\s*health|outpatient|medical\s*(billing|coder|coding)|claims.*medical|underwriter.*life|life.*underwriter)/i;
+    'data scientist': ['Tech', 'Data Science / AI'],
+    'data science': ['Tech', 'Data Science / AI'],
+    'machine learning': ['Tech', 'Data Science / AI'],
+    'ml engineer': ['Tech', 'Data Science / AI'],
+    'ai engineer': ['Tech', 'Data Science / AI'],
+    'data engineer': ['Tech', 'Data Science / AI'],
+    'business intelligence developer': ['Tech', 'Data Science / AI'],
+    'artificial intelligence': ['Tech', 'Data Science / AI'],
 
-const BUSINESS_REGEX =
-    /(business|marketing|sales|finance|accounting|accountant|wealth|banking|relationship\s*banker|loan\s*officer|mortgage|client\s*associate|client\s*service|customer\s*experience|customer\s*service|category\s*(mgr|manager)|management|manager|consultant|hr\b|human\s*resources|recruiting|recruiter|operations|project\s*manager|program\s*manager|product\s*manager|product\s*owner|strategy|analyst|coordinator|administrator|admin\b|executive|director|vice\s*president|vp\b|leasing|agent|insurance|claims|underwriter|actuarial|risk\s*management|compliance|audit|treasury|capital\s*planning|procurement|buyer|supply\s*chain|logistics|forecast|communications|instructional\s*designer|corporate|portfolio\s*manager|account\s*manager|business\s*systems\s*analyst)/i;
+    'it support': ['Tech', 'IT / Sysadmin'],
+    'desktop support': ['Tech', 'IT / Sysadmin'],
+    'systems administrator': ['Tech', 'IT / Sysadmin'],
+    'sysadmin': ['Tech', 'IT / Sysadmin'],
+    'network engineer': ['Tech', 'IT / Sysadmin'],
+    'it specialist': ['Tech', 'IT / Sysadmin'],
+    'technical support': ['Tech', 'IT / Sysadmin'],
+    'help desk': ['Tech', 'IT / Sysadmin'],
 
-export function classifyJobCategory(
-    jobTitle: string,
-    jobDescription: string
-): string {
-    const text = `${jobTitle} ${jobDescription}`.toLowerCase();
+    'cybersecurity': ['Tech', 'Cybersecurity'],
+    'information security': ['Tech', 'Cybersecurity'],
+    'security engineer': ['Tech', 'Cybersecurity'],
+    'security analyst': ['Tech', 'Cybersecurity'],
 
-    // Check HEALTH first to catch "medical coding" before TECH catches "coding"
-    if (HEALTH_REGEX.test(text)) return 'health';
-    if (TECH_REGEX.test(text)) return 'tech';
-    if (ENGINEERING_REGEX.test(text)) return 'engineering';
-    if (BUSINESS_REGEX.test(text)) return 'business';
+    'cloud engineer': ['Tech', 'Cloud / DevOps'],
+    'devops': ['Tech', 'Cloud / DevOps'],
+    'site reliability': ['Tech', 'Cloud / DevOps'],
+    'sre': ['Tech', 'Cloud / DevOps'],
+    'platform engineer': ['Tech', 'Cloud / DevOps'],
 
-    return 'N/A'; // Changed from null to 'N/A'
+    'qa engineer': ['Tech', 'QA / Testing'],
+    'quality assurance': ['Tech', 'QA / Testing'],
+    'test engineer': ['Tech', 'QA / Testing'],
+    'sdet': ['Tech', 'QA / Testing'],
+
+    'ux designer': ['Tech', 'UI / UX'],
+    'ui designer': ['Tech', 'UI / UX'],
+    'user experience': ['Tech', 'UI / UX'],
+    'product designer': ['Tech', 'UI / UX'],
+
+    'embedded software': ['Tech', 'Hardware / Embedded'],
+    'firmware': ['Tech', 'Hardware / Embedded'],
+    'hardware engineer': ['Tech', 'Hardware / Embedded'],
+
+    // ENGINEERING
+    'mechanical engineer': ['Engineering', 'Mechanical'],
+    'hvac engineer': ['Engineering', 'Mechanical'],
+    'thermal engineer': ['Engineering', 'Mechanical'],
+
+    'electrical engineer': ['Engineering', 'Electrical'],
+    'power engineer': ['Engineering', 'Electrical'],
+    'controls engineer': ['Engineering', 'Electrical'],
+
+    'civil engineer': ['Engineering', 'Civil / Structural'],
+    'structural engineer': ['Engineering', 'Civil / Structural'],
+    'construction engineer': ['Engineering', 'Civil / Structural'],
+
+    'chemical engineer': ['Engineering', 'Chemical'],
+    'process engineer': ['Engineering', 'Chemical'],
+
+    'industrial engineer': ['Engineering', 'Industrial'],
+    'manufacturing engineer': ['Engineering', 'Industrial'],
+    'quality engineer': ['Engineering', 'Industrial'],
+
+    'aerospace engineer': ['Engineering', 'Aerospace'],
+
+    'materials engineer': ['Engineering', 'Materials'],
+    'metallurgist': ['Engineering', 'Materials'],
+
+    'environmental engineer': ['Engineering', 'Environmental'],
+    'ehs': ['Engineering', 'Environmental'],
+    'safety specialist': ['Engineering', 'Environmental'],
+
+    // BUSINESS
+    'accountant': ['Business', 'Finance / Accounting'],
+    'financial analyst': ['Business', 'Finance / Accounting'],
+    'controller': ['Business', 'Finance / Accounting'],
+    'auditor': ['Business', 'Finance / Accounting'],
+
+    'marketing': ['Business', 'Marketing / Sales'],
+    'sales': ['Business', 'Marketing / Sales'],
+    'account executive': ['Business', 'Marketing / Sales'],
+    'business development': ['Business', 'Marketing / Sales'],
+
+    'operations': ['Business', 'Operations / Logistics'],
+    'logistics': ['Business', 'Operations / Logistics'],
+    'supply chain': ['Business', 'Operations / Logistics'],
+    'procurement': ['Business', 'Operations / Logistics'],
+
+    'human resources': ['Business', 'HR / Recruiting'],
+    'recruiter': ['Business', 'HR / Recruiting'],
+    'talent acquisition': ['Business', 'HR / Recruiting'],
+
+    'business analyst': ['Business', 'Business Analytics'],
+    'business intelligence': ['Business', 'Business Analytics'],
+
+    'consultant': ['Business', 'Consulting / Strategy'],
+    'strategy': ['Business', 'Consulting / Strategy'],
+
+    'project manager': ['Business', 'Project Management'],
+    'program manager': ['Business', 'Project Management'],
+    'scrum master': ['Business', 'Project Management'],
+    'product manager': ['Business', 'Project Management'],
+
+    // HEALTH
+    'registered nurse': ['Health', 'Clinical / Nursing'],
+    'nurse': ['Health', 'Clinical / Nursing'],
+    'rn': ['Health', 'Clinical / Nursing'],
+    'therapist': ['Health', 'Clinical / Nursing'],
+
+    'pharmacist': ['Health', 'Pharmacy'],
+    'pharmacy': ['Health', 'Pharmacy'],
+
+    'healthcare administration': ['Health', 'Healthcare Administration'],
+    'medical billing': ['Health', 'Healthcare Administration'],
+
+    'research scientist': ['Health', 'Research / Lab'],
+    'lab technician': ['Health', 'Research / Lab'],
+    'clinical research': ['Health', 'Research / Lab'],
+
+    'public health': ['Health', 'Public Health'],
+
+    'medical technologist': ['Health', 'Medical Technology'],
+    'radiology': ['Health', 'Medical Technology'],
+    'ct tech': ['Health', 'Medical Technology'],
+};
+
+/**
+ * Get job field category and subcategory from job title
+ */
+export function getJobField(jobTitle: string): [string, string] | null {
+    if (!jobTitle) return null;
+
+    const normalized = jobTitle.toLowerCase().trim().replace(/\s+/g, ' ');
+
+    // Check for matches (prioritize longer matches first)
+    const sortedMappings = Object.entries(JOB_FIELD_MAPPINGS).sort(
+        (a, b) => b[0].length - a[0].length
+    );
+
+    for (const [keyword, [category, subcategory]] of sortedMappings) {
+        if (normalized.includes(keyword)) {
+            return [category, subcategory];
+        }
+    }
+
+    return null; // No match
 }
+
+/**
+ * Get job_field_id from Supabase for a given job title
+ */
+export async function getJobFieldId(
+    jobTitle: string
+): Promise<number | null> {
+    const field = getJobField(jobTitle);
+    if (!field) return null;
+
+    const [category, subcategory] = field;
+
+    try {
+        const { data, error } = await supabase
+            .from('job_field_counts')
+            .select('id')
+            .eq('category', category)
+            .eq('subcategory', subcategory)
+            .single();
+
+        if (error) {
+            console.error('Error fetching job_field_id:', error);
+            return null;
+        }
+
+        return data?.id || null;
+    } catch (error) {
+        console.error('Error in getJobFieldId:', error);
+        return null;
+    }
+}
+
+/**
+ * Classify experience level (keep existing logic)
+ */
 export function classifyExperienceLevel(
     jobTitle: string,
     jobDescription: string,
@@ -43,6 +217,66 @@ export function classifyExperienceLevel(
         return 'advanced';
     }
 
-    // Everything else is moderate (internships, entry-level, part-time, etc.)
     return 'moderate';
+}
+
+/**
+ * Bulk categorize jobs and update Supabase
+ * For use in admin page
+ */
+export async function bulkCategorizeJobs(): Promise<{
+    success: number;
+    failed: number;
+}> {
+    // Get all jobs without job_field_id
+    const { data: jobs, error: fetchError } = await supabase
+        .from('job_postings_ingest_test')
+        .select('job_id, job_title')
+        .is('job_field_id', null);
+
+    if (fetchError || !jobs) {
+        console.error('Error fetching jobs:', fetchError);
+        return { success: 0, failed: 0 };
+    }
+
+    let success = 0;
+    let failed = 0;
+
+    for (const job of jobs) {
+        const fieldId = await getJobFieldId(job.job_title);
+
+        if (fieldId) {
+            const { error: updateError } = await supabase
+                .from('job_postings_ingest_test')
+                .update({ job_field_id: fieldId })
+                .eq('job_id', job.job_id);
+
+            if (updateError) {
+                console.error(`Failed to update ${job.job_id}:`, updateError);
+                failed++;
+            } else {
+                success++;
+            }
+        } else {
+            // No match found - leave as null
+            failed++;
+        }
+    }
+
+    return { success, failed };
+}
+
+/**
+ * Legacy classification function for backward compatibility
+ */
+export function classifyJobCategory(
+    jobTitle: string,
+    jobDescription: string
+): string {
+    const field = getJobField(jobTitle);
+    if (field) return field[0].toLowerCase();
+
+    // Fallback if title search fails?
+    // For now, return N/A as expected by existing code
+    return 'N/A';
 }
