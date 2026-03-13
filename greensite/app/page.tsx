@@ -25,6 +25,27 @@ export default function Home() {
     <div className="min-h-screen bg-green-50">
       <HeroSection user={user} />
       <FeaturesSection />
+
+      {/* Discord Notifications Box */}
+      <section className="px-6 py-12 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-green-50 border border-green-100 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between shadow-sm">
+            <div className="mb-6 md:mb-0 md:mr-8 text-center md:text-left">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Get Custom Discord Notifications</h2>
+              <p className="text-lg text-gray-600">
+                Never miss a match. Get real-time alerts for jobs that fit your profile.
+              </p>
+            </div>
+            <Link
+              href="/notifications"
+              className="px-8 py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 transition-all shadow-md whitespace-nowrap"
+            >
+              Connect Discord
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <StatsSection />
       <CTASection user={user} />
 
