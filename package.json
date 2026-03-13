@@ -1,0 +1,11 @@
+{
+    "name": "greenwebsite-root",
+    "private": true,
+    "scripts": {
+        "dev": "npm run dev --workspace=greensite",
+        "install-all": "npm install --workspace=greensite"
+    },
+    "workspaces": [
+        "greensite"
+    ]
+}
