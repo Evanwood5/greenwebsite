@@ -36,12 +36,12 @@ export default function ExplodedCube() {
           >
             {/* Animation wrapper */}
             <div className={`absolute inset-0 preserve-3d assemble-piece-${piece.id}`}>
-              {/* Hover offset wrapper */}
+              {/* Hover offset wrapper - pulling further apart */}
               <div
                 className="absolute inset-0 preserve-3d transition-transform duration-500 ease-out"
                 style={{
                   transform: hoveredPiece === piece.id
-                    ? `translate3d(${piece.dir.x * 100}px, ${piece.dir.y * 100}px, ${piece.dir.z * 100}px)`
+                    ? `translate3d(${piece.dir.x * 120}px, ${piece.dir.y * 120}px, ${piece.dir.z * 120}px)`
                     : 'translate3d(0, 0, 0)'
                 }}
               >
@@ -52,18 +52,18 @@ export default function ExplodedCube() {
                       key={idx}
                       className="absolute top-1/2 left-1/2 w-12 h-12 -ml-6 -mt-6 preserve-3d"
                       style={{
-                        transform: `translate3d(${pos.x * 64}px, ${pos.y * 64}px, ${pos.z * 64}px)`,
+                        transform: `translate3d(${pos.x * 80}px, ${pos.y * 80}px, ${pos.z * 80}px)`,
                       }}
                     >
-                      {/* Cube face with beveled puzzle look */}
-                      <div className={`absolute inset-0 ${piece.color} border border-green-900/10 shadow-lg translate-z-[24px]`}>
-                        <div className="absolute inset-[2px] border border-white/20 rounded-[1px]" />
+                      {/* Cube faces with technical dashed outline */}
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 shadow-lg translate-z-[24px]`}>
+                        <div className="absolute inset-[2px] border border-white/10 rounded-[1px]" />
                       </div>
-                      <div className={`absolute inset-0 ${piece.color} border border-green-900/10 -translate-z-[24px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border border-green-900/10 rotate-y-90 translate-x-[24px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border border-green-900/10 -rotate-y-90 -translate-x-[24px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border border-green-900/10 rotate-x-90 translate-y-[24px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border border-green-900/10 -rotate-x-90 -translate-y-[24px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -translate-z-[24px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 rotate-y-90 translate-x-[24px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -rotate-y-90 -translate-x-[24px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 rotate-x-90 translate-y-[24px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -rotate-x-90 -translate-y-[24px]`} />
                     </div>
                   );
                 })}
@@ -84,20 +84,20 @@ export default function ExplodedCube() {
           100% { transform: rotateX(-15deg) rotateY(360deg); }
         }
 
-        /* Exploded state with permanent spacing (gap) */
+        /* Pull-apart animation sequence with massive offsets */
         ${pieces.map(p => `
           .assemble-piece-${p.id} {
             animation: assemble${p.id} 16s ease-in-out infinite;
           }
           @keyframes assemble${p.id} {
-            /* Full exploded state */
+            /* Fully pull-apart (exploded) state */
             0%, 15%, 85%, 100% { 
-              transform: translate3d(${p.dir.x * 260}px, ${p.dir.y * 260}px, ${p.dir.z * 260}px) rotateX(${p.dir.x * 10}deg) rotateY(${p.dir.y * 10}deg); 
-              opacity: 0.8; 
+              transform: translate3d(${p.dir.x * 320}px, ${p.dir.y * 320}px, ${p.dir.z * 320}px);
+              opacity: 0.6; 
             }
-            /* "Fitted" state with massive mandatory gap (80px offset) */
+            /* "Resting" exploded state (much more space than before) */
             45%, 65% { 
-              transform: translate3d(${p.dir.x * 80}px, ${p.dir.y * 80}px, ${p.dir.z * 80}px) rotateX(0deg) rotateY(0deg); 
+              transform: translate3d(${p.dir.x * 120}px, ${p.dir.y * 120}px, ${p.dir.z * 120}px);
               opacity: 1; 
             }
           }
