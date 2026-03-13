@@ -10,47 +10,36 @@ export default function Navbar() {
     <nav className="w-full px-6 py-4 bg-white/80 backdrop-blur-sm border-b border-gray-200/50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">G</span>
-          </div>
-          <span className="text-xl font-bold text-gray-900">Greenify</span>
+          <span className="text-2xl font-bold text-green-500">Greenify</span>
         </Link>
 
-        <div className="flex items-center space-x-6">
-          <Link href="/analytics" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
-            Analytics
+        <div className="flex items-center space-x-4">
+          <Link href="/bots" className="px-5 py-2 bg-gray-500 text-white rounded-full text-sm font-medium hover:bg-gray-600 transition-colors">
+            bot
           </Link>
-          <Link href="/jobs" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
+          <Link href="/analytics" className="px-5 py-2 bg-gray-500 text-white rounded-full text-sm font-medium hover:bg-gray-600 transition-colors">
+            analytics
+          </Link>
+          <Link href="/jobs" className="px-5 py-2 bg-gray-800 text-white rounded-full text-sm font-medium hover:bg-gray-900 transition-colors">
             Jobs
           </Link>
-          <Link href="/custom_jobs" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
-            Custom Jobs
-          </Link>
-          <Link href="/bots" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
-            Bots
-          </Link>
-          <Link href="/links" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
+          <Link href="/links" className="px-5 py-2 bg-gray-500 text-white rounded-full text-sm font-medium hover:bg-gray-600 transition-colors">
             Links
           </Link>
           {user ? (
-            <div className="flex items-center space-x-4 pl-4 border-l border-gray-100">
-              <span className="text-sm text-gray-500 hidden md:block">{user.email}</span>
-              <button
-                onClick={signOut}
-                className="px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors font-medium"
-              >
-                Sign Out
-              </button>
-            </div>
+            <button
+              onClick={signOut}
+              className="ml-4 text-sm text-gray-500 hover:text-red-500 transition-colors"
+            >
+              sign out
+            </button>
           ) : (
-            <div className="flex items-center space-x-3 pl-4 border-l border-gray-100">
-              <Link
-                href="/auth"
-                className="px-4 py-2 text-sm text-green-700 font-semibold hover:bg-green-50 rounded-lg transition-colors"
-              >
-                Sign In
-              </Link>
-            </div>
+            <Link
+              href="/auth"
+              className="ml-4 text-sm text-gray-500 hover:text-green-600 transition-colors"
+            >
+              sign in
+            </Link>
           )}
         </div>
       </div>
