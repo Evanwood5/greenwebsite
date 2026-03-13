@@ -10,14 +10,14 @@ export default function CTASection({ user }: CTASectionProps) {
   return (
     <>
       {/* Analytics Preview CTA */}
-      <section className="px-6 py-20 bg-white/50 backdrop-blur-sm">
+      <section className="px-6 py-20 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-3xl bg-white shadow-xl overflow-hidden">
+          <div className="rounded-3xl bg-green-50 border border-green-100 shadow-sm overflow-hidden">
             <div className="grid md:grid-cols-2 gap-0">
               {/* Left: text */}
               <div className="p-12 flex flex-col justify-center">
-                <span className="text-sm font-semibold text-green-600 uppercase tracking-wide mb-3">
-                  📊 Analytics Dashboard
+                <span className="text-sm font-semibold text-green-700 uppercase tracking-wide mb-3">
+                  Analytics Dashboard
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                   See What the Michigan Job Market Looks Like Right Now
@@ -27,17 +27,17 @@ export default function CTASection({ user }: CTASectionProps) {
                 </p>
                 <Link
                   href="/analytics"
-                  className="self-start px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                  className="self-start px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Explore Analytics →
                 </Link>
               </div>
 
               {/* Right: dummy chart placeholder */}
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 p-12 flex items-center justify-center">
+              <div className="bg-green-100 p-12 flex items-center justify-center">
                 <div className="w-full max-w-xs">
                   {/* Fake bar chart */}
-                  <div className="text-sm text-gray-500 mb-4 font-medium">Top Hiring Industries</div>
+                  <div className="text-sm text-green-800 mb-4 font-medium">Top Hiring Industries</div>
                   {[
                     { label: "Clean Energy", pct: 85 },
                     { label: "AgriTech", pct: 65 },
@@ -45,13 +45,13 @@ export default function CTASection({ user }: CTASectionProps) {
                     { label: "Gov / Nonprofit", pct: 50 },
                   ].map((bar) => (
                     <div key={bar.label} className="mb-3">
-                      <div className="flex justify-between text-xs text-gray-600 mb-1">
+                      <div className="flex justify-between text-xs text-green-800 mb-1">
                         <span>{bar.label}</span>
                         <span>{bar.pct}%</span>
                       </div>
-                      <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-2.5 bg-white rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
+                          className="h-full bg-green-500 rounded-full"
                           style={{ width: `${bar.pct}%` }}
                         />
                       </div>
@@ -65,8 +65,8 @@ export default function CTASection({ user }: CTASectionProps) {
       </section>
 
       {/* Final CTA Banner */}
-      <section className="px-6 py-20 bg-gradient-to-r from-green-500 to-blue-600">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="px-6 py-20">
+        <div className="max-w-4xl mx-auto text-center p-12 bg-green-900 rounded-3xl">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to Make an Impact?
           </h2>
@@ -78,7 +78,7 @@ export default function CTASection({ user }: CTASectionProps) {
           {!user && (
             <Link
               href="/auth"
-              className="inline-block px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1 font-semibold text-lg"
+              className="inline-block px-8 py-4 bg-white text-green-900 rounded-xl hover:bg-green-50 transition-all duration-200 shadow-sm hover:-translate-y-0.5 font-bold text-lg"
             >
               Start Your Journey
             </Link>
