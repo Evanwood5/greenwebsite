@@ -4,24 +4,21 @@ import Link from "next/link";
 
 const features = [
   {
-    icon: "🔍",
-    gradient: "from-green-500 to-green-600",
+    gradient: "bg-green-100",
     title: "100+ Michigan Jobs Scraped Daily",
     description:
       "We automatically pull the latest job postings from across Michigan so you never miss an opportunity. Updated every day, always fresh.",
     cta: { label: "Browse Jobs", href: "/jobs" },
   },
   {
-    icon: "🤖",
-    gradient: "from-blue-500 to-blue-600",
+    gradient: "bg-green-100",
     title: "Custom Jobs That Match Your Resume",
     description:
       "Upload your resume once and our AI scores every job against your skills and experience — surfacing the best matches at the top.",
     cta: { label: "Get Custom Jobs", href: "/custom_jobs" },
   },
   {
-    icon: "📊",
-    gradient: "from-indigo-500 to-indigo-600",
+    gradient: "bg-green-100",
     title: "Job Market Analytics",
     description:
       "See real-time trends: which industries are hiring most, average salaries by role, and where Michigan's green economy is growing.",
@@ -48,12 +45,10 @@ export default function FeaturesSection() {
               key={feature.title}
               className="flex flex-col p-8 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
-              {/* Icon */}
+              {/* Highlight */}
               <div
-                className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 text-3xl`}
-              >
-                {feature.icon}
-              </div>
+                className={`w-16 h-4 ${feature.gradient} rounded-full mb-6`}
+              />
 
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 {feature.title}
