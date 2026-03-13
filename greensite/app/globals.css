@@ -2,21 +2,26 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #053102;
 }
 
 @theme inline {
+  --color-green-50: #F1FEEF;
+  --color-green-100: #DFFEDA;
+  --color-green-200: #C0FBB7;
+  --color-green-300: #8EF67F;
+  --color-green-400: #54E840;
+  --color-green-500: #29C115;
+  --color-green-600: #1FAD0C;
+  --color-green-700: #1C870E;
+  --color-green-800: #1A6A11;
+  --color-green-900: #165710;
+  --color-green-950: #053102;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
