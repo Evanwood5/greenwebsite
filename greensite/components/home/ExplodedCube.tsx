@@ -25,8 +25,8 @@ export default function ExplodedCube() {
   ];
 
   return (
-    <div className="relative w-full h-[600px] flex items-center justify-center perspective-[2000px]">
-      <div className="relative w-80 h-80 preserve-3d animate-master-rotate">
+    <div className="relative w-full h-[700px] flex items-center justify-center perspective-[2500px]">
+      <div className="relative w-[400px] h-[400px] preserve-3d animate-master-rotate">
         {pieces.map((piece) => (
           <div
             key={piece.id}
@@ -38,10 +38,10 @@ export default function ExplodedCube() {
             <div className={`absolute inset-0 preserve-3d assemble-piece-${piece.id}`}>
               {/* Hover offset wrapper - pulling further apart */}
               <div
-                className="absolute inset-0 preserve-3d transition-transform duration-500 ease-out"
+                className="absolute inset-0 preserve-3d transition-transform duration-1000 ease-out"
                 style={{
                   transform: hoveredPiece === piece.id
-                    ? `translate3d(${piece.dir.x * 200}px, ${piece.dir.y * 200}px, ${piece.dir.z * 200}px)`
+                    ? `translate3d(${piece.dir.x * 250}px, ${piece.dir.y * 250}px, ${piece.dir.z * 250}px)`
                     : 'translate3d(0, 0, 0)'
                 }}
               >
@@ -50,20 +50,20 @@ export default function ExplodedCube() {
                   return (
                     <div
                       key={idx}
-                      className="absolute top-1/2 left-1/2 w-16 h-16 -ml-8 -mt-8 preserve-3d"
+                      className="absolute top-1/2 left-1/2 w-20 h-20 -ml-10 -mt-10 preserve-3d"
                       style={{
-                        transform: `translate3d(${pos.x * 110}px, ${pos.y * 110}px, ${pos.z * 110}px)`,
+                        transform: `translate3d(${pos.x * 140}px, ${pos.y * 140}px, ${pos.z * 140}px)`,
                       }}
                     >
                       {/* Cube faces with technical dashed outline */}
-                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 shadow-2xl translate-z-[32px]`}>
-                        <div className="absolute inset-[3px] border border-white/10 rounded-[1px]" />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 shadow-2xl translate-z-[40px]`}>
+                        <div className="absolute inset-[4px] border border-white/10 rounded-[1px]" />
                       </div>
-                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -translate-z-[32px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 rotate-y-90 translate-x-[32px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -rotate-y-90 -translate-x-[32px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 rotate-x-90 translate-y-[32px]`} />
-                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -rotate-x-90 -translate-y-[32px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -translate-z-[40px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 rotate-y-90 translate-x-[40px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -rotate-y-90 -translate-x-[40px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 rotate-x-90 translate-y-[40px]`} />
+                      <div className={`absolute inset-0 ${piece.color} border-2 border-dashed border-white/40 -rotate-x-90 -translate-y-[40px]`} />
                     </div>
                   );
                 })}
@@ -76,7 +76,7 @@ export default function ExplodedCube() {
       <style jsx>{`
         .preserve-3d { transform-style: preserve-3d; }
         .animate-master-rotate {
-          animation: globalRotate 45s linear infinite;
+          animation: globalRotate 60s linear infinite;
         }
 
         @keyframes globalRotate {
@@ -84,21 +84,26 @@ export default function ExplodedCube() {
           100% { transform: rotateX(-20deg) rotateY(360deg); }
         }
 
-        /* Pull-apart animation sequence with massive offsets */
+        /* Pull-apart animation sequence: Compressed (0%) -> Exploded (50%) -> Compressed (100%) */
         ${pieces.map(p => `
           .assemble-piece-${p.id} {
-            animation: assemble${p.id} 18s ease-in-out infinite;
+            animation: assemble${p.id} 32s ease-in-out infinite;
           }
           @keyframes assemble${p.id} {
-            /* Fully pull-apart (exploded) state */
-            0%, 15%, 85%, 100% { 
-              transform: translate3d(${p.dir.x * 500}px, ${p.dir.y * 500}px, ${p.dir.z * 500}px);
-              opacity: 0.5; 
+            /* Compressed solid cube state */
+            0%, 5%, 95%, 100% { 
+              transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+              opacity: 1;
             }
-            /* "Resting" exploded state (massive whitespace) */
-            45%, 65% { 
-              transform: translate3d(${p.dir.x * 180}px, ${p.dir.y * 180}px, ${p.dir.z * 180}px);
-              opacity: 1; 
+            /* Fully pull-apart (exploded) state at midpoint */
+            45%, 55% { 
+              transform: translate3d(${p.dir.x * 550}px, ${p.dir.y * 550}px, ${p.dir.z * 550}px) rotateX(${p.dir.x * 15}deg) rotateY(${p.dir.y * 15}deg);
+              opacity: 0.4; 
+            }
+            /* Slow drift/resting in exploded state */
+            25%, 75% { 
+              transform: translate3d(${p.dir.x * 220}px, ${p.dir.y * 220}px, ${p.dir.z * 220}px) rotateX(${p.dir.x * 5}deg) rotateY(${p.dir.y * 5}deg);
+              opacity: 0.8;
             }
           }
         `).join('\n')}
