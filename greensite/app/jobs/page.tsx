@@ -137,8 +137,35 @@ export default function JobsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-green-50">Loading...</div>
-    )
+      <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-10 text-center border border-green-100">
+          <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            Authentication Required
+          </h2>
+
+          <p className="text-gray-600 mb-8">
+            Please sign in to access our full list of Michigan job opportunities and custom matching.
+          </p>
+
+          <Link
+            href="/auth"
+            className="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-md hover:shadow-lg"
+          >
+            Sign In to Continue
+          </Link>
+
+          <p className="mt-6 text-sm text-gray-500 italic">
+            Get personalized job matches based on your resume and preferences.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
