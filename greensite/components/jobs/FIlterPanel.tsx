@@ -37,23 +37,23 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
 
   return (
     <div className="w-48 flex-shrink-0">
-      <h2 className="text-4xl font-bold text-gray-800 mb-6">Filters</h2>
-      <div className="space-y-8">
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">Filters</h2>
+      <div className="space-y-10">
         {sections.map((section) => (
           <div key={section.label} className="group">
-            <div className="h-2 w-24 bg-black mb-4" />
-            <h3 className="text-2xl font-semibold text-gray-800 mb-2">{section.label}</h3>
-            {/* Simple dummy input/select for now to match the "clean" mockup look */}
+            <div className="h-1.5 w-12 bg-green-600 mb-4 rounded-full" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{section.label}</h3>
+            {/* Simple input/select to match the clean look */}
             <input
               type="text"
-              placeholder="..."
-              className="bg-transparent border-none focus:outline-none text-gray-500 w-full italic"
+              placeholder="Search..."
+              className="bg-transparent border-b border-gray-200 focus:border-green-600 focus:outline-none text-gray-600 w-full py-2 transition-colors"
               disabled={loading}
               onChange={(e) => handleFilterChange(section.key as keyof FilterOptions, e.target.value)}
             />
           </div>
         ))}
-        <div className="h-2 w-24 bg-black pt-4" />
+        <div className="h-1.5 w-12 bg-green-600 pt-4 rounded-full" />
       </div>
     </div>
   )
