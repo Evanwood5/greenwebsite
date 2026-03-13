@@ -22,17 +22,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-green-50">
+    <div className="min-h-screen bg-green-50 dark:bg-gray-950 transition-colors duration-300">
       <HeroSection user={user} />
       <FeaturesSection />
 
       {/* Discord Notifications Box */}
-      <section className="px-6 py-12 bg-white">
+      <section className="px-6 py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-green-50 border border-green-100 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between shadow-sm">
+          <div className="bg-green-50 dark:bg-gray-800 border border-green-100 dark:border-gray-700 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between shadow-sm transition-colors duration-300">
             <div className="mb-6 md:mb-0 md:mr-8 text-center md:text-left">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Get Custom Discord Notifications</h2>
-              <p className="text-lg text-gray-600">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Get Custom Discord Notifications</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300">
                 Never miss a match. Get real-time alerts for jobs that fit your profile.
               </p>
             </div>
@@ -50,7 +50,7 @@ export default function Home() {
       <CTASection user={user} />
 
       {/* Footer */}
-      <footer className="px-6 py-12 bg-gray-900">
+      <footer className="px-6 py-12 bg-gray-900 dark:bg-black border-t border-gray-800">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
