@@ -47,9 +47,9 @@ export default function JobList({ jobs, loading }: JobListProps) {
 
 function JobCard({ job }: { job: Job }) {
   return (
-    <div className="bg-gray-400/80 rounded-[40px] p-10 hover:bg-gray-400 transition-colors relative group">
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-3xl font-bold text-white leading-tight pr-20">
+    <div className="bg-white border border-green-100 rounded-3xl p-8 hover:shadow-md transition-all relative group">
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-2xl font-bold text-gray-900 leading-tight pr-20 group-hover:text-green-600 transition-colors">
           {job.job_title || 'Untitled Position'}
         </h3>
         {job.job_href && (
@@ -57,16 +57,22 @@ function JobCard({ job }: { job: Job }) {
             href={job.job_href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-red-500 text-2xl font-bold hover:text-red-600 transition-colors"
+            className="px-4 py-2 bg-green-50 text-green-600 text-sm font-bold rounded-lg hover:bg-green-600 hover:text-white transition-all"
           >
             Apply
           </a>
         )}
       </div>
 
-      <p className="text-2xl font-semibold text-gray-700">
-        {job.city || 'Grand Rapids'}
-      </p>
+      <div className="flex items-center text-gray-500 font-medium">
+        <span className="text-sm">
+          {job.city || 'Grand Rapids'}, {job.state || 'MI'}
+        </span>
+        <span className="mx-2">•</span>
+        <span className="text-sm">
+          {job.job_type || 'Full-time'}
+        </span>
+      </div>
     </div>
   )
 }
