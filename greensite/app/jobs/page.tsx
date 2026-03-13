@@ -129,9 +129,15 @@ export default function JobsPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-green-50">
         <div className="text-lg">Loading...</div>
       </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-green-50">Loading...</div>
     )
   }
 
