@@ -1,66 +1,87 @@
 'use client';
 
+import { useState } from 'react';
+
 export default function ExplodedCube() {
-    return (
-        <div className="relative w-full h-[400px] flex items-center justify-center perspective-[1000px]">
-            <div className="relative w-48 h-48 preserve-3d animate-rotate-slow">
-                {/* Core center cube (optional) */}
+  const pieces = [
+    { id: 1, x: 1.3, y: 1.3, z: 1.3, color: 'bg-green-600' },
+    { id: 2, x: -1.3, y: 1.3, z: 1.3, color: 'bg-green-500' },
+    { id: 3, x: 1.3, y: -1.3, z: 1.3, color: 'bg-green-400' },
+    { id: 4, x: -1.3, y: -1.3, z: 1.3, color: 'bg-green-700' },
+    { id: 5, x: 1.3, y: 1.3, z: -1.3, color: 'bg-green-500' },
+    { id: 6, x: -1.3, y: 1.3, z: -1.3, color: 'bg-green-600' },
+    { id: 7, x: 1.3, y: -1.3, z: -1.3, color: 'bg-green-800' },
+    { id: 8, x: -1.3, y: -1.3, z: -1.3, color: 'bg-green-500' },
+  ];
 
-                {/* Exploded pieces mapping */}
-                {[
-                    { x: 1.2, y: 1.2, z: 1.2, color: 'bg-green-600' },
-                    { x: -1.2, y: 1.2, z: 1.2, color: 'bg-green-500' },
-                    { x: 1.2, y: -1.2, z: 1.2, color: 'bg-green-400' },
-                    { x: -1.2, y: -1.2, z: 1.2, color: 'bg-green-700' },
-                    { x: 1.2, y: 1.2, z: -1.2, color: 'bg-green-500' },
-                    { x: -1.2, y: 1.2, z: -1.2, color: 'bg-green-600' },
-                    { x: 1.2, y: -1.2, z: -1.2, color: 'bg-green-800' },
-                    { x: -1.2, y: -1.2, z: -1.2, color: 'bg-green-500' },
-                ].map((piece, i) => (
-                    <div
-                        key={i}
-                        className="absolute top-0 left-0 w-16 h-16 preserve-3d transition-transform duration-700 hover:scale-110"
-                        style={{
-                            transform: `translate3d(${piece.x * 60}px, ${piece.y * 60}px, ${piece.z * 60}px)`,
-                        }}
-                    >
-                        {/* Cube faces */}
-                        <div className={`absolute inset-0 ${piece.color} border border-white/20 opacity-90 translate-z-[32px]`} />
-                        <div className={`absolute inset-0 ${piece.color} border border-white/20 opacity-90 -translate-z-[32px]`} />
-                        <div className={`absolute inset-0 ${piece.color} border border-white/20 opacity-90 rotate-y-90 translate-x-[32px]`} />
-                        <div className={`absolute inset-0 ${piece.color} border border-white/20 opacity-90 -rotate-y-90 -translate-x-[32px]`} />
-                        <div className={`absolute inset-0 ${piece.color} border border-white/20 opacity-90 rotate-x-90 translate-y-[32px]`} />
-                        <div className={`absolute inset-0 ${piece.color} border border-white/20 opacity-90 -rotate-x-90 -translate-y-[32px]`} />
-                    </div>
-                ))}
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+
+  return (
+    <div className="relative w-full h-[500px] flex items-center justify-center perspective-[1200px]">
+      <div className="relative w-64 h-64 preserve-3d animate-float-cube">
+        {pieces.map((piece) => {
+          const isHovered = hoveredId === piece.id;
+          const offset = isHovered ? 1.5 : 1.3;
+
+          return (
+            <div
+              key={piece.id}
+              className="absolute top-1/2 left-1/2 w-20 h-20 -ml-10 -mt-10 preserve-3d transition-all duration-500 ease-out cursor-pointer"
+              style={{
+                transform: `translate3d(${piece.x * offset * 60}px, ${piece.y * offset * 60}px, ${piece.z * offset * 60}px)`,
+              }}
+              onMouseEnter={() => setHoveredId(piece.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              {/* Main Cube Body with puzzle-like feel */}
+              {/* Front */}
+              <div className={`absolute inset-0 ${piece.color} border-[3px] border-white/30 opacity-95 rounded-sm shadow-inner translate-z-[40px] shadow-green-900/20`} />
+              {/* Back */}
+              <div className={`absolute inset-0 ${piece.color} border-[3px] border-white/30 opacity-95 rounded-sm -translate-z-[40px]`} />
+              {/* Left */}
+              <div className={`absolute inset-0 ${piece.color} border-[3px] border-white/30 opacity-95 rounded-sm -rotate-y-90 translate-x-[-40px]`} />
+              {/* Right */}
+              <div className={`absolute inset-0 ${piece.color} border-[3px] border-white/30 opacity-95 rounded-sm rotate-y-90 translate-x-[40px]`} />
+              {/* Top */}
+              <div className={`absolute inset-0 ${piece.color} border-[3px] border-white/30 opacity-95 rounded-sm -rotate-x-90 translate-y-[-40px]`} />
+              {/* Bottom */}
+              <div className={`absolute inset-0 ${piece.color} border-[3px] border-white/30 opacity-95 rounded-sm rotate-x-90 translate-y-[40px]`} />
+
+              {/* Puzzle notch simulation using small inner overlapping squares */}
+              <div className="absolute inset-[30%] bg-white/10 border border-white/20 rounded-full translate-z-[41px]" />
+              <div className="absolute inset-[30%] bg-white/10 border border-white/20 rounded-full rotate-y-90 translate-x-[41px]" />
             </div>
+          );
+        })}
+      </div>
 
-            <style jsx>{`
-        .perspective-[1000px] {
-          perspective: 1000px;
+      <style jsx>{`
+        .perspective-\\[1200px\\] {
+          perspective: 1200px;
         }
         .preserve-3d {
           transform-style: preserve-3d;
         }
-        .animate-rotate-slow {
-          animation: rotate 20s linear infinite;
+        .animate-float-cube {
+          animation: floatAndRotate 25s ease-in-out infinite;
         }
         .rotate-x-90 { transform: rotateX(90deg); }
         .rotate-y-90 { transform: rotateY(90deg); }
         .-rotate-x-90 { transform: rotateX(-90deg); }
         .-rotate-y-90 { transform: rotateY(-90deg); }
-        .translate-z-\\[32px\\] { transform: translateZ(32px); }
-        .-translate-z-\\[32px\\] { transform: translateZ(-32px); }
-        .translate-x-\\[32px\\] { transform: translateX(32px); }
-        .-translate-x-\\[32px\\] { transform: translateX(-32px); }
-        .translate-y-\\[32px\\] { transform: translateY(32px); }
-        .-translate-y-\\[32px\\] { transform: translateY(-32px); }
+        .translate-z-\\[40px\\] { transform: translateZ(40px); }
+        .-translate-z-\\[40px\\] { transform: translateZ(-40px); }
+        .translate-z-\\[41px\\] { transform: translateZ(41px); }
+        .translate-x-\\[41px\\] { transform: translateX(41px); }
 
-        @keyframes rotate {
-          from { transform: rotateX(0deg) rotateY(0deg); }
-          to { transform: rotateX(360deg) rotateY(360deg); }
+        @keyframes floatAndRotate {
+          0% { transform: rotateX(0deg) rotateY(0deg) translateY(0px); }
+          25% { transform: rotateX(20deg) rotateY(90deg) translateY(-20px); }
+          50% { transform: rotateX(0deg) rotateY(180deg) translateY(0px); }
+          75% { transform: rotateX(-20deg) rotateY(270deg) translateY(20px); }
+          100% { transform: rotateX(0deg) rotateY(360deg) translateY(0px); }
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 }
