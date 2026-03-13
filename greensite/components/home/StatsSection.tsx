@@ -1,10 +1,10 @@
 'use client'
 
 const stats = [
-  { value: "1,000+", label: "Jobs Scraped", emoji: "📋" },
-  { value: "500+", label: "Michigan Companies", emoji: "🏢" },
-  { value: "5,000+", label: "Job Seekers", emoji: "👥" },
-  { value: "95%", label: "Match Accuracy", emoji: "🎯" },
+  { value: "1,000+", label: "Jobs Scraped" },
+  { value: "500+", label: "Michigan Companies" },
+  { value: "5,000+", label: "Job Seekers" },
+  { value: "95%", label: "Match Accuracy" },
 ];
 
 const testimonials = [
@@ -33,20 +33,19 @@ const testimonials = [
 
 export default function StatsSection() {
   return (
-    <section className="px-6 py-20">
+    <section className="px-6 py-20 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="text-center p-6 rounded-2xl bg-white shadow-md"
+              className="text-center p-8 rounded-2xl bg-green-50 shadow-sm border border-green-100"
             >
-              <div className="text-3xl mb-2">{stat.emoji}</div>
-              <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-1">
+              <div className="text-4xl md:text-5xl font-bold text-green-900 mb-2">
                 {stat.value}
               </div>
-              <div className="text-gray-500 font-medium">{stat.label}</div>
+              <div className="text-green-700 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -61,11 +60,11 @@ export default function StatsSection() {
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="p-8 rounded-2xl bg-white shadow-lg border border-gray-100 flex flex-col gap-4"
+              className="p-8 rounded-2xl bg-white shadow-md border border-gray-100 flex flex-col gap-4"
             >
               <p className="text-gray-700 leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
               <div className="flex items-center gap-3 mt-auto">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center text-white text-sm font-bold">
+                <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white text-sm font-bold">
                   {t.avatar}
                 </div>
                 <div>
