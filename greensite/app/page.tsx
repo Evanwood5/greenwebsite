@@ -12,17 +12,17 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="flex min-h-screen items-center justify-center bg-green-50">
         <div className="flex items-center space-x-2">
           <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
-          <div className="text-lg text-gray-700">Loading...</div>
+          <div className="text-lg text-gray-700 font-medium">Loading...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-green-50">
       <HeroSection user={user} />
       <FeaturesSection />
       <StatsSection />
@@ -32,7 +32,7 @@ export default function Home() {
       <footer className="px-6 py-12 bg-gray-900">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">G</span>
             </div>
             <span className="text-xl font-bold text-white">Greenify</span>
