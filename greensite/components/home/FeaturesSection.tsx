@@ -28,13 +28,13 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section className="px-6 py-20 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm transition-colors duration-300">
+    <section className="px-6 py-20 bg-white/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Everything You Need to Land the Job
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Greenify combines live job scraping, AI resume matching, and market analytics — all in one platform built for Michigan.
           </p>
         </div>
@@ -43,23 +43,23 @@ export default function FeaturesSection() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="flex flex-col p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-lg dark:shadow-2xl/20 hover:shadow-xl dark:hover:shadow-2xl/40 transition-all duration-300 border border-transparent dark:border-gray-700"
+              className="flex flex-col p-8 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
               {/* Highlight */}
               <div
-                className={`w-16 h-4 ${feature.gradient} dark:bg-green-900/40 rounded-full mb-6`}
+                className={`w-16 h-4 ${feature.gradient} rounded-full mb-6`}
               />
 
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed flex-1">
+              <p className="text-gray-600 leading-relaxed flex-1">
                 {feature.description}
               </p>
 
               <Link
                 href={feature.cta.href}
-                className="mt-6 inline-flex items-center text-sm font-semibold text-green-600 dark:text-green-500 hover:text-green-700 dark:hover:text-green-400 transition-colors"
+                className="mt-6 inline-flex items-center text-sm font-semibold text-green-600 hover:text-green-700 transition-colors"
               >
                 {feature.cta.label} →
               </Link>
