@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useState } from 'react';
 
 interface ResumeUploadProps {
     onResumeUploaded: (uploaded: boolean) => void;
@@ -10,153 +9,142 @@ interface ResumeUploadProps {
 }
 
 export default function ResumeUpload({ onResumeUploaded, userId, existingResumeUrl }: ResumeUploadProps) {
-    const [isUploading, setIsUploading] = useState(false);
-    const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Check if resume exists based on existingResumeUrl prop
-    const hasResume = Boolean(existingResumeUrl) || Boolean(uploadedFile);
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
 
-    // Reset uploadedFile when existingResumeUrl changes to null
-    React.useEffect(() => {
-        if (!existingResumeUrl) {
-            setUploadedFile(null);
-        }
-    }, [existingResumeUrl]);
-
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-
-        if (!file) return;
+        if (!selectedFile) return;
 
         // Validate file type
-        if (file.type !== 'application/pdf') {
+        if (selectedFile.type !== 'application/pdf') {
             setError('Please upload a PDF file');
             return;
         }
 
         // Validate file size (2MB)
-        if (file.size > 2 * 1024 * 1024) {
+        if (selectedFile.size > 2 * 1024 * 1024) {
             setError('File size must be less than 2MB');
             return;
         }
 
+        setFile(selectedFile);
+        setError(null);
+        handleUpload(selectedFile);
+    };
+
+    const handleUpload = async (fileToUpload: File) => {
         if (!userId) {
             setError('You must be logged in to upload a resume');
             return;
         }
 
+        setUploading(true);
         setError(null);
-        setIsUploading(true);
 
         try {
-            // Upload file to Supabase storage
-            const fileName = `${userId}.pdf`;
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('resumes')
-                .upload(fileName, file, {
-                    upsert: true, // Allow overwriting existing files
-                });
+            // Create form data
+            const formData = new FormData();
+            formData.append('resume', fileToUpload);
+            formData.append('userId', userId);
 
-            if (uploadError) throw uploadError;
+            // Call API route
+            const response = await fetch('/api/resume/upload', {
+                method: 'POST',
+                body: formData,
+            });
 
-            // Get public URL
-            const { data: { publicUrl } } = supabase.storage
-                .from('resumes')
-                .getPublicUrl(fileName);
+            const data = await response.json();
 
-            // Update profiles table with resume URL
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .upsert({
-                    user_id: userId,
-                    resume: publicUrl,
-                }, {
-                    onConflict: 'user_id'
-                });
+            if (!response.ok) {
+                throw new Error(data.error || 'Upload failed');
+            }
 
-            if (updateError) throw updateError;
-
-            setUploadedFile(file.name);
+            console.log('Upload success:', data);
             onResumeUploaded(true);
-            
-            // Clear the file input
-            const fileInput = document.getElementById('resume-upload') as HTMLInputElement;
-            const updateInput = document.getElementById('resume-upload-update') as HTMLInputElement;
-            if (fileInput) fileInput.value = '';
-            if (updateInput) updateInput.value = '';
+
         } catch (err: any) {
             console.error('Upload error:', err);
             setError(err.message || 'Failed to upload resume');
+            onResumeUploaded(false);
         } finally {
-            setIsUploading(false);
+            setUploading(false);
         }
     };
+
+    // Check if resume exists
+    const hasResume = Boolean(existingResumeUrl);
 
     return (
         <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">📄 Upload Your Resume</h2>
             <p className="text-gray-600 mb-6">Upload your resume to get personalized job matches</p>
 
-            {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-600">{error}</p>
-                </div>
-            )}
-
-            {!hasResume && !uploadedFile ? (
+            {!hasResume ? (
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-green-500 transition-colors">
                     <input
                         type="file"
                         id="resume-upload"
                         accept=".pdf"
                         onChange={handleFileChange}
+                        disabled={uploading}
                         className="hidden"
-                        disabled={isUploading}
                     />
-                    <label htmlFor="resume-upload" className={isUploading ? 'cursor-not-allowed' : 'cursor-pointer'}>
+                    <label htmlFor="resume-upload" className="cursor-pointer">
                         <div className="text-6xl mb-4">📎</div>
                         <p className="text-lg font-semibold text-gray-700 mb-2">
-                            {isUploading ? 'Uploading...' : 'Click to upload or drag and drop'}
+                            {uploading ? 'Processing...' : 'Click to upload or drag and drop'}
                         </p>
                         <p className="text-sm text-gray-500 mb-4">PDF only, max 2MB, 2 pages</p>
-                        <button
-                            type="button"
-                            onClick={() => document.getElementById('resume-upload')?.click()}
-                            disabled={isUploading}
-                            className={`px-6 py-2 rounded-lg font-semibold ${
-                                isUploading 
-                                    ? 'bg-gray-400 text-white cursor-not-allowed' 
-                                    : 'bg-green-600 text-white hover:bg-green-700'
-                            }`}
-                        >
-                            {isUploading ? 'Uploading...' : 'Browse Files'}
-                        </button>
+                        {!uploading && (
+                            <button
+                                type="button"
+                                onClick={() => document.getElementById('resume-upload')?.click()}
+                                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+                            >
+                                Browse Files
+                            </button>
+                        )}
                     </label>
                 </div>
             ) : (
                 <div className="border-2 border-green-500 rounded-lg p-6 bg-green-50">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="text-4xl">✅</div>
+                            <div>
+                                <p className="font-semibold text-gray-900">Resume uploaded</p>
+                                <p className="text-sm text-gray-600">
+                                    {uploading ? 'Processing...' : 'Your resume has been processed and saved'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Hidden input for updating resume */}
                     <input
                         type="file"
                         id="resume-upload-update"
                         accept=".pdf"
                         onChange={handleFileChange}
+                        disabled={uploading}
                         className="hidden"
-                        disabled={isUploading}
                     />
-                    
-                    <div className="flex items-center gap-3">
-                        <div className="text-4xl">✅</div>
-                        <div className="flex-1">
-                            <p className="font-semibold text-gray-900">
-                                {uploadedFile || 'Resume uploaded'}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                {isUploading ? 'Processing...' : 'Successfully uploaded to secure storage'}
-                            </p>
-                        </div>
-                    </div>
+                </div>
+            )}
+
+            {error && (
+                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                    {error}
+                </div>
+            )}
+
+            {uploading && (
+                <div className="mt-4 text-center text-gray-600">
+                    <div className="text-2xl mb-2">⏳</div>
+                    <p className="text-sm">Processing your resume and removing sensitive information...</p>
                 </div>
             )}
 
@@ -169,9 +157,6 @@ export default function ResumeUpload({ onResumeUploaded, userId, existingResumeU
                 </p>
                 <p className="flex items-center gap-2">
                     <span className="text-green-600">✓</span> Maximum 2MB, 2 pages
-                </p>
-                <p className="flex items-center gap-2">
-                    <span className="text-green-600">✓</span> Securely stored in encrypted storage
                 </p>
             </div>
         </div>
