@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from "react";
 import FieldSelector from "./components/FieldSelector";
-import CompaniesChart from "./components/CompaniesChart";
 import TopHiringPieChart from "./components/TopHiringPieChart";
+import TopCitiesChart from "./components/TopCitiesChart";
+import MonthlyStatsCard from "./components/MonthlyStatsCard";
+import JobTypeSummary from "./components/JobTypeSummary";
+import MichiganCountyMap from "./components/MichiganCountyMap";
+import SubcategoryTrendChart from "./components/SubcategoryTrendChart";
 
 type Field = "tech" | "engineering" | "business" | "health";
 
@@ -12,7 +16,6 @@ export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch data when field changes
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -27,7 +30,7 @@ export default function DashboardPage() {
       }
     }
     fetchData();
-  }, [field]); // Re-fetch when field changes
+  }, [field]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50" style={{ padding: 24 }}>
@@ -48,12 +51,14 @@ export default function DashboardPage() {
       ) : !data ? (
         <div className="text-center py-20 text-red-600">Failed to load data</div>
       ) : (
-        /* Blue Container */
         <div
           style={{
-            background: "#0b4fb3",
+            background: "rgba(255, 255, 255, 0.5)",
+            backdropFilter: "blur(10px)",
             padding: 24,
             borderRadius: 16,
+            border: "1px solid rgba(255, 255, 255, 0.8)",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)"
           }}
         >
           <div
@@ -63,16 +68,34 @@ export default function DashboardPage() {
               gap: 24,
             }}
           >
-            {/* Analytics 1 - Companies Producing Jobs (Bar Chart) */}
-            <CompaniesChart
-              data={data.topCompanies}
-              title="Companies Producing Jobs"
-            />
-
-            {/* Analytics 2 - Top Hiring Companies (Pie Chart) */}
+            {/* Row 1 */}
             <TopHiringPieChart
               data={data.topCompanies}
               title="Top Hiring Companies"
+            />
+
+            <TopCitiesChart
+              data={data.topCities}
+              title="Top Cities Hiring"
+            />
+
+            {/* Row 2 */}
+            <MonthlyStatsCard stats={data.monthlyStats} />
+
+            <JobTypeSummary
+              jobTypes={data.jobTypes}
+              totalJobs={data.totalJobs}
+            />
+
+            {/* Row 3 - Job Trend (NEW!) */}
+            <SubcategoryTrendChart
+              title="Job Posting Trends by Category"
+              category={field.charAt(0).toUpperCase() + field.slice(1)}
+            />
+
+            {/* Row 4 - Michigan Map */}
+            <MichiganCountyMap
+              title="Jobs by Michigan County"
             />
           </div>
         </div>

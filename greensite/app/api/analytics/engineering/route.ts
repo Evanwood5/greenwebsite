@@ -2,11 +2,18 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET() {
     try {
-        // Get all engineering jobs
+        // Get all engineering jobs using the new JOIN structure
         const { data: jobs, error } = await supabase
             .from('job_postings_ingest_test')
-            .select('*')
-            .eq('category', 'engineering');
+            .select(`
+                *,
+                job_field_counts!inner (
+                    id,
+                    category,
+                    subcategory
+                )
+            `)
+            .eq('job_field_counts.category', 'Engineering');
 
         if (error) throw error;
 
@@ -51,12 +58,64 @@ export async function GET() {
             .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
 
-        // Month-over-month growth (simplified - you'd need to calculate based on created_at)
-        const thisMonth = jobs?.filter(job => {
+        // Jobs by subcategory
+        const subcategoryCounts = jobs?.reduce((acc: any, job) => {
+            const subcategory = job.job_field_counts?.subcategory || 'Unknown';
+            acc[subcategory] = (acc[subcategory] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Month-over-month growth calculation
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+        
+        const lastMonthDate = new Date(thisYear, thisMonth - 1, 1);
+        const lastMonth = lastMonthDate.getMonth();
+        const lastMonthYear = lastMonthDate.getFullYear();
+
+        const thisMonthJobs = jobs?.filter(job => {
             const created = new Date(job.created_at);
-            const now = new Date();
-            return created.getMonth() === now.getMonth();
+            return created.getMonth() === thisMonth && created.getFullYear() === thisYear;
         }).length || 0;
+
+        const lastMonthJobs = jobs?.filter(job => {
+            const created = new Date(job.created_at);
+            return created.getMonth() === lastMonth && created.getFullYear() === lastMonthYear;
+        }).length || 0;
+
+        const percentChange = lastMonthJobs > 0 
+            ? Math.round(((thisMonthJobs - lastMonthJobs) / lastMonthJobs) * 100)
+            : 0;
+
+        // Job posting trends over last 30 days
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const recentJobs = jobs?.filter(job => {
+            const created = new Date(job.created_at);
+            return created >= thirtyDaysAgo;
+        }) || [];
+
+        // Group by date
+        const jobsByDate: { [date: string]: number } = {};
+        recentJobs.forEach(job => {
+            const date = new Date(job.created_at);
+            const dateKey = `${date.getMonth() + 1}/${date.getDate()}`;
+            jobsByDate[dateKey] = (jobsByDate[dateKey] || 0) + 1;
+        });
+
+        // Create array of last 30 days with counts
+        const trendData = [];
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateKey = `${date.getMonth() + 1}/${date.getDate()}`;
+            trendData.push({
+                date: dateKey,
+                count: jobsByDate[dateKey] || 0,
+            });
+        }
 
         return Response.json({
             category: 'engineering',
@@ -65,10 +124,13 @@ export async function GET() {
             experienceLevels,
             jobTypes,
             topCities,
-            monthOverMonth: {
-                current: thisMonth,
-                // You'd calculate previous month here
-            }
+            subcategoryCounts,
+            monthlyStats: {
+                totalJobs: thisMonthJobs,
+                percentChange: percentChange,
+                previousMonth: lastMonthJobs,
+            },
+            trendData,
         });
 
     } catch (error) {
