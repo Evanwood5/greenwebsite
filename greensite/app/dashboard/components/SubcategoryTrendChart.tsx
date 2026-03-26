@@ -55,12 +55,11 @@ useEffect(() => {
     return (
       <div
         style={{
-          height: 280,
-          background: "#1e1e2f",
+          height: "100%",
+          background: "#1a1a1a",
           borderRadius: 16,
           padding: 16,
           color: "white",
-          gridColumn: "span 2",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -74,12 +73,11 @@ useEffect(() => {
   return (
     <div
       style={{
-        height: 280,
-        background: "#1e1e2f",
+        height: "100%",
+        background: "#1a1a1a",
         borderRadius: 16,
         padding: 16,
         color: "white",
-        gridColumn: "span 2",
       }}
     >
       <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>

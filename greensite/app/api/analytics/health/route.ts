@@ -31,6 +31,7 @@ export async function GET() {
             .map(([company, jobCount]) => ({ company, jobCount }))
             .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
+            const totalCompanies = Object.keys(companyCounts || {}).length;
 
         // Jobs by experience level
         const experienceLevels = jobs?.reduce((acc: any, job) => {
@@ -121,6 +122,7 @@ export async function GET() {
             category: 'health',
             totalJobs,
             topCompanies,
+            totalCompanies,
             experienceLevels,
             jobTypes,
             topCities,

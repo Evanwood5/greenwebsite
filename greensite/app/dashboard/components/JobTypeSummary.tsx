@@ -1,73 +1,133 @@
 "use client";
 
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+
 interface JobTypeSummaryProps {
   jobTypes: { [key: string]: number };
   totalJobs: number;
 }
 
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+
 export default function JobTypeSummary({ jobTypes, totalJobs }: JobTypeSummaryProps) {
-  // Calculate percentages
-  const fullTime = jobTypes['Full Time'] || 0;
-  const partTime = jobTypes['Part Time'] || 0;
-  const internship = jobTypes['Internship'] || 0;
-  const contract = jobTypes['Contract'] || 0;
-
-  const fullTimePct = Math.round((fullTime / totalJobs) * 100);
-  const partTimePct = Math.round((partTime / totalJobs) * 100);
-  const internshipPct = Math.round((internship / totalJobs) * 100);
-
-  // For now, we don't have remote data - will add later
-  // This is a placeholder
-  const remote = Math.round(totalJobs * 0.22); // Estimate
-  const onsite = totalJobs - remote;
-  const remotePct = Math.round((remote / totalJobs) * 100);
-  const onsitePct = 100 - remotePct;
+  // Prepare data for pie chart
+  const chartData = Object.entries(jobTypes || {})
+    .map(([type, count]) => ({
+      name: type,
+      value: count,
+      percentage: Math.round((count / totalJobs) * 100),
+    }))
+    .filter(item => item.value > 0);
 
   return (
     <div
       style={{
-        height: 260,
-        background: "#1e1e2f",
+        background: "#1a1a1a",
         borderRadius: 16,
-        padding: 20,
+        padding: 24,
         color: "white",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
+        height: "100%",
       }}
     >
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>
-        Job Type Breakdown
+      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
+        Employment Type
       </h3>
 
-      {/* Job Types */}
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 14, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
-          <span>🏢 Full-Time</span>
-          <span style={{ fontWeight: 700 }}>{fullTime} ({fullTimePct}%)</span>
-        </div>
-        <div style={{ fontSize: 14, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
-          <span>⏰ Part-Time</span>
-          <span style={{ fontWeight: 700 }}>{partTime} ({partTimePct}%)</span>
-        </div>
-        <div style={{ fontSize: 14, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
-          <span>🎓 Internship</span>
-          <span style={{ fontWeight: 700 }}>{internship} ({internshipPct}%)</span>
-        </div>
-      </div>
+      <div style={{ 
+        display: "flex", 
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 24,
+      }}>
+        {/* Pie Chart */}
+        <div style={{ flex: "0 0 200px", position: "relative" }}>
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={90}
+                paddingAngle={2}
+                dataKey="value"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]} 
+                  />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  background: '#d6ba04', 
+                  border: '1px solid #333',
+                  borderRadius: 8,
+                  color: 'white',
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
 
-      {/* Divider */}
-      <div style={{ height: 1, background: "#333", margin: "12px 0" }} />
-
-      {/* Remote vs On-Site */}
-      <div>
-        <div style={{ fontSize: 14, marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
-          <span>📍 Remote</span>
-          <span style={{ fontWeight: 700, color: "#22c55e" }}>{remote} ({remotePct}%)</span>
+          {/* Center Label */}
+          <div style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            pointerEvents: "none",
+          }}>
+            <div style={{ fontSize: 24, fontWeight: 700 }}>
+              {chartData[0]?.percentage || 0}%
+            </div>
+            <div style={{ fontSize: 12, color: "#888" }}>
+              {chartData[0]?.name || "N/A"}
+            </div>
+          </div>
         </div>
-        <div style={{ fontSize: 14, display: "flex", justifyContent: "space-between" }}>
-          <span>🏙️ On-Site</span>
-          <span style={{ fontWeight: 700 }}>{onsite} ({onsitePct}%)</span>
+
+        {/* Legend List */}
+        <div style={{ 
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}>
+          {chartData.map((item) => (
+            <div
+              key={item.name}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "8px 0",
+                borderBottom: "1px solid #2a2a2a",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div
+                  style={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    background: COLORS[chartData.indexOf(item) % COLORS.length],
+                  }}
+                />
+                <span style={{ fontSize: 14 }}>
+                  {item.name}
+                </span>
+              </div>
+
+              <div style={{ 
+                fontSize: 14,
+                fontWeight: 600,
+              }}>
+                {item.percentage}%
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

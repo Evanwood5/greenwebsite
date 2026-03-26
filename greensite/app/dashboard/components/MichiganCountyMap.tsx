@@ -95,7 +95,8 @@ useEffect(() => {
     return (
       <div
         style={{
-          height: 420,
+          height: "100%",
+          minHeight: 420,
           background: "#1e1e2f",
           borderRadius: 16,
           padding: 16,
@@ -134,20 +135,20 @@ useEffect(() => {
   }
 
   const projection = geoAlbersUsa()
-    .scale(7500)
-    .translate([1300, 1500]);
+    .scale(8500)
+    .translate([1125, 1500]);
 
   const pathGenerator = geoPath().projection(projection);
 
   return (
     <div
       style={{
-        height: 600,
-        background: "#1e1e2f",
-        borderRadius: 16,
-        padding: 16,
-        color: "white",
-        gridColumn: "span 2",
+      height: "100%",
+      minHeight: 400,
+      background: "#1a1a1a",
+      borderRadius: 16,
+      padding: 16,
+      color: "white",
       }}
     >
       <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
@@ -160,11 +161,11 @@ useEffect(() => {
           <svg
             width="100%"
             height="100%"
-            viewBox="0 0 800 700"
+            viewBox="0 0 700 500"
             preserveAspectRatio="xMidYMid meet"
-            style={{ background: "#1e1e2f" }}
+            style={{ background: "transparent" }}
           >
-            <g transform="translate(-1400, -200) scale(0.8)">
+            <g transform="translate(-1300, -150) scale(0.75)">
               {geoData.features.map((feat: any, i: number) => {
                 const countyName = feat.properties?.name || "Unknown";
                 const jobCount = countyJobMap[countyName] || 0;

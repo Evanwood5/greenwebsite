@@ -24,3 +24,11 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Hide Recharts measurement elements */
+.recharts-surface tspan[style*="position: absolute"] {
+  display: none !important;
+}
+
+span[style*="position: absolute"][style*="top: -20000px"] {
+  display: none !important;
+}
