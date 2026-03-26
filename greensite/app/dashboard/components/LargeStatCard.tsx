@@ -6,6 +6,7 @@ interface LargeStatCardProps {
   subtitle?: string;
   changePercent?: number;
   changeLabel?: string;
+  icon?: string;
 }
 
 export default function LargeStatCard({ 
@@ -45,7 +46,7 @@ export default function LargeStatCard({
         fontWeight: 700,
         lineHeight: 1,
       }}>
-        {typeof value === 'number' ? value.toLocaleString() : value}
+        {value.toLocaleString()}
       </div>
 
       {/* Subtitle and Change Indicator */}
