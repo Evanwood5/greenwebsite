@@ -57,6 +57,7 @@ export async function GET() {
             .map(([name, jobCount]) => ({ name, jobCount }))
             .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
+            const totalCompanies = Object.keys(companyCounts || {}).length;
 
         // Jobs by subcategory (for the new trend chart later)
         const subcategoryCounts = jobs?.reduce((acc: any, job) => {
@@ -121,6 +122,7 @@ export async function GET() {
             category: 'tech',
             totalJobs,
             topCompanies,
+            totalCompanies,
             experienceLevels,
             jobTypes,
             topCities,
