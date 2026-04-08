@@ -2,6 +2,7 @@
 // Classifies jobs into categories and fetches the corresponding job_field_id from Supabase
 
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 // Job field mappings: (category, subcategory) - mirrors backend logic
 const JOB_FIELD_MAPPINGS: Record<string, [string, string]> = {
@@ -246,7 +247,7 @@ export async function bulkCategorizeJobs(): Promise<{
         const fieldId = await getJobFieldId(job.job_title);
 
         if (fieldId) {
-            const { error: updateError } = await supabase
+            const { error: updateError } = await supabaseAdmin
                 .from('job_postings_ingest_test')
                 .update({ job_field_id: fieldId })
                 .eq('job_id', job.job_id);
