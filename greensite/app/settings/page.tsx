@@ -12,6 +12,55 @@ interface Preference {
   includeRemote: boolean
 }
 
+const MICHIGAN_CITIES = [
+  { value: 'MI:all', label: 'All Michigan (statewide)' },
+  { value: 'MI:Ann Arbor', label: 'Ann Arbor' },
+  { value: 'MI:Battle Creek', label: 'Battle Creek' },
+  { value: 'MI:Bay City', label: 'Bay City' },
+  { value: 'MI:Dearborn', label: 'Dearborn' },
+  { value: 'MI:Detroit', label: 'Detroit' },
+  { value: 'MI:East Lansing', label: 'East Lansing' },
+  { value: 'MI:Farmington Hills', label: 'Farmington Hills' },
+  { value: 'MI:Flint', label: 'Flint' },
+  { value: 'MI:Jackson', label: 'Jackson' },
+  { value: 'MI:Lansing', label: 'Lansing' },
+  { value: 'MI:Livonia', label: 'Livonia' },
+  { value: 'MI:Monroe', label: 'Monroe' },
+  { value: 'MI:Novi', label: 'Novi' },
+  { value: 'MI:Pontiac', label: 'Pontiac' },
+  { value: 'MI:Port Huron', label: 'Port Huron' },
+  { value: 'MI:Rochester Hills', label: 'Rochester Hills' },
+  { value: 'MI:Southfield', label: 'Southfield' },
+  { value: 'MI:Sterling Heights', label: 'Sterling Heights' },
+  { value: 'MI:Taylor', label: 'Taylor' },
+  { value: 'MI:Troy', label: 'Troy' },
+  { value: 'MI:Warren', label: 'Warren' },
+  { value: 'MI:Westland', label: 'Westland' },
+  { value: 'MI:Grand Rapids', label: 'Grand Rapids' },
+  { value: 'MI:Holland', label: 'Holland' },
+  { value: 'MI:Muskegon', label: 'Muskegon' },
+  { value: 'MI:Ludington', label: 'Ludington' },
+  { value: 'MI:Wyoming', label: 'Wyoming' },
+  { value: 'MI:Benton Harbor', label: 'Benton Harbor' },
+  { value: 'MI:St. Joseph', label: 'St. Joseph' },
+  { value: 'MI:Kalamazoo', label: 'Kalamazoo' },
+  { value: 'MI:Three Rivers', label: 'Three Rivers' },
+  { value: 'MI:Midland', label: 'Midland' },
+  { value: 'MI:Saginaw', label: 'Saginaw' },
+  { value: 'MI:Mount Pleasant', label: 'Mount Pleasant' },
+  { value: 'MI:Traverse City', label: 'Traverse City' },
+  { value: 'MI:Petoskey', label: 'Petoskey' },
+  { value: 'MI:Gaylord', label: 'Gaylord' },
+  { value: 'MI:Cadillac', label: 'Cadillac' },
+  { value: 'MI:Alpena', label: 'Alpena' },
+  { value: 'MI:Bad Axe', label: 'Bad Axe' },
+  { value: 'MI:Marquette', label: 'Marquette' },
+  { value: 'MI:Escanaba', label: 'Escanaba' },
+  { value: 'MI:Houghton', label: 'Houghton' },
+  { value: 'MI:Sault Ste. Marie', label: 'Sault Ste. Marie' },
+  { value: 'MI:Menominee', label: 'Menominee' },
+]
+
 function CheckCircleIcon({ color = '#22c55e' }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -51,6 +100,8 @@ function displayLocation(loc: string) {
   return `${parts.length} cities`
 }
 
+const emptyPref: Preference = { jobTypes: [], location: '', experienceLevel: 'any', includeRemote: true }
+
 const cardStyle: React.CSSProperties = {
   background: '#1e1e1e',
   borderRadius: '12px',
@@ -73,13 +124,183 @@ const sectionSubStyle: React.CSSProperties = {
   marginBottom: '16px',
 }
 
+interface PrefEditorProps {
+  pref: Preference
+  onChange: (p: Preference) => void
+}
+
+function PrefEditor({ pref, onChange }: PrefEditorProps) {
+  const jobTypeOptions = ['full-time', 'internship', 'part-time']
+  const selectedCities = pref.location ? pref.location.split(',').filter(Boolean) : []
+
+  function toggleJobType(type: string) {
+    if (pref.jobTypes.includes(type)) {
+      onChange({ ...pref, jobTypes: pref.jobTypes.filter(t => t !== type) })
+    } else {
+      if (pref.jobTypes.length >= 2) {
+        alert('You can select up to 2 job types')
+        return
+      }
+      onChange({ ...pref, jobTypes: [...pref.jobTypes, type] })
+    }
+  }
+
+  function toggleCity(cityValue: string) {
+    let next: string[]
+    if (cityValue === 'MI:all') {
+      next = selectedCities.includes('MI:all') ? [] : ['MI:all']
+    } else {
+      if (selectedCities.includes('MI:all')) {
+        next = [cityValue]
+      } else if (selectedCities.includes(cityValue)) {
+        next = selectedCities.filter(c => c !== cityValue)
+      } else {
+        next = [...selectedCities, cityValue]
+      }
+    }
+    onChange({ ...pref, location: next.join(',') })
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingTop: '4px' }}>
+      {/* Job Types */}
+      <div>
+        <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>
+          Job Type (select up to 2)
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {jobTypeOptions.map(type => {
+            const selected = pref.jobTypes.includes(type)
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => toggleJobType(type)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: selected ? 'none' : '1px solid #3a3a3a',
+                  background: selected ? '#166534' : '#141414',
+                  color: selected ? '#86efac' : '#9ca3af',
+                  fontSize: '13px',
+                  fontWeight: selected ? 600 : 400,
+                  cursor: 'pointer',
+                  textTransform: 'capitalize',
+                }}
+              >
+                {selected && '✓ '}{type}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Experience Level (full-time only) */}
+      {pref.jobTypes.includes('full-time') && (
+        <div>
+          <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>
+            Experience Level
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {[
+              { value: 'moderate', label: 'Moderate (0–2 years)' },
+              { value: 'advanced', label: 'Advanced (2+ years)' },
+              { value: 'any', label: 'Any level' },
+            ].map(opt => (
+              <label
+                key={opt.value}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #2a2a2a', background: '#141414', cursor: 'pointer' }}
+              >
+                <input
+                  type="radio"
+                  name={`exp-${opt.value}`}
+                  value={opt.value}
+                  checked={pref.experienceLevel === opt.value}
+                  onChange={() => onChange({ ...pref, experienceLevel: opt.value })}
+                  style={{ accentColor: '#22c55e', width: '15px', height: '15px' }}
+                />
+                <span style={{ color: '#d1d5db', fontSize: '13px' }}>{opt.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Location */}
+      <div>
+        <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+          Location
+        </p>
+        <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '8px' }}>Each city includes a 30-mile radius</p>
+        <div style={{ background: '#141414', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '12px', maxHeight: '220px', overflowY: 'auto' }}>
+          {MICHIGAN_CITIES.map(city => (
+            <label
+              key={city.value}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '6px 4px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                background: city.value === 'MI:all' ? '#14532d22' : 'transparent',
+                borderBottom: city.value === 'MI:all' ? '1px solid #166534' : 'none',
+                marginBottom: city.value === 'MI:all' ? '6px' : '0',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedCities.includes(city.value)}
+                onChange={() => toggleCity(city.value)}
+                style={{ accentColor: '#22c55e', width: '14px', height: '14px', flexShrink: 0 }}
+              />
+              <span style={{
+                fontSize: '13px',
+                color: city.value === 'MI:all' ? '#4ade80' : '#d1d5db',
+                fontWeight: city.value === 'MI:all' ? 600 : 400,
+              }}>
+                {city.label}
+              </span>
+            </label>
+          ))}
+        </div>
+        {selectedCities.length > 0 && (
+          <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '6px' }}>
+            {selectedCities.includes('MI:all')
+              ? 'Matching jobs across all of Michigan'
+              : `${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
+          </p>
+        )}
+      </div>
+
+      {/* Remote */}
+      <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', background: '#141414', border: '1px solid #2a2a2a', borderRadius: '8px', cursor: 'pointer' }}>
+        <input
+          type="checkbox"
+          checked={pref.includeRemote}
+          onChange={e => onChange({ ...pref, includeRemote: e.target.checked })}
+          style={{ accentColor: '#22c55e', width: '16px', height: '16px', flexShrink: 0 }}
+        />
+        <div>
+          <p style={{ color: 'white', fontSize: '13px', fontWeight: 500 }}>Include remote jobs</p>
+          <p style={{ color: '#6b7280', fontSize: '12px' }}>Get matched with remote opportunities</p>
+        </div>
+      </label>
+    </div>
+  )
+}
+
 export default function SettingsPage() {
   const { user } = useAuth()
   const [resumeUploaded, setResumeUploaded] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [removing, setRemoving] = useState(false)
-  const [pref1, setPref1] = useState<Preference>({ jobTypes: [], location: '', experienceLevel: 'any', includeRemote: true })
-  const [pref2, setPref2] = useState<Preference>({ jobTypes: [], location: '', experienceLevel: 'any', includeRemote: true })
+  const [pref1, setPref1] = useState<Preference>({ ...emptyPref })
+  const [pref2, setPref2] = useState<Preference>({ ...emptyPref })
+  const [editingPref, setEditingPref] = useState<null | 1 | 2>(null)
+  const [editDraft, setEditDraft] = useState<Preference>({ ...emptyPref })
+  const [saving, setSaving] = useState(false)
+  const [saveMsg, setSaveMsg] = useState('')
   const [notifStatus, setNotifStatus] = useState<'idle' | 'saved'>('idle')
 
   useEffect(() => {
@@ -114,7 +335,6 @@ export default function SettingsPage() {
     const file = e.target.files?.[0]
     if (!file || !user?.id) return
     setUploading(true)
-
     try {
       const formData = new FormData()
       formData.append('resume', file)
@@ -141,18 +361,72 @@ export default function SettingsPage() {
     }
   }
 
+  const startEdit = (id: 1 | 2) => {
+    setEditDraft({ ...(id === 1 ? pref1 : pref2) })
+    setEditingPref(id)
+    setSaveMsg('')
+  }
+
+  const cancelEdit = () => {
+    setEditingPref(null)
+    setSaveMsg('')
+  }
+
+  const savePreference = async (id: 1 | 2) => {
+    if (!user?.id) return
+    setSaving(true)
+    setSaveMsg('')
+    try {
+      const locationsArray = editDraft.location
+        .split(',')
+        .map(l => l.trim())
+        .filter(l => l.startsWith('MI:'))
+
+      const { error } = await supabase.from('user_job_preferences').upsert({
+        user_id: user.id,
+        preference_id: id,
+        job_types: editDraft.jobTypes,
+        max_distance_miles: 30,
+        include_remote: editDraft.includeRemote,
+        locations: locationsArray,
+        experience_level: editDraft.jobTypes.includes('full-time') ? editDraft.experienceLevel : null,
+      }, { onConflict: 'user_id,preference_id' })
+
+      if (error) throw error
+
+      if (id === 1) setPref1({ ...editDraft })
+      else setPref2({ ...editDraft })
+
+      setSaveMsg('Saved!')
+      setTimeout(() => {
+        setEditingPref(null)
+        setSaveMsg('')
+      }, 1000)
+    } catch (err) {
+      console.error('Save error:', err)
+      setSaveMsg('Failed to save')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const removePref = async (id: 1 | 2) => {
     if (!user?.id) return
     await supabase.from('user_job_preferences').delete().eq('user_id', user.id).eq('preference_id', id)
-    const empty: Preference = { jobTypes: [], location: '', experienceLevel: 'any', includeRemote: true }
-    if (id === 1) setPref1(empty)
-    else setPref2(empty)
+    if (id === 1) setPref1({ ...emptyPref })
+    else setPref2({ ...emptyPref })
+    if (editingPref === id) setEditingPref(null)
   }
 
   const university = user?.email?.includes('umich') ? 'University of Michigan'
     : user?.email?.includes('msu') ? 'Michigan State University'
     : user?.email?.includes('wayne') ? 'Wayne State University'
     : 'Michigan University'
+
+  const prefItems = [
+    { id: 1 as const, pref: pref1, label: 'Job Preference #1', sub: 'Set up your first job search criteria' },
+    { id: 2 as const, pref: pref2, label: 'Job Preference #2', sub: 'Set up your second job search criteria' },
+  ]
 
   return (
     <AppShell>
@@ -210,7 +484,7 @@ export default function SettingsPage() {
           )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-            {['We\'ll anonymize your personal data', 'Only PDF files accepted', 'Maximum 2MB, 2 pages'].map((text) => (
+            {["We'll anonymize your personal data", 'Only PDF files accepted', 'Maximum 2MB, 2 pages'].map((text) => (
               <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <CheckCircleIcon />
                 <span style={{ color: '#9ca3af', fontSize: '13px' }}>{text}</span>
@@ -242,73 +516,110 @@ export default function SettingsPage() {
         </div>
 
         {/* Preferences */}
-        {([{ id: 1, pref: pref1, label: 'Job Preference #1', sub: 'Set up your first job search criteria' }, { id: 2, pref: pref2, label: 'Job Preference #2', sub: 'Set up your second job search criteria' }] as const).map(({ id, pref, label, sub }) => (
-          <div key={id} style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #ec4899, #f97316)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="4"/>
-                  </svg>
+        {prefItems.map(({ id, pref, label, sub }) => {
+          const isEditing = editingPref === id
+
+          return (
+            <div key={id} style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isEditing ? '16px' : '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #ec4899, #f97316)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                      <circle cx="12" cy="12" r="10"/>
+                      <circle cx="12" cy="12" r="4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p style={{ color: 'white', fontSize: '14px', fontWeight: 600 }}>{label}</p>
+                    <p style={{ color: '#6b7280', fontSize: '12px' }}>{sub}</p>
+                  </div>
                 </div>
-                <div>
-                  <p style={{ color: 'white', fontSize: '14px', fontWeight: 600 }}>{label}</p>
-                  <p style={{ color: '#6b7280', fontSize: '12px' }}>{sub}</p>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {!isEditing && (
+                    <button
+                      onClick={() => startEdit(id)}
+                      style={{ padding: '6px 14px', background: '#1e3a5f', color: '#60a5fa', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      {pref.jobTypes.length > 0 ? 'Edit' : 'Set Up'}
+                    </button>
+                  )}
+                  {pref.jobTypes.length > 0 && !isEditing && (
+                    <button
+                      onClick={() => removePref(id)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#7f1d1d', color: '#fca5a5', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      <TrashIcon />
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
-              {pref.jobTypes.length > 0 && (
-                <button
-                  onClick={() => removePref(id)}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: '#7f1d1d', color: '#fca5a5', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
-                >
-                  <TrashIcon />
-                  Delete
-                </button>
+
+              {isEditing ? (
+                <>
+                  <PrefEditor pref={editDraft} onChange={setEditDraft} />
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center' }}>
+                    <button
+                      onClick={() => savePreference(id)}
+                      disabled={saving || editDraft.jobTypes.length === 0}
+                      style={{ padding: '9px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: saving || editDraft.jobTypes.length === 0 ? 'not-allowed' : 'pointer', opacity: saving || editDraft.jobTypes.length === 0 ? 0.6 : 1 }}
+                    >
+                      {saving ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                      onClick={cancelEdit}
+                      disabled={saving}
+                      style={{ padding: '9px 20px', background: 'transparent', color: '#9ca3af', border: '1px solid #3a3a3a', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    {saveMsg && (
+                      <span style={{ color: saveMsg === 'Saved!' ? '#4ade80' : '#f87171', fontSize: '13px' }}>{saveMsg}</span>
+                    )}
+                  </div>
+                </>
+              ) : pref.jobTypes.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckCircleIcon />
+                    <span style={{ color: '#22c55e', fontSize: '13px', fontWeight: 500 }}>Job Types:</span>
+                    <span style={{ color: '#d1d5db', fontSize: '13px' }}>{pref.jobTypes.join(', ')}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ec4899" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span style={{ color: '#ec4899', fontSize: '13px', fontWeight: 500 }}>Location:</span>
+                    <span style={{ color: '#d1d5db', fontSize: '13px' }}>{displayLocation(pref.location)}</span>
+                  </div>
+                  {pref.experienceLevel && pref.experienceLevel !== 'any' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/>
+                        <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+                      </svg>
+                      <span style={{ color: '#f59e0b', fontSize: '13px', fontWeight: 500 }}>Experience:</span>
+                      <span style={{ color: '#d1d5db', fontSize: '13px', textTransform: 'capitalize' }}>{pref.experienceLevel}</span>
+                    </div>
+                  )}
+                  {pref.includeRemote && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                      </svg>
+                      <span style={{ color: '#60a5fa', fontSize: '13px' }}>Remote jobs included</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p style={{ color: '#6b7280', fontSize: '13px' }}>Not configured yet. Click Set Up to add your preferences.</p>
               )}
             </div>
-
-            {pref.jobTypes.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <CheckCircleIcon />
-                  <span style={{ color: '#22c55e', fontSize: '13px', fontWeight: 500 }}>Job Types:</span>
-                  <span style={{ color: '#d1d5db', fontSize: '13px' }}>{pref.jobTypes.join(', ')}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ec4899" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                  <span style={{ color: '#ec4899', fontSize: '13px', fontWeight: 500 }}>Location:</span>
-                  <span style={{ color: '#d1d5db', fontSize: '13px' }}>{displayLocation(pref.location)}</span>
-                </div>
-                {pref.experienceLevel && pref.experienceLevel !== 'any' && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="7" width="20" height="14" rx="2"/>
-                      <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
-                    </svg>
-                    <span style={{ color: '#f59e0b', fontSize: '13px', fontWeight: 500 }}>Experience:</span>
-                    <span style={{ color: '#d1d5db', fontSize: '13px', textTransform: 'capitalize' }}>{pref.experienceLevel}</span>
-                  </div>
-                )}
-                {pref.includeRemote && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"/>
-                      <line x1="2" y1="12" x2="22" y2="12"/>
-                      <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
-                    </svg>
-                    <span style={{ color: '#60a5fa', fontSize: '13px' }}>Remote jobs included</span>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p style={{ color: '#6b7280', fontSize: '13px' }}>Not configured yet. Go to Custom Jobs to set preferences.</p>
-            )}
-          </div>
-        ))}
+          )
+        })}
 
         {/* Notifications */}
         <h2 style={sectionHeadingStyle}>Custom Notifications</h2>
