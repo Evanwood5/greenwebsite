@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export async function POST(request: Request) {
     try {
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         console.log('PII stripped successfully, text length:', cleaned_text.length);
 
         // Save to Supabase
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from('profiles')
             .upsert({
                 user_id: userId,
