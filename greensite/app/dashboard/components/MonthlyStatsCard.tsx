@@ -8,28 +8,29 @@ interface MonthlyStatsCardProps {
 
 export default function MonthlyStatsCard({ stats }: MonthlyStatsCardProps) {
   const isPositive = stats.percentChange > 0;
+  const isZero = stats.percentChange === 0;
 
   return (
     <div
       style={{
-        height: 220,
-        background: "#0a0a0a",
+        height: 260,
+        background: "#1e1e2f",
         borderRadius: 16,
         padding: 24,
         color: "white",
-        gridColumn: "span 2",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 48,
+        gap: 16,
       }}
     >
       {/* Total Jobs */}
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>
+        <div style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>
           Total Jobs This Month
         </div>
-        <div style={{ fontSize: 48, fontWeight: 700 }}>
+        <div style={{ fontSize: 42, fontWeight: 700 }}>
           {stats.totalJobs.toLocaleString()}
         </div>
       </div>
@@ -37,8 +38,8 @@ export default function MonthlyStatsCard({ stats }: MonthlyStatsCardProps) {
       {/* Divider */}
       <div
         style={{
-          width: 2,
-          height: 120,
+          width: "80%",
+          height: 1,
           background: "#333",
         }}
       />
@@ -48,23 +49,37 @@ export default function MonthlyStatsCard({ stats }: MonthlyStatsCardProps) {
         <div style={{ fontSize: 14, color: "#888", marginBottom: 8 }}>
           Month-over-Month Change
         </div>
-        <div
-          style={{
-            fontSize: 48,
-            fontWeight: 700,
-            color: isPositive ? "#22c55e" : "#ef4444",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span>{isPositive ? "↑" : "↓"}</span>
-          <span>{Math.abs(stats.percentChange)}%</span>
-        </div>
-        <div style={{ fontSize: 14, color: "#888", marginTop: 8 }}>
-          {isPositive ? "+" : ""}
-          {(stats.totalJobs - stats.previousMonth).toLocaleString()} jobs from last month
-        </div>
+        {isZero && stats.previousMonth === 0 ? (
+          <>
+            <div style={{ fontSize: 32, fontWeight: 700, color: "#888" }}>
+              New Data
+            </div>
+            <div style={{ fontSize: 14, color: "#888", marginTop: 8 }}>
+              First month of tracking
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              style={{
+                fontSize: 36,
+                fontWeight: 700,
+                color: isPositive ? "#22c55e" : isZero ? "#888" : "#ef4444",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+            >
+              {!isZero && <span>{isPositive ? "↑" : "↓"}</span>}
+              <span>{Math.abs(stats.percentChange)}%</span>
+            </div>
+            <div style={{ fontSize: 14, color: "#888", marginTop: 8 }}>
+              {isPositive ? "+" : isZero ? "" : ""}
+              {(stats.totalJobs - stats.previousMonth).toLocaleString()} jobs from last month
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
