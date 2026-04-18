@@ -7,58 +7,38 @@ interface FieldSelectorProps {
   onChange: (field: Field) => void;
 }
 
-const FIELD_COLORS = {
-  tech: "#3b82f6",      // Blue
-  engineering: "#f59e0b", // Orange
-  business: "#10b981",  // Green
-  health: "#ec4899",    // Pink
-};
-
 export default function FieldSelector({ value, onChange }: FieldSelectorProps) {
-  const fields: Field[] = ["tech", "engineering", "business", "health"];
+  const fields: Field[] = ["business", "engineering", "health", "tech"];
 
   return (
-    <div style={{ 
-      display: "flex", 
-      gap: 12, 
-      marginBottom: 24,
-      background: "#1a1a1a",
-      padding: "8px",
-      borderRadius: 12,
-      width: "fit-content",
-    }}>
+    <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
       {fields.map((field) => {
         const isSelected = value === field;
-        const color = FIELD_COLORS[field];
 
         return (
           <button
             key={field}
             onClick={() => onChange(field)}
             style={{
-              padding: "12px 24px",
-              borderRadius: 8,
-              border: "none",
-              background: isSelected ? color : "transparent",
+              padding: "8px 20px",
+              borderRadius: 20,
+              border: isSelected ? "none" : "1px solid #333",
+              background: isSelected ? "#22c55e" : "transparent",
               color: "white",
               fontSize: 14,
-              fontWeight: 600,
+              fontWeight: isSelected ? 600 : 400,
               cursor: "pointer",
-              transition: "all 0.2s",
+              transition: "all 150ms",
               textTransform: "capitalize",
             }}
             onMouseEnter={(e) => {
-              if (!isSelected) {
-                e.currentTarget.style.background = "#2a2a2a";
-              }
+              if (!isSelected) e.currentTarget.style.borderColor = "#555";
             }}
             onMouseLeave={(e) => {
-              if (!isSelected) {
-                e.currentTarget.style.background = "transparent";
-              }
+              if (!isSelected) e.currentTarget.style.borderColor = "#333";
             }}
           >
-            {field}
+            {field.charAt(0).toUpperCase() + field.slice(1)}
           </button>
         );
       })}
