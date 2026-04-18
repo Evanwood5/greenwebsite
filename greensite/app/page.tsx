@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from "@/contexts/AuthContext";
+import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import StatsSection from "@/components/home/StatsSection";
@@ -22,6 +23,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ background: '#1a1a1a' }}>
+      <Navbar />
       <HeroSection user={user} />
       <StatsSection />
       <FeaturesSection />
