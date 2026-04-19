@@ -6,69 +6,108 @@ interface HeroSectionProps {
   user?: any;
 }
 
+function HeroMockup() {
+  return (
+    <div
+      className="w-full rounded-xl overflow-hidden"
+      style={{ border: '2px solid #22c55e', background: '#111', padding: '20px', minHeight: '240px' }}
+    >
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ background: '#e05252', height: '10px', borderRadius: '4px', width: '75%' }} />
+      </div>
+      <div className="relative" style={{ marginBottom: '20px' }}>
+        <div style={{ background: '#d97706', height: '10px', borderRadius: '4px', width: '88%' }} />
+        <div
+          className="absolute"
+          style={{
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+            <polygon points="5,3 19,12 5,21" />
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div style={{ background: '#3b82f6', height: '10px', borderRadius: '4px', width: '55%' }} />
+      </div>
+    </div>
+  );
+}
+
 export default function HeroSection({ user }: HeroSectionProps) {
   return (
-    <section className="relative px-6 py-24 overflow-hidden">
-      {/* Background blobs */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-green-200 rounded-full opacity-20 animate-pulse" />
-      <div className="absolute top-40 right-20 w-16 h-16 bg-blue-200 rounded-full opacity-30 animate-pulse" />
-      <div className="absolute bottom-20 left-20 w-24 h-24 bg-indigo-200 rounded-full opacity-20 animate-pulse" />
+    <section style={{ background: '#1a1a1a' }} className="px-6 py-20 md:py-28">
+      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6">
+            <span className="text-green-400">Michigan&apos;s</span>{' '}
+            <span className="text-white">Best</span>
+            <br />
+            <span className="text-white">Job Search Platform</span>
+          </h1>
 
-      <div className="max-w-7xl mx-auto text-center max-w-4xl">
-        <span className="inline-block px-4 py-1 mb-6 text-sm font-semibold text-green-700 bg-green-100 rounded-full">
-          🌱 Michigan&apos;s #1 Green Job Platform
-        </span>
+          <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-lg">
+            Greenify tracks over{' '}
+            <span className="text-green-400">1,000 company career pages</span>
+            , processing them in{' '}
+            <span className="text-orange-400">real-time</span>
+            {' '}to deliver powerful analytics and job opportunities that precisely match your skills and experience.
+          </p>
 
-        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-          Best Job Search &amp;{" "}
-          <span className="bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-transparent">
-            Analytics
-          </span>{" "}
-          in Michigan
-        </h1>
-
-        <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-          We scrape 100+ Michigan job postings daily and match them to your resume using AI — so you spend less time searching and more time applying.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          {user ? (
-            <>
-              <Link
-                href="/jobs"
-                className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
-              >
-                Browse Jobs
-              </Link>
-              <Link
-                href="/dashboard"
-                className="px-8 py-4 bg-white text-gray-700 rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 font-semibold text-lg transition-all duration-200"
-              >
-                View Dashboard
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/auth"
-                className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
-              >
-                Get Jobs Now 🚀
-              </Link>
-              <Link
-                href="/jobs"
-                className="px-8 py-4 bg-white text-gray-700 rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 font-semibold text-lg transition-all duration-200"
-              >
-                Explore Jobs
-              </Link>
-            </>
-          )}
+          <div className="flex flex-wrap gap-4">
+            {user ? (
+              <>
+                <Link
+                  href="/jobs"
+                  className="px-6 py-3 text-white font-semibold border border-white/30 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer flex items-center gap-2"
+                >
+                  Get Started
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="px-6 py-3 text-white font-semibold border border-white/30 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer"
+                >
+                  Contact Us
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth"
+                  className="px-6 py-3 text-white font-semibold border border-white/30 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer flex items-center gap-2"
+                >
+                  Get Started
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </Link>
+                <Link
+                  href="#contact"
+                  className="px-6 py-3 text-white font-semibold border border-white/30 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer"
+                >
+                  Contact Us
+                </Link>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Dummy trust bar */}
-        <p className="mt-10 text-sm text-gray-400">
-          Built by Spartans, powered by MSU · Trusted by 500+ Michigan job seekers
-        </p>
+        <div className="hidden md:block">
+          <HeroMockup />
+        </div>
       </div>
     </section>
   );

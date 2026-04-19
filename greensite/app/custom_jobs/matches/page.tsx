@@ -1,128 +1,148 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
+import AppShell from '@/components/AppShell'
+import { DarkJobCard } from '@/components/jobs/JobList'
 
-interface JobMatch {
-    id: string;
-    jobTitle: string;
-    company: string;
-    location: string;
-    jobType: string;
-    experienceLevel?: string;
-    score: number;
-    jobLink: string;
-    matchedPreference: string | number;
+interface MatchedJob {
+  id: number
+  created_at: string
+  company_name: string | null
+  job_title: string | null
+  job_href: string | null
+  job_type: string | null
+  city: string | null
+  state: string | null
+  is_remote: boolean | null
+  matched_at: string
 }
 
-export default function MatchesPage() {
-    const [matches, setMatches] = useState<JobMatch[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function ResumeJobsPage() {
+  const { user } = useAuth()
+  const [jobs, setJobs] = useState<MatchedJob[]>([])
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        // TODO: Fetch matches from backend
-        // For now, show empty state
-        setTimeout(() => {
-            setMatches([]);
-            setLoading(false);
-        }, 1000);
-    }, []);
+  useEffect(() => {
+    if (user?.id) loadMatches()
+  }, [user?.id])
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
-                <div className="max-w-4xl mx-auto">
-                    <div className="text-center py-20">
-                        <div className="text-6xl mb-4">⏳</div>
-                        <p className="text-gray-600">Loading your matches...</p>
-                    </div>
-                </div>
-            </div>
-        );
+  const loadMatches = async () => {
+    if (!user?.id) return
+    setLoading(true)
+
+    try {
+      const { data: matchRows } = await supabase
+        .from('user_job_matches')
+        .select('job_id, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (!matchRows || matchRows.length === 0) {
+        setJobs([])
+        return
+      }
+
+      const jobIds = matchRows.map(m => m.job_id)
+      const { data: jobRows } = await supabase
+        .from('job_postings_ingest_test')
+        .select('*')
+        .in('job_id', jobIds)
+
+      if (jobRows) {
+        const merged: MatchedJob[] = matchRows
+          .map(match => {
+            const job = jobRows.find((j: any) => j.job_id === match.job_id)
+            if (!job) return null
+            return { ...job, id: job.id || job.job_id, matched_at: match.created_at }
+          })
+          .filter(Boolean) as MatchedJob[]
+        setJobs(merged)
+      }
+    } catch (err) {
+      console.error('Error loading matches:', err)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
-            <div className="max-w-4xl mx-auto">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Your Job Matches</h1>
-                    <p className="text-gray-600">
-                        AI-powered recommendations based on your resume and preferences
-                    </p>
-                </div>
+  const statCards = [
+    { label: 'Total Matches', value: jobs.length.toString(), color: '#4ade80' },
+    { label: 'New This Week', value: jobs.length > 0 ? jobs.length.toString() : '0', color: '#60a5fa' },
+    { label: 'Saved Jobs', value: '0', color: '#facc15' },
+    { label: 'Applications', value: '0', color: '#f472b6' },
+  ]
 
-                {/* Matches List */}
-                {matches.length === 0 ? (
-                    <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-                        <div className="text-6xl mb-4">📭</div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">No matches yet</h2>
-                        <p className="text-gray-600 mb-6">
-                            We're checking for new jobs daily at 9 AM. Check back tomorrow!
-                        </p>
-                        <div className="bg-blue-50 rounded-lg p-4 max-w-md mx-auto">
-                            <p className="text-sm text-blue-900">
-                                💡 <strong>Tip:</strong> You'll receive an email notification when we find a good match
-                            </p>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        {matches.map((match) => (
-                            <div
-                                key={match.id}
-                                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-1">
-                                            {match.jobTitle}
-                                        </h3>
-                                        <p className="text-gray-600">{match.company}</p>
-                                        <p className="text-sm text-gray-500">
-                                            📍 {match.location} • {match.jobType}
-                                            {match.experienceLevel && ` • ${match.experienceLevel}`}
-                                        </p>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold text-sm">
-                                            {Math.round(match.score * 100)}% Match
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <a
-                                        href={match.jobLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
-                                    >
-                                        View Job →
-                                    </a>
-                                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200">
-                                        Save
-                                    </button>
-                                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200">
-                                        Not Interested
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* Back Button */}
-                <div className="mt-8 text-center">
-                    <Link
-                        href="/custom_jobs"
-
-                        className="inline-block px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50"
-                    >
-                        ← Back to Dashboard
-                    </Link>
-                </div>
-            </div>
+  return (
+    <AppShell>
+      <div style={{ maxWidth: '1100px' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>Resume-Matched Jobs</h1>
+          <p style={{ color: '#6b7280', fontSize: '14px' }}>AI-powered job matches based on your resume and preferences</p>
         </div>
-    );
+
+        {/* Resume settings banner */}
+        <div style={{ background: '#1e1e1e', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px', border: '1px solid #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div>
+              <p style={{ color: 'white', fontSize: '14px', fontWeight: 600 }}>Resume Settings</p>
+              <p style={{ color: '#6b7280', fontSize: '13px' }}>Manage your resume and job preferences</p>
+            </div>
+          </div>
+          <Link
+            href="/settings"
+            style={{ padding: '8px 16px', background: '#22c55e', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}
+          >
+            Go to Settings
+          </Link>
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
+          {statCards.map((card) => (
+            <div key={card.label} style={{ background: '#1e1e1e', borderRadius: '12px', padding: '16px 20px', border: '1px solid #2a2a2a' }}>
+              <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '8px' }}>{card.label}</p>
+              <p style={{ color: card.color, fontSize: '28px', fontWeight: 700 }}>{card.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Jobs */}
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={{ background: '#1e1e1e', borderRadius: '14px', height: '220px', border: '1px solid #2a2a2a' }} />
+            ))}
+          </div>
+        ) : jobs.length === 0 ? (
+          <div style={{ background: '#1e1e1e', borderRadius: '14px', padding: '60px 20px', textAlign: 'center', border: '1px solid #2a2a2a' }}>
+            <p style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>No matches yet</p>
+            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '20px' }}>
+              Upload your resume and set job preferences to receive AI-powered matches.
+            </p>
+            <Link
+              href="/settings"
+              style={{ padding: '10px 20px', background: '#22c55e', color: 'white', borderRadius: '8px', fontSize: '14px', fontWeight: 600, textDecoration: 'none' }}
+            >
+              Set Up Resume
+            </Link>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+            {jobs.map((job) => (
+              <DarkJobCard key={job.id} job={job} />
+            ))}
+          </div>
+        )}
+      </div>
+    </AppShell>
+  )
 }
