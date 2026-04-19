@@ -37,10 +37,10 @@ function UniversityIcon() {
 export default function CTASection() {
   return (
     <>
-      <section id="contact" style={{ background: '#1a1a1a' }} className="px-6 py-20">
-        <div className="max-w-7xl mx-auto">
+      <section id="contact" style={{ background: '#1a1a1a' }} className="px-6 py-14">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-bold">
+            <h2 className="text-3xl font-bold">
               <span className="text-white">Get in </span>
               <span className="text-green-400">Touch</span>
             </h2>
@@ -100,7 +100,7 @@ export default function CTASection() {
       </section>
 
       <footer style={{ background: '#1a1a1a' }} className="px-6 pb-8 pt-2 border-t border-white/10">
-        <div className="max-w-7xl mx-auto flex items-center justify-center relative">
+        <div className="max-w-5xl mx-auto flex items-center justify-center relative">
           <p className="text-gray-500 text-sm text-center">
             &copy; 2026 Greenify. Trusted by universities across Michigan.
           </p>

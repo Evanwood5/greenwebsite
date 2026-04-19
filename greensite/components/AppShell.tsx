@@ -120,7 +120,7 @@ export default function AppShell({ children }: AppShellProps) {
         }}
       >
         {/* Logo */}
-        <div style={{ padding: collapsed ? '20px 16px' : '20px 20px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #222' }}>
+        <Link href="/" style={{ padding: collapsed ? '20px 16px' : '20px 20px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #222', textDecoration: 'none', cursor: 'pointer' }}>
           <div style={{ flexShrink: 0 }}>
             <LeafIcon />
           </div>
@@ -129,7 +129,7 @@ export default function AppShell({ children }: AppShellProps) {
               Greenify
             </span>
           )}
-        </div>
+        </Link>
 
         {/* Nav items */}
         <nav style={{ flex: 1, padding: '12px 8px' }}>

@@ -147,10 +147,10 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" style={{ background: '#1a1a1a' }} className="px-6 py-20">
-      <div className="max-w-7xl mx-auto">
+    <section id="features" style={{ background: '#1a1a1a' }} className="px-6 py-14">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-white">
             Three Core <span className="text-green-400">Features</span>
           </h2>
         </div>

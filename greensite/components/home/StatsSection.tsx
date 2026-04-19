@@ -57,10 +57,10 @@ const testimonials = [
 
 export default function StatsSection() {
   return (
-    <section style={{ background: '#1a1a1a' }} className="px-6 py-20">
-      <div className="max-w-7xl mx-auto">
+    <section style={{ background: '#1a1a1a' }} className="px-6 py-14">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-14">
-          <h2 className="text-4xl font-bold">
+          <h2 className="text-3xl font-bold">
             <span className="text-green-400">Success</span>{' '}
             <span className="text-white">Stories</span>
           </h2>

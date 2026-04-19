@@ -8,7 +8,7 @@ export default function Navbar() {
 
   return (
     <nav style={{ background: '#1a1a1a' }} className="w-full px-6 py-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-5xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-2 cursor-pointer">
           <div className="w-8 h-8 flex items-center justify-center">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,12 +29,26 @@ export default function Navbar() {
             Contact Us
           </Link>
           {user ? (
-            <button
-              onClick={signOut}
-              className="px-4 py-2 text-sm text-white border border-white/30 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer"
-            >
-              Sign Out
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/jobs"
+                className="px-5 py-2 text-sm text-white font-semibold rounded-lg transition-colors duration-200 cursor-pointer"
+                style={{ background: '#166534' }}
+                onMouseOver={(e) => (e.currentTarget.style.background = '#15803d')}
+                onMouseOut={(e) => (e.currentTarget.style.background = '#166534')}
+              >
+                Dashboard
+              </Link>
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                style={{ border: '1px solid #555' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+            </div>
           ) : (
             <Link
               href="/auth"

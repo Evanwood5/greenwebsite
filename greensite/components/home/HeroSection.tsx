@@ -10,7 +10,7 @@ function HeroMockup() {
   return (
     <div
       className="w-full rounded-xl overflow-hidden"
-      style={{ border: '2px solid #22c55e', background: '#111', padding: '20px', minHeight: '240px' }}
+      style={{ border: '2px solid #22c55e', background: '#111', padding: '16px', minHeight: '180px' }}
     >
       <div style={{ marginBottom: '20px' }}>
         <div style={{ background: '#e05252', height: '10px', borderRadius: '4px', width: '75%' }} />
@@ -46,17 +46,17 @@ function HeroMockup() {
 
 export default function HeroSection({ user }: HeroSectionProps) {
   return (
-    <section style={{ background: '#1a1a1a' }} className="px-6 py-20 md:py-28">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <section style={{ background: '#1a1a1a' }} className="px-6 py-14 md:py-20">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-5">
             <span className="text-green-400">Michigan&apos;s</span>{' '}
             <span className="text-white">Best</span>
             <br />
             <span className="text-white">Job Search Platform</span>
           </h1>
 
-          <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-lg">
+          <p className="text-gray-400 text-base leading-relaxed mb-6 max-w-lg">
             Greenify tracks over{' '}
             <span className="text-green-400">1,000 company career pages</span>
             , processing them in{' '}
