@@ -194,7 +194,7 @@ export default function JobList({ jobs, loading }: JobListProps) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
       {jobs.map((job) => (
-        <DarkJobCard key={job.id} job={job} />
+        <DarkJobCard key={job.job_id} job={job} />
       ))}
     </div>
   )

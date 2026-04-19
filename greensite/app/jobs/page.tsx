@@ -93,8 +93,8 @@ export default function JobsPage() {
       if (data) {
         if (append) {
           setJobs(prev => {
-            const existing = new Set(prev.map(j => j.id))
-            return [...prev, ...data.filter(j => !existing.has(j.id))]
+            const existing = new Set(prev.map(j => j.job_id))
+            return [...prev, ...data.filter(j => !existing.has(j.job_id))]
           })
         } else {
           setJobs(data)
