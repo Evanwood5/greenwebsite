@@ -23,12 +23,12 @@ export default function LargeStatCard({
     <div
       style={{
         background: "#1a1a1a",
-        borderRadius: 16,
-        padding: "24px",
+        borderRadius: 12,
+        padding: "18px",
         color: "white",
         display: "flex",
         flexDirection: "column",
-        gap: 12,
+        gap: 8,
       }}
     >
       {/* Title */}
@@ -41,8 +41,8 @@ export default function LargeStatCard({
       </div>
 
       {/* Main Value */}
-      <div style={{ 
-        fontSize: 48, 
+      <div style={{
+        fontSize: 36,
         fontWeight: 700,
         lineHeight: 1,
       }}>
@@ -64,7 +64,7 @@ export default function LargeStatCard({
         
         {changePercent !== undefined && (
           <span style={{ 
-            color: isPositive ? "#22c55e" : isNegative ? "#ef4444" : "#888",
+            color: isPositive ? "#29C115" : isNegative ? "#ef4444" : "#888",
             fontWeight: 600,
             display: "flex",
             alignItems: "center",

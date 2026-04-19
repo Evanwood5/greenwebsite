@@ -64,7 +64,7 @@ export default function MonthlyStatsCard({ stats }: MonthlyStatsCardProps) {
               style={{
                 fontSize: 36,
                 fontWeight: 700,
-                color: isPositive ? "#22c55e" : isZero ? "#888" : "#ef4444",
+                color: isPositive ? "#29C115" : isZero ? "#888" : "#ef4444",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

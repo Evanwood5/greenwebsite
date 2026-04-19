@@ -142,7 +142,7 @@ export default function MultiFieldTrendChart({ title }: MultiFieldTrendChartProp
           <Line
             type="monotone"
             dataKey="Engineering"
-            stroke="#22c55e"
+            stroke="#29C115"
             strokeWidth={2}
             dot={false}
           />

@@ -90,7 +90,7 @@ export default function SavedJobsPage() {
     <AppShell>
       <div style={{ maxWidth: '1100px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <BookmarkIcon />
           </div>
           <div>

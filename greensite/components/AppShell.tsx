@@ -78,7 +78,7 @@ function UserIcon({ size = 18 }: { size?: number }) {
 
 function LeafIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M11 20A7 7 0 014 13c0-6 8-12 8-12s8 6 8 12a7 7 0 01-7 7z"/>
       <path d="M12 20v-4"/>
     </svg>
@@ -106,21 +106,25 @@ export default function AppShell({ children }: AppShellProps) {
   const sidebarWidth = collapsed ? 60 : 260
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#141414' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#080808' }}>
       <aside
         style={{
           width: sidebarWidth,
           minWidth: sidebarWidth,
-          background: '#111',
-          borderRight: '1px solid #222',
+          height: '100vh',
+          position: 'sticky',
+          top: 0,
+          background: '#0a0a0a',
+          borderRight: '1px solid rgba(255,255,255,0.07)',
           display: 'flex',
           flexDirection: 'column',
           transition: 'width 200ms ease, min-width 200ms ease',
           overflow: 'hidden',
+          flexShrink: 0,
         }}
       >
         {/* Logo */}
-        <Link href="/" style={{ padding: collapsed ? '20px 16px' : '20px 20px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #222', textDecoration: 'none', cursor: 'pointer' }}>
+        <Link href="/" style={{ padding: collapsed ? '16px 14px' : '16px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.07)', textDecoration: 'none', cursor: 'pointer' }}>
           <div style={{ flexShrink: 0 }}>
             <LeafIcon />
           </div>
@@ -132,10 +136,10 @@ export default function AppShell({ children }: AppShellProps) {
         </Link>
 
         {/* Nav items */}
-        <nav style={{ flex: 1, padding: '12px 8px' }}>
+        <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', minHeight: 0 }}>
           {navItems.map((item, idx) => {
             if (item === null) {
-              return <div key={idx} style={{ height: '1px', background: '#222', margin: '8px 8px' }} />
+              return <div key={idx} style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '6px 8px' }} />
             }
 
             const Icon = item.icon
@@ -152,10 +156,10 @@ export default function AppShell({ children }: AppShellProps) {
                   padding: collapsed ? '10px 12px' : '10px 12px',
                   borderRadius: '8px',
                   marginBottom: '2px',
-                  background: isActive ? '#1e1e1e' : 'transparent',
-                  color: isActive ? 'white' : '#9ca3af',
+                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  color: isActive ? '#ffffff' : '#71717a',
                   textDecoration: 'none',
-                  fontSize: '14px',
+                  fontSize: '13px',
                   fontWeight: isActive ? 500 : 400,
                   transition: 'background 150ms, color 150ms',
                   whiteSpace: 'nowrap',
@@ -164,14 +168,14 @@ export default function AppShell({ children }: AppShellProps) {
                 }}
                 onMouseOver={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.background = '#1a1a1a'
-                    e.currentTarget.style.color = 'white'
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                    e.currentTarget.style.color = '#e4e4e7'
                   }
                 }}
                 onMouseOut={(e) => {
                   if (!isActive) {
                     e.currentTarget.style.background = 'transparent'
-                    e.currentTarget.style.color = '#9ca3af'
+                    e.currentTarget.style.color = '#71717a'
                   }
                 }}
               >
@@ -185,7 +189,7 @@ export default function AppShell({ children }: AppShellProps) {
         </nav>
 
         {/* Collapse button */}
-        <div style={{ padding: '16px 8px', borderTop: '1px solid #222' }}>
+        <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
           <button
             onClick={() => setCollapsed(!collapsed)}
             style={{
@@ -197,7 +201,7 @@ export default function AppShell({ children }: AppShellProps) {
               borderRadius: '8px',
               background: 'transparent',
               border: 'none',
-              color: '#22c55e',
+              color: '#29C115',
               fontSize: '14px',
               fontWeight: 500,
               cursor: 'pointer',
@@ -216,29 +220,30 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Main content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Top bar */}
-        <header style={{ padding: '12px 24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', borderBottom: '1px solid #222' }}>
+        <header style={{ padding: '10px 20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
           {user?.email && (
-            <span style={{ color: '#9ca3af', fontSize: '14px' }}>{user.email}</span>
+            <span style={{ color: '#52525b', fontSize: '12px' }}>{user.email}</span>
           )}
           <div
             style={{
-              width: '36px',
-              height: '36px',
+              width: '30px',
+              height: '30px',
               borderRadius: '50%',
-              background: '#166534',
+              background: 'rgba(41,193,21,0.08)',
+              border: '1px solid rgba(41,193,21,0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'white',
+              color: '#29C115',
               flexShrink: 0,
             }}
           >
-            <UserIcon size={18} />
+            <UserIcon size={14} />
           </div>
         </header>
 
         {/* Page content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', background: '#141414' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: '24px 48px', background: '#080808' }}>
           {children}
         </main>
 

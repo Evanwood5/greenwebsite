@@ -67,7 +67,7 @@ export default function ExperienceLevelChart({ data, title }: ExperienceLevelCha
           />
           <Bar
             dataKey="jobCount"
-            fill="#22c55e"
+            fill="#29C115"
             radius={[8, 8, 0, 0]}
           />
         </BarChart>

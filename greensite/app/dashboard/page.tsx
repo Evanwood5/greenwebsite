@@ -42,7 +42,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: 1300 }}>
+      <div style={{ maxWidth: 1300, margin: '0 auto' }}>
         <FieldSelector value={field} onChange={setField} />
 
         {loading ? (
@@ -50,10 +50,10 @@ export default function DashboardPage() {
         ) : !data ? (
           <div style={{ color: "#ef4444", paddingTop: 80, textAlign: "center" }}>Failed to load data</div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
             {/* Row 1: Stat cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
               <LargeStatCard
                 title="Total Active Jobs"
                 value={data.totalJobs}
@@ -73,10 +73,10 @@ export default function DashboardPage() {
             </div>
 
             {/* Row 2: Two-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr", gap: 20, alignItems: "start" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr", gap: 14, alignItems: "start" }}>
 
               {/* Left: Companies + Cities stacked */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <TopHiringCompaniesList
                   data={data.topCompanies}
                   title="Top Hiring Companies"
@@ -88,12 +88,12 @@ export default function DashboardPage() {
               </div>
 
               {/* Right: Skills + Trend chart stacked */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <TopSkillsInDemand
                   data={data.subcategoryCounts || {}}
                   title="Top Skills in Demand"
                 />
-                <div style={{ background: "#1a1a1a", borderRadius: 16, padding: 24 }}>
+                <div style={{ background: "#1a1a1a", borderRadius: 12, padding: 18 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, color: "white" }}>
                     Job Posting Trends by Category
                   </h3>
@@ -108,7 +108,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Row 3: Employment type + county map */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <JobTypeSummary
                 jobTypes={data.jobTypes}
                 totalJobs={data.totalJobs}
