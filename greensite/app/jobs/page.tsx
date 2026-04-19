@@ -1,26 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import Link from 'next/link'
 import FilterPanel, { FilterOptions } from '@/components/jobs/FIlterPanel'
 import JobList from '@/components/jobs/JobList'
-
-interface Job {
-  id: number
-  created_at: string
-  company_name: string | null
-  job_title: string | null
-  job_href: string | null
-  job_type: string | null
-  city: string | null
-  state: string | null
-  is_remote: boolean | null
-}
+import { fetchJobsFromDB, Job } from '@/lib/jobsApi'
 
 export default function JobsPage() {
-  const { user, loading: authLoading } = useAuth()
+  const { loading: authLoading } = useAuth()
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -32,37 +19,11 @@ export default function JobsPage() {
     jobType: '',
     isRemote: '',
     state: '',
-    searchTerm: ''
+    searchTerm: '',
+    jobField: '',
+    jobSubField: '',
+    city: '',
   })
-  const JOBS_PER_PAGE = 20
-
-  const buildQuery = () => {
-    let query = supabase
-      .from('job_postings_ingest_test')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-
-    // Apply filters
-    if (filters.searchTerm) {
-      query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
-    }
-
-    if (filters.jobType) {
-      query = query.eq('job_type', filters.jobType)
-    }
-
-    if (filters.state) {
-      query = query.eq('state', filters.state)
-    }
-
-    if (filters.isRemote === 'remote') {
-      query = query.eq('is_remote', true)
-    } else if (filters.isRemote === 'onsite') {
-      query = query.eq('is_remote', false)
-    }
-
-    return query
-  }
 
   const fetchJobs = async (page: number = 0, append: boolean = false) => {
     try {
@@ -74,35 +35,21 @@ export default function JobsPage() {
       }
       setError(null)
 
-      const query = buildQuery()
-      const { data, error: fetchError, count } = await query
-        .range(page * JOBS_PER_PAGE, (page + 1) * JOBS_PER_PAGE - 1)
+      const { data, count, hasMore } = await fetchJobsFromDB(filters, page)
 
-      if (fetchError) {
-        throw fetchError
+      if (append) {
+        setJobs(prevJobs => {
+          const existingIds = new Set(prevJobs.map((job: Job) => job.job_id))
+          return [...prevJobs, ...data.filter((job: Job) => !existingIds.has(job.job_id))]
+        })
+      } else {
+        setJobs(data)
       }
 
-      if (data) {
-        if (append) {
-          // Prevent duplicates by filtering out jobs that already exist
-          setJobs(prevJobs => {
-            const existingIds = new Set(prevJobs.map(job => job.id))
-            const newJobs = data.filter(job => !existingIds.has(job.id))
-            return [...prevJobs, ...newJobs]
-          })
-        } else {
-          setJobs(data)
-        }
-        
-        setTotalCount(count || 0)
-        
-        // Check if there are more jobs to load
-        const totalLoaded = (page + 1) * JOBS_PER_PAGE
-        setHasMore(count ? totalLoaded < count : false)
-        
-        // Always update currentPage to the page we just loaded
-        setCurrentPage(page)
-      }
+      setTotalCount(count)
+      setHasMore(hasMore)
+      setCurrentPage(page)
+
     } catch (error: any) {
       setError(error.message || 'Failed to fetch jobs')
       console.error('Error fetching jobs:', error)
@@ -114,40 +61,42 @@ export default function JobsPage() {
 
   useEffect(() => {
     fetchJobs(0)
-  }, [filters]) // Refetch when filters change
+  }, [filters])
 
   const handleFiltersChange = (newFilters: FilterOptions) => {
     setFilters(newFilters)
     setCurrentPage(0)
-    setJobs([]) // Clear jobs to avoid showing old results while loading
+    setJobs([])
   }
 
   const loadMore = () => {
-    const nextPage = currentPage + 1
-    fetchJobs(nextPage, true)
+    fetchJobs(currentPage + 1, true)
   }
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-[#0f1117]">
+        <div className="text-gray-400 text-lg">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0f1117] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
+
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Job Opportunities</h1>
-          <p className="text-gray-600">
-            {totalCount > 0 ? `${totalCount} job${totalCount !== 1 ? 's' : ''} available` : 'Discover your next career opportunity'}
+          <h1 className="text-3xl font-bold text-white mb-2">Job Opportunities</h1>
+          <p className="text-gray-400">
+            {totalCount > 0
+              ? `${totalCount} job${totalCount !== 1 ? 's' : ''} available`
+              : 'Discover your next career opportunity'}
           </p>
         </div>
 
         {/* Filter Panel */}
-        <FilterPanel 
+        <FilterPanel
           onFiltersChange={handleFiltersChange}
           loading={loading || loadingMore}
         />
@@ -155,7 +104,7 @@ export default function JobsPage() {
         {/* Jobs Count */}
         {jobs.length > 0 && !loading && (
           <div className="mb-6">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-400">
               Showing {jobs.length} of {totalCount} job{totalCount !== 1 ? 's' : ''}
               {!hasMore && jobs.length === totalCount && ' (all jobs loaded)'}
             </p>
@@ -164,14 +113,14 @@ export default function JobsPage() {
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-            <div className="text-red-700">
+          <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
+            <div className="text-red-400">
               <p className="font-medium">Error loading jobs</p>
               <p className="text-sm mt-1">{error}</p>
             </div>
             <button
               onClick={() => fetchJobs(0)}
-              className="mt-3 text-sm text-red-600 hover:text-red-800 font-medium"
+              className="mt-3 text-sm text-red-400 hover:text-red-300 font-medium"
             >
               Try Again
             </button>
@@ -181,18 +130,24 @@ export default function JobsPage() {
         {/* Jobs List */}
         <JobList jobs={jobs} loading={loading} />
 
-        {/* Load More Button */}
+        {/* Load More */}
         {hasMore && jobs.length > 0 && !loading && (
           <div className="flex justify-center mt-8">
             <button
               onClick={loadMore}
               disabled={loadingMore}
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 disabled:bg-blue-400 transition-colors font-medium"
+              className="text-white px-8 py-3 rounded-xl transition-colors font-medium disabled:opacity-50"
+              style={{ backgroundColor: '#29C115' }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#24ab12')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29C115')}
             >
-              {loadingMore ? 'Loading...' : `Load More Jobs (${totalCount - jobs.length} remaining)`}
+              {loadingMore
+                ? 'Loading...'
+                : `Load More Jobs (${totalCount - jobs.length} remaining)`}
             </button>
           </div>
         )}
+
       </div>
     </div>
   )
