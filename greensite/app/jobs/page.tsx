@@ -5,18 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import JobList from '@/components/jobs/JobList'
-
-interface Job {
-  id: number
-  created_at: string
-  company_name: string | null
-  job_title: string | null
-  job_href: string | null
-  job_type: string | null
-  city: string | null
-  state: string | null
-  is_remote: boolean | null
-}
+import { Job } from '@/lib/jobsApi'
 
 interface FilterOptions {
   jobType: string
@@ -28,7 +17,7 @@ interface FilterOptions {
 function FilterIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
     </svg>
   )
 }
@@ -36,7 +25,7 @@ function FilterIcon() {
 function ChevronDownIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"/>
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   )
 }
@@ -44,7 +33,7 @@ function ChevronDownIcon() {
 function ChevronUpIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="18 15 12 9 6 15"/>
+      <polyline points="18 15 12 9 6 15" />
     </svg>
   )
 }
@@ -53,12 +42,12 @@ const JOBS_PER_PAGE = 20
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '8px 12px',
-  borderRadius: '8px',
-  border: '1px solid #333',
-  background: '#1a1a1a',
-  color: 'white',
-  fontSize: '13px',
+  padding: '6px 10px',
+  borderRadius: '6px',
+  border: '1px solid rgba(255,255,255,0.08)',
+  background: '#111',
+  color: '#e4e4e7',
+  fontSize: '12px',
   outline: 'none',
   boxSizing: 'border-box',
 }
@@ -104,8 +93,8 @@ export default function JobsPage() {
       if (data) {
         if (append) {
           setJobs(prev => {
-            const existing = new Set(prev.map(j => j.id))
-            return [...prev, ...data.filter(j => !existing.has(j.id))]
+            const existing = new Set(prev.map(j => j.job_id))
+            return [...prev, ...data.filter(j => !existing.has(j.job_id))]
           })
         } else {
           setJobs(data)
@@ -140,10 +129,10 @@ export default function JobsPage() {
   }
 
   const statCards = [
-    { label: 'Total Jobs', value: totalCount > 0 ? totalCount.toLocaleString() : '...', color: '#4ade80' },
-    { label: 'New This Week', value: '89', color: '#60a5fa' },
-    { label: 'Saved Jobs', value: '0', color: '#facc15' },
-    { label: 'Applications', value: '0', color: '#f472b6' },
+    { label: 'Total Jobs', value: totalCount > 0 ? totalCount.toLocaleString() : '...', color: '#29C115', bg: 'rgba(41,193,21,0.08)', border: 'rgba(41,193,21,0.15)' },
+    { label: 'New This Week', value: '89', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
+    { label: 'Saved Jobs', value: '0', color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.15)' },
+    { label: 'Applications', value: '0', color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
   ]
 
   if (authLoading) {
@@ -158,21 +147,21 @@ export default function JobsPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: '1100px' }}>
-        <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>Job Dashboard</h1>
-          <p style={{ color: '#6b7280', fontSize: '14px' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Job Dashboard</h1>
+          <p style={{ color: '#52525b', fontSize: '12px' }}>
             {totalCount > 0 ? `${totalCount.toLocaleString()} opportunities from partner companies` : 'Loading opportunities...'}
           </p>
         </div>
 
         {/* Filters */}
-        <div style={{ background: '#1e1e1e', borderRadius: '12px', marginBottom: '20px', border: '1px solid #2a2a2a' }}>
+        <div style={{ background: '#0d0d0d', borderRadius: '10px', marginBottom: '14px', border: '1px solid rgba(255,255,255,0.07)' }}>
           <button
             onClick={() => setFiltersOpen(!filtersOpen)}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '16px 20px', background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: '14px', fontWeight: 500 }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 16px', background: 'transparent', border: 'none', color: '#71717a', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}
           >
-            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <FilterIcon />
               Filters
             </span>
@@ -180,14 +169,14 @@ export default function JobsPage() {
           </button>
 
           {filtersOpen && (
-            <div style={{ padding: '0 20px 20px', borderTop: '1px solid #2a2a2a' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', paddingTop: '16px' }}>
+            <div style={{ padding: '0 16px 16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px', paddingTop: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>Search</label>
+                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>Search</label>
                   <input type="text" placeholder="Title or company..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} style={inputStyle} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>Job Type</label>
+                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>Job Type</label>
                   <select value={filters.jobType} onChange={(e) => handleFilterChange('jobType', e.target.value)} style={inputStyle}>
                     <option value="">All Types</option>
                     <option value="Full Time">Full Time</option>
@@ -195,7 +184,7 @@ export default function JobsPage() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>Location</label>
+                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>Location</label>
                   <select value={filters.isRemote} onChange={(e) => handleFilterChange('isRemote', e.target.value)} style={inputStyle}>
                     <option value="">All Locations</option>
                     <option value="remote">Remote Only</option>
@@ -203,10 +192,10 @@ export default function JobsPage() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>State</label>
+                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>State</label>
                   <select value={filters.state} onChange={(e) => handleFilterChange('state', e.target.value)} style={inputStyle}>
                     <option value="">All States</option>
-                    {['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'].map(s => (
+                    {['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'].map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
@@ -217,11 +206,11 @@ export default function JobsPage() {
         </div>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
           {statCards.map((card) => (
-            <div key={card.label} style={{ background: '#1e1e1e', borderRadius: '12px', padding: '16px 20px', border: '1px solid #2a2a2a' }}>
-              <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '8px' }}>{card.label}</p>
-              <p style={{ color: card.color, fontSize: '28px', fontWeight: 700 }}>{card.value}</p>
+            <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
+              <p style={{ color: '#52525b', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
+              <p style={{ color: card.color, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
             </div>
           ))}
         </div>
@@ -242,12 +231,13 @@ export default function JobsPage() {
             <button
               onClick={() => fetchJobs(currentPage + 1, true)}
               disabled={loadingMore}
-              style={{ padding: '10px 24px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '14px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.7 : 1 }}
+              style={{ padding: '8px 20px', background: 'rgba(41,193,21,0.1)', color: '#29C115', border: '1px solid rgba(41,193,21,0.2)', borderRadius: '7px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
             >
               {loadingMore ? 'Loading...' : `Load More (${totalCount - jobs.length} remaining)`}
             </button>
           </div>
         )}
+
       </div>
     </AppShell>
   )

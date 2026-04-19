@@ -10,7 +10,7 @@ interface SubcategoryTrendChartProps {
 
 // Color palette matching the reference image
 const COLORS = [
-  "#22c55e",  // Green - Software Engineering
+  "#29C115",  // Green - Software Engineering
   "#f59e0b",  // Orange - Data Science
   "#3b82f6",  // Blue - Cloud/DevOps
   "#ef4444",  // Red - Cybersecurity

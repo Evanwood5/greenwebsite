@@ -23,7 +23,7 @@ export default function FieldSelector({ value, onChange }: FieldSelectorProps) {
               padding: "8px 20px",
               borderRadius: 20,
               border: isSelected ? "none" : "1px solid #333",
-              background: isSelected ? "#22c55e" : "transparent",
+              background: isSelected ? "#29C115" : "transparent",
               color: "white",
               fontSize: 14,
               fontWeight: isSelected ? 600 : 400,

@@ -61,7 +61,7 @@ const MICHIGAN_CITIES = [
   { value: 'MI:Menominee', label: 'Menominee' },
 ]
 
-function CheckCircleIcon({ color = '#22c55e' }: { color?: string }) {
+function CheckCircleIcon({ color = '#29C115' }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
@@ -180,7 +180,7 @@ function PrefEditor({ pref, onChange }: PrefEditorProps) {
                   padding: '8px 16px',
                   borderRadius: '8px',
                   border: selected ? 'none' : '1px solid #3a3a3a',
-                  background: selected ? '#166534' : '#141414',
+                  background: selected ? '#1a8a0d' : '#141414',
                   color: selected ? '#86efac' : '#9ca3af',
                   fontSize: '13px',
                   fontWeight: selected ? 600 : 400,
@@ -217,7 +217,7 @@ function PrefEditor({ pref, onChange }: PrefEditorProps) {
                   value={opt.value}
                   checked={pref.experienceLevel === opt.value}
                   onChange={() => onChange({ ...pref, experienceLevel: opt.value })}
-                  style={{ accentColor: '#22c55e', width: '15px', height: '15px' }}
+                  style={{ accentColor: '#29C115', width: '15px', height: '15px' }}
                 />
                 <span style={{ color: '#d1d5db', fontSize: '13px' }}>{opt.label}</span>
               </label>
@@ -243,8 +243,8 @@ function PrefEditor({ pref, onChange }: PrefEditorProps) {
                 padding: '6px 4px',
                 borderRadius: '6px',
                 cursor: 'pointer',
-                background: city.value === 'MI:all' ? '#14532d22' : 'transparent',
-                borderBottom: city.value === 'MI:all' ? '1px solid #166534' : 'none',
+                background: city.value === 'MI:all' ? '#1a8a0d22' : 'transparent',
+                borderBottom: city.value === 'MI:all' ? '1px solid #1a8a0d' : 'none',
                 marginBottom: city.value === 'MI:all' ? '6px' : '0',
               }}
             >
@@ -252,11 +252,11 @@ function PrefEditor({ pref, onChange }: PrefEditorProps) {
                 type="checkbox"
                 checked={selectedCities.includes(city.value)}
                 onChange={() => toggleCity(city.value)}
-                style={{ accentColor: '#22c55e', width: '14px', height: '14px', flexShrink: 0 }}
+                style={{ accentColor: '#29C115', width: '14px', height: '14px', flexShrink: 0 }}
               />
               <span style={{
                 fontSize: '13px',
-                color: city.value === 'MI:all' ? '#4ade80' : '#d1d5db',
+                color: city.value === 'MI:all' ? '#29C115' : '#d1d5db',
                 fontWeight: city.value === 'MI:all' ? 600 : 400,
               }}>
                 {city.label}
@@ -279,7 +279,7 @@ function PrefEditor({ pref, onChange }: PrefEditorProps) {
           type="checkbox"
           checked={pref.includeRemote}
           onChange={e => onChange({ ...pref, includeRemote: e.target.checked })}
-          style={{ accentColor: '#22c55e', width: '16px', height: '16px', flexShrink: 0 }}
+          style={{ accentColor: '#29C115', width: '16px', height: '16px', flexShrink: 0 }}
         />
         <div>
           <p style={{ color: 'white', fontSize: '13px', fontWeight: 500 }}>Include remote jobs</p>
@@ -439,7 +439,7 @@ export default function SettingsPage() {
         {/* Profile Information */}
         <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
@@ -472,8 +472,8 @@ export default function SettingsPage() {
           </p>
 
           {resumeUploaded && (
-            <div style={{ background: '#14532d', border: '1px solid #166534', borderRadius: '10px', padding: '14px 16px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ background: '#1a8a0d', border: '1px solid #1a8a0d', borderRadius: '10px', padding: '14px 16px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <CheckCircleIcon />
               </div>
               <div>
@@ -562,7 +562,7 @@ export default function SettingsPage() {
                     <button
                       onClick={() => savePreference(id)}
                       disabled={saving || editDraft.jobTypes.length === 0}
-                      style={{ padding: '9px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: saving || editDraft.jobTypes.length === 0 ? 'not-allowed' : 'pointer', opacity: saving || editDraft.jobTypes.length === 0 ? 0.6 : 1 }}
+                      style={{ padding: '9px 20px', background: '#29C115', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: saving || editDraft.jobTypes.length === 0 ? 'not-allowed' : 'pointer', opacity: saving || editDraft.jobTypes.length === 0 ? 0.6 : 1 }}
                     >
                       {saving ? 'Saving...' : 'Save'}
                     </button>
@@ -574,7 +574,7 @@ export default function SettingsPage() {
                       Cancel
                     </button>
                     {saveMsg && (
-                      <span style={{ color: saveMsg === 'Saved!' ? '#4ade80' : '#f87171', fontSize: '13px' }}>{saveMsg}</span>
+                      <span style={{ color: saveMsg === 'Saved!' ? '#29C115' : '#f87171', fontSize: '13px' }}>{saveMsg}</span>
                     )}
                   </div>
                 </>
@@ -582,7 +582,7 @@ export default function SettingsPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <CheckCircleIcon />
-                    <span style={{ color: '#22c55e', fontSize: '13px', fontWeight: 500 }}>Job Types:</span>
+                    <span style={{ color: '#29C115', fontSize: '13px', fontWeight: 500 }}>Job Types:</span>
                     <span style={{ color: '#d1d5db', fontSize: '13px' }}>{pref.jobTypes.join(', ')}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -627,7 +627,7 @@ export default function SettingsPage() {
 
         <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 01-3.46 0"/>
             </svg>
@@ -637,7 +637,7 @@ export default function SettingsPage() {
           {/* Email */}
           <div style={{ background: '#141414', borderRadius: '10px', padding: '14px 16px', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                   <polyline points="22,6 12,13 2,6"/>
@@ -648,11 +648,11 @@ export default function SettingsPage() {
                 <p style={{ color: '#6b7280', fontSize: '12px' }}>Receive job alerts via email at {user?.email}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '4px' }}>
                   <CheckCircleIcon />
-                  <span style={{ color: '#22c55e', fontSize: '12px' }}>Active</span>
+                  <span style={{ color: '#29C115', fontSize: '12px' }}>Active</span>
                 </div>
               </div>
             </div>
-            <span style={{ padding: '4px 12px', background: '#22c55e', color: 'white', borderRadius: '6px', fontSize: '12px', fontWeight: 600, flexShrink: 0 }}>Enabled</span>
+            <span style={{ padding: '4px 12px', background: '#29C115', color: 'white', borderRadius: '6px', fontSize: '12px', fontWeight: 600, flexShrink: 0 }}>Enabled</span>
           </div>
 
           {/* Phone */}
@@ -692,7 +692,7 @@ export default function SettingsPage() {
 
         <button
           onClick={() => { setNotifStatus('saved'); setTimeout(() => setNotifStatus('idle'), 2000) }}
-          style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}
+          style={{ padding: '10px 20px', background: '#29C115', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}
         >
           {notifStatus === 'saved' ? 'Saved!' : 'Save Notification Settings'}
         </button>

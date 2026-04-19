@@ -35,7 +35,7 @@ export default function AuthPage() {
     <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '28px' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="7" width="20" height="14" rx="2"/>
             <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
             <line x1="12" y1="12" x2="12" y2="16"/>
@@ -91,7 +91,7 @@ export default function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            style={{ width: '100%', padding: '14px', borderRadius: '10px', background: '#22c55e', color: 'white', fontSize: '15px', fontWeight: 600, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
+            style={{ width: '100%', padding: '14px', borderRadius: '10px', background: '#29C115', color: 'white', fontSize: '15px', fontWeight: 600, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
@@ -105,7 +105,7 @@ export default function AuthPage() {
 
         <p style={{ color: '#6b7280', fontSize: '14px', textAlign: 'center' }}>
           Don&apos;t have access?{' '}
-          <a href="mailto:partnerships@greenify.io" style={{ color: '#22c55e', textDecoration: 'none' }}>
+          <a href="mailto:partnerships@greenify.io" style={{ color: '#29C115', textDecoration: 'none' }}>
             Contact your university
           </a>
         </p>

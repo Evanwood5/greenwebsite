@@ -110,7 +110,7 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
                 </div>
                 <div style={{ 
                   fontSize: 12, 
-                  color: "#22c55e",
+                  color: "#29C115",
                   fontWeight: 600,
                   display: "flex",
                   alignItems: "center",

@@ -69,7 +69,7 @@ export default function ResumeJobsPage() {
   }
 
   const statCards = [
-    { label: 'Total Matches', value: jobs.length.toString(), color: '#4ade80' },
+    { label: 'Total Matches', value: jobs.length.toString(), color: '#29C115' },
     { label: 'New This Week', value: jobs.length > 0 ? jobs.length.toString() : '0', color: '#60a5fa' },
     { label: 'Saved Jobs', value: '0', color: '#facc15' },
     { label: 'Applications', value: '0', color: '#f472b6' },
@@ -86,7 +86,7 @@ export default function ResumeJobsPage() {
         {/* Resume settings banner */}
         <div style={{ background: '#1e1e1e', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px', border: '1px solid #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                 <polyline points="14 2 14 8 20 8"/>
@@ -99,7 +99,7 @@ export default function ResumeJobsPage() {
           </div>
           <Link
             href="/settings"
-            style={{ padding: '8px 16px', background: '#22c55e', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}
+            style={{ padding: '8px 16px', background: '#29C115', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}
           >
             Go to Settings
           </Link>
@@ -130,7 +130,7 @@ export default function ResumeJobsPage() {
             </p>
             <Link
               href="/settings"
-              style={{ padding: '10px 20px', background: '#22c55e', color: 'white', borderRadius: '8px', fontSize: '14px', fontWeight: 600, textDecoration: 'none' }}
+              style={{ padding: '10px 20px', background: '#29C115', color: 'white', borderRadius: '8px', fontSize: '14px', fontWeight: 600, textDecoration: 'none' }}
             >
               Set Up Resume
             </Link>
