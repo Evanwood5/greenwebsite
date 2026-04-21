@@ -50,10 +50,10 @@ export default function DashboardPage() {
         ) : !data ? (
           <div style={{ color: "#ef4444", paddingTop: 80, textAlign: "center" }}>Failed to load data</div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
             {/* Row 1: Stat cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
               <LargeStatCard
                 title="Total Active Jobs"
                 value={data.totalJobs}
@@ -76,7 +76,7 @@ export default function DashboardPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr", gap: 14, alignItems: "start" }}>
 
               {/* Left: Companies + Cities stacked */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <TopHiringCompaniesList
                   data={data.topCompanies}
                   title="Top Hiring Companies"
@@ -88,16 +88,16 @@ export default function DashboardPage() {
               </div>
 
               {/* Right: Skills + Trend chart stacked */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <TopSkillsInDemand
                   data={data.subcategoryCounts || {}}
                   title="Top Skills in Demand"
                 />
-                <div style={{ background: "#1a1a1a", borderRadius: 12, padding: 18 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, color: "white" }}>
+                <div style={{ background: "#1a1a1a", borderRadius: 12, padding: 14 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "white" }}>
                     Job Posting Trends by Category
                   </h3>
-                  <div style={{ height: 320 }}>
+                  <div style={{ height: 240 }}>
                     <SubcategoryTrendChart
                       title=""
                       category={field.charAt(0).toUpperCase() + field.slice(1)}
@@ -108,7 +108,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Row 3: Employment type + county map */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <JobTypeSummary
                 jobTypes={data.jobTypes}
                 totalJobs={data.totalJobs}

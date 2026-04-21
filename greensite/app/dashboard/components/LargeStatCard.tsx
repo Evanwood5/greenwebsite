@@ -24,16 +24,16 @@ export default function LargeStatCard({
       style={{
         background: "#1a1a1a",
         borderRadius: 12,
-        padding: "18px",
+        padding: "14px 16px",
         color: "white",
         display: "flex",
         flexDirection: "column",
-        gap: 8,
+        gap: 5,
       }}
     >
       {/* Title */}
-      <div style={{ 
-        fontSize: 14, 
+      <div style={{
+        fontSize: 12,
         color: "#888",
         fontWeight: 500,
       }}>
@@ -42,7 +42,7 @@ export default function LargeStatCard({
 
       {/* Main Value */}
       <div style={{
-        fontSize: 36,
+        fontSize: 26,
         fontWeight: 700,
         lineHeight: 1,
       }}>

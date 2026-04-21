@@ -1,5 +1,7 @@
 'use client'
 
+import FadeIn from '@/components/ui/FadeIn'
+
 export default function CTASection() {
   return (
     <>
@@ -10,7 +12,7 @@ export default function CTASection() {
       >
         <div className="max-w-6xl mx-auto">
           {/* Section header */}
-          <div className="text-center mb-16">
+          <FadeIn className="text-center mb-16">
             <div
               className="inline-block text-[10px] font-bold tracking-widest mb-5 px-3 py-1.5 rounded-full"
               style={{
@@ -28,10 +30,11 @@ export default function CTASection() {
             >
               Get in touch
             </h2>
-          </div>
+          </FadeIn>
 
           <div className="grid md:grid-cols-2 gap-5">
             {/* Discord */}
+            <FadeIn>
             <div
               className="rounded-2xl p-8"
               style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)' }}
@@ -68,8 +71,10 @@ export default function CTASection() {
                 </svg>
               </a>
             </div>
+            </FadeIn>
 
             {/* University */}
+            <FadeIn delay={120}>
             <div
               className="rounded-2xl p-8"
               style={{ background: 'rgba(249,115,22,0.06)', border: '1px solid rgba(249,115,22,0.15)' }}
@@ -105,6 +110,7 @@ export default function CTASection() {
                 </svg>
               </a>
             </div>
+            </FadeIn>
           </div>
         </div>
       </section>
