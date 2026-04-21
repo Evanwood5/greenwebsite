@@ -1,5 +1,7 @@
 'use client'
 
+import FadeIn from '@/components/ui/FadeIn'
+
 const testimonials = [
   {
     name: 'Sarah Chen',
@@ -53,7 +55,7 @@ export default function StatsSection() {
     >
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
-        <div className="text-center mb-16">
+        <FadeIn className="text-center mb-16">
           <div
             className="inline-block text-[10px] font-bold tracking-widest mb-5 px-3 py-1.5 rounded-full"
             style={{
@@ -71,12 +73,12 @@ export default function StatsSection() {
           >
             Students who got hired first
           </h2>
-        </div>
+        </FadeIn>
 
         <div className="grid md:grid-cols-3 gap-5">
-          {testimonials.map((t) => (
+          {testimonials.map((t, i) => (
+            <FadeIn key={t.name} delay={i * 120}>
             <div
-              key={t.name}
               className="rounded-2xl p-6 flex flex-col"
               style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)' }}
             >
@@ -139,6 +141,7 @@ export default function StatsSection() {
                 </div>
               </div>
             </div>
+            </FadeIn>
           ))}
         </div>
       </div>

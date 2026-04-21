@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navbar() {
@@ -17,18 +18,8 @@ export default function Navbar() {
       }}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2.5 cursor-pointer">
-          <div
-            className="w-7 h-7 flex items-center justify-center rounded-md"
-            style={{ background: 'rgba(41,193,21,0.1)', border: '1px solid rgba(41,193,21,0.18)' }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <rect x="2" y="7" width="20" height="14" rx="2" stroke="#29C115" strokeWidth="2"/>
-              <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#29C115" strokeWidth="2"/>
-              <line x1="12" y1="12" x2="12" y2="16" stroke="#29C115" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="10" y1="14" x2="14" y2="14" stroke="#29C115" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
+        <Link href="/" className="flex items-center gap-2 cursor-pointer">
+          <Image src="/final_green.png" alt="Greenify logo" width={36} height={36} />
           <span className="text-[15px] font-semibold text-white tracking-tight">Greenify</span>
         </Link>
 

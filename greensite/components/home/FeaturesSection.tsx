@@ -1,5 +1,7 @@
 'use client'
 
+import FadeIn from '@/components/ui/FadeIn'
+
 function BriefcaseIcon() {
   return (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -241,7 +243,7 @@ export default function FeaturesSection() {
     >
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
-        <div className="text-center mb-20">
+        <FadeIn className="text-center mb-20">
           <div
             className="inline-block text-[10px] font-bold tracking-widest mb-5 px-3 py-1.5 rounded-full"
             style={{
@@ -259,12 +261,12 @@ export default function FeaturesSection() {
           >
             Everything you need to get hired first
           </h2>
-        </div>
+        </FadeIn>
 
         <div className="flex flex-col gap-24">
-          {features.map((feature) => (
+          {features.map((feature, i) => (
+            <FadeIn key={feature.title} delay={i * 100}>
             <div
-              key={feature.title}
               className="grid md:grid-cols-2 gap-16 items-center"
             >
               {/* Text side */}
@@ -302,6 +304,7 @@ export default function FeaturesSection() {
                 {feature.mockup}
               </div>
             </div>
+            </FadeIn>
           ))}
         </div>
       </div>

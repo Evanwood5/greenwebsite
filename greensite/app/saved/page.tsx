@@ -8,6 +8,7 @@ import { DarkJobCard } from '@/components/jobs/JobList'
 
 interface SavedJob {
   id: number
+  job_id: string
   created_at: string
   company_name: string | null
   job_title: string | null
@@ -17,14 +18,6 @@ interface SavedJob {
   state: string | null
   is_remote: boolean | null
   saved_at: string
-}
-
-function BookmarkIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
-    </svg>
-  )
 }
 
 export default function SavedJobsPage() {
@@ -40,7 +33,6 @@ export default function SavedJobsPage() {
   const loadSaved = async () => {
     if (!user?.id) return
     setLoading(true)
-
     try {
       const { data: savedRows } = await supabase
         .from('saved_jobs')
@@ -48,10 +40,7 @@ export default function SavedJobsPage() {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
-      if (!savedRows || savedRows.length === 0) {
-        setJobs([])
-        return
-      }
+      if (!savedRows || savedRows.length === 0) { setJobs([]); return }
 
       const jobIds = savedRows.map((r: any) => r.job_id)
       const { data: jobRows } = await supabase
@@ -88,34 +77,37 @@ export default function SavedJobsPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: '1100px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <BookmarkIcon />
-          </div>
-          <div>
-            <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700, marginBottom: '2px' }}>Saved Jobs</h1>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>
-              {loading ? 'Loading...' : `${jobs.length} job${jobs.length !== 1 ? 's' : ''} saved for later`}
-            </p>
-          </div>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: '16px' }}>
+          <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Saved Jobs</h1>
+          <p style={{ color: '#52525b', fontSize: '12px' }}>
+            {loading ? 'Loading...' : `${jobs.length} job${jobs.length !== 1 ? 's' : ''} saved for later`}
+          </p>
         </div>
 
         {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} style={{ background: '#1e1e1e', borderRadius: '14px', height: '220px', border: '1px solid #2a2a2a' }} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} style={{ background: '#0d0d0d', borderRadius: '10px', height: '180px', border: '1px solid rgba(255,255,255,0.07)' }} />
             ))}
           </div>
         ) : jobs.length === 0 ? (
-          <div style={{ background: '#1e1e1e', borderRadius: '14px', padding: '60px 20px', textAlign: 'center', border: '1px solid #2a2a2a' }}>
-            <p style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>No saved jobs yet</p>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>
+          <div style={{
+            background: '#0d0d0d',
+            borderRadius: '10px',
+            padding: '60px 20px',
+            textAlign: 'center',
+            border: '1px solid rgba(255,255,255,0.07)',
+          }}>
+            <p style={{ color: 'white', fontSize: '15px', fontWeight: 600, marginBottom: '6px' }}>No saved jobs yet</p>
+            <p style={{ color: '#52525b', fontSize: '12px' }}>
               Bookmark jobs from the dashboard to find them here later.
             </p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
             {jobs.map((job) => (
               <DarkJobCard
                 key={job.id}

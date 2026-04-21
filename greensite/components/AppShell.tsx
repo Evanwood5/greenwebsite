@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -76,14 +77,6 @@ function UserIcon({ size = 18 }: { size?: number }) {
   )
 }
 
-function LeafIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 20A7 7 0 014 13c0-6 8-12 8-12s8 6 8 12a7 7 0 01-7 7z"/>
-      <path d="M12 20v-4"/>
-    </svg>
-  )
-}
 
 const navItems = [
   { label: 'Job Dashboard', href: '/jobs', icon: BriefcaseIcon },
@@ -126,7 +119,7 @@ export default function AppShell({ children }: AppShellProps) {
         {/* Logo */}
         <Link href="/" style={{ padding: collapsed ? '16px 14px' : '16px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.07)', textDecoration: 'none', cursor: 'pointer' }}>
           <div style={{ flexShrink: 0 }}>
-            <LeafIcon />
+            <Image src="/final_green.png" alt="Greenify logo" width={32} height={32} />
           </div>
           {!collapsed && (
             <span style={{ color: 'white', fontWeight: 700, fontSize: '16px', whiteSpace: 'nowrap' }}>
@@ -243,7 +236,7 @@ export default function AppShell({ children }: AppShellProps) {
         </header>
 
         {/* Page content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '24px 48px', background: '#080808' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: '18px 32px', background: '#080808' }}>
           {children}
         </main>
 

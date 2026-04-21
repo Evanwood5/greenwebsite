@@ -26,8 +26,8 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
     <div
       style={{
         background: "#1a1a1a",
-        borderRadius: 16,
-        padding: 24,
+        borderRadius: 12,
+        padding: 16,
         color: "white",
         height: "100%",
       }}
@@ -36,9 +36,9 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 12,
       }}>
-        <h3 style={{ fontSize: 16, fontWeight: 600 }}>
+        <h3 style={{ fontSize: 13, fontWeight: 600 }}>
           {title}
         </h3>
         <button
@@ -55,7 +55,7 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
         </button>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {data.slice(0, 5).map((company, index) => {
           const percentage = ((company.jobCount / totalJobs) * 100).toFixed(0);
           const displayName = formatCompanyName(company.company);
@@ -67,7 +67,7 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: "12px 0",
+                padding: "7px 0",
                 borderBottom: index < 4 ? "1px solid #2a2a2a" : "none",
               }}
             >
@@ -75,14 +75,14 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
                 {/* Company logo placeholder */}
                 <div
                   style={{
-                    width: 40,
-                    height: 40,
+                    width: 28,
+                    height: 28,
                     background: "#2563eb",
-                    borderRadius: 8,
+                    borderRadius: 6,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 14,
+                    fontSize: 10,
                     fontWeight: 700,
                     color: "white",
                   }}
@@ -91,7 +91,7 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
                 </div>
 
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 500 }}>
+                  <div style={{ fontSize: 12, fontWeight: 500 }}>
                     {displayName}
                   </div>
                 </div>
@@ -102,8 +102,8 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
                 alignItems: "center", 
                 gap: 12,
               }}>
-                <div style={{ 
-                  fontSize: 16, 
+                <div style={{
+                  fontSize: 13,
                   fontWeight: 700,
                 }}>
                   {company.jobCount}

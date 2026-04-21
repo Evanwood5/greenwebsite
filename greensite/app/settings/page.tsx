@@ -103,25 +103,26 @@ function displayLocation(loc: string) {
 const emptyPref: Preference = { jobTypes: [], location: '', experienceLevel: 'any', includeRemote: true }
 
 const cardStyle: React.CSSProperties = {
-  background: '#1e1e1e',
-  borderRadius: '12px',
-  padding: '20px',
-  border: '1px solid #2a2a2a',
-  marginBottom: '12px',
+  background: '#0d0d0d',
+  borderRadius: '10px',
+  padding: '16px',
+  border: '1px solid rgba(255,255,255,0.07)',
+  marginBottom: '10px',
 }
 
 const sectionHeadingStyle: React.CSSProperties = {
   color: 'white',
-  fontSize: '18px',
-  fontWeight: 700,
-  marginBottom: '4px',
-  marginTop: '32px',
+  fontSize: '13px',
+  fontWeight: 600,
+  marginBottom: '2px',
+  marginTop: '22px',
+  letterSpacing: '-0.01em',
 }
 
 const sectionSubStyle: React.CSSProperties = {
-  color: '#6b7280',
-  fontSize: '13px',
-  marginBottom: '16px',
+  color: '#52525b',
+  fontSize: '11px',
+  marginBottom: '10px',
 }
 
 interface PrefEditorProps {
@@ -430,10 +431,10 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <div style={{ maxWidth: '760px' }}>
-        <div style={{ marginBottom: '8px' }}>
-          <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>Settings</h1>
-          <p style={{ color: '#6b7280', fontSize: '14px' }}>Manage your account, resume, and job preferences</p>
+      <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Settings</h1>
+          <p style={{ color: '#52525b', fontSize: '12px' }}>Manage your account, resume, and job preferences</p>
         </div>
 
         {/* Profile Information */}
@@ -443,16 +444,16 @@ export default function SettingsPage() {
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <span style={{ color: 'white', fontSize: '15px', fontWeight: 600 }}>Profile Information</span>
+            <span style={{ color: 'white', fontSize: '13px', fontWeight: 600 }}>Profile Information</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
             <div>
-              <p style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>Email</p>
-              <p style={{ color: 'white', fontSize: '14px' }}>{user?.email || 'Not signed in'}</p>
+              <p style={{ color: '#52525b', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Email</p>
+              <p style={{ color: 'white', fontSize: '12px' }}>{user?.email || 'Not signed in'}</p>
             </div>
             <div>
-              <p style={{ color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>University</p>
-              <p style={{ color: 'white', fontSize: '14px' }}>{university}</p>
+              <p style={{ color: '#52525b', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>University</p>
+              <p style={{ color: 'white', fontSize: '12px' }}>{university}</p>
             </div>
           </div>
         </div>
@@ -465,20 +466,20 @@ export default function SettingsPage() {
         <div style={cardStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
             <UploadIcon />
-            <span style={{ color: 'white', fontSize: '15px', fontWeight: 600 }}>Upload Your Resume</span>
+            <span style={{ color: 'white', fontSize: '13px', fontWeight: 600 }}>Upload Your Resume</span>
           </div>
-          <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '14px' }}>
+          <p style={{ color: '#52525b', fontSize: '12px', marginBottom: '12px' }}>
             Upload your resume to get personalized job matches
           </p>
 
           {resumeUploaded && (
-            <div style={{ background: '#1a8a0d', border: '1px solid #1a8a0d', borderRadius: '10px', padding: '14px 16px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ background: 'rgba(41,193,21,0.08)', border: '1px solid rgba(41,193,21,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <CheckCircleIcon />
               </div>
               <div>
-                <p style={{ color: 'white', fontSize: '14px', fontWeight: 600 }}>Resume uploaded</p>
-                <p style={{ color: '#86efac', fontSize: '13px' }}>Your resume has been processed and saved</p>
+                <p style={{ color: 'white', fontSize: '12px', fontWeight: 600 }}>Resume uploaded</p>
+                <p style={{ color: '#86efac', fontSize: '11px' }}>Your resume has been processed and saved</p>
               </div>
             </div>
           )}
@@ -631,21 +632,21 @@ export default function SettingsPage() {
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 01-3.46 0"/>
             </svg>
-            <span style={{ color: 'white', fontSize: '15px', fontWeight: 600 }}>Notification Preferences</span>
+            <span style={{ color: 'white', fontSize: '13px', fontWeight: 600 }}>Notification Preferences</span>
           </div>
 
           {/* Email */}
-          <div style={{ background: '#141414', borderRadius: '10px', padding: '14px 16px', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#1a8a0d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ background: '#111', borderRadius: '8px', padding: '12px 14px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '30px', height: '30px', borderRadius: '7px', background: 'rgba(41,193,21,0.1)', border: '1px solid rgba(41,193,21,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                   <polyline points="22,6 12,13 2,6"/>
                 </svg>
               </div>
               <div>
-                <p style={{ color: 'white', fontSize: '14px', fontWeight: 500 }}>Email Notifications</p>
-                <p style={{ color: '#6b7280', fontSize: '12px' }}>Receive job alerts via email at {user?.email}</p>
+                <p style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>Email Notifications</p>
+                <p style={{ color: '#52525b', fontSize: '11px' }}>Receive job alerts via email at {user?.email}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '4px' }}>
                   <CheckCircleIcon />
                   <span style={{ color: '#29C115', fontSize: '12px' }}>Active</span>
@@ -656,16 +657,16 @@ export default function SettingsPage() {
           </div>
 
           {/* Phone */}
-          <div style={{ background: '#141414', borderRadius: '10px', padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: '#1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ background: '#111', borderRadius: '8px', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '30px', height: '30px', borderRadius: '7px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.13 1.19 2 2 0 012.11 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-.45a2 2 0 012.11.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                 </svg>
               </div>
               <div>
-                <p style={{ color: 'white', fontSize: '14px', fontWeight: 500 }}>Phone Notifications</p>
-                <p style={{ color: '#6b7280', fontSize: '12px' }}>Receive SMS alerts</p>
+                <p style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>Phone Notifications</p>
+                <p style={{ color: '#52525b', fontSize: '11px' }}>Receive SMS alerts</p>
               </div>
             </div>
             <button style={{ padding: '4px 12px', background: 'transparent', color: 'white', border: '1px solid #444', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>
@@ -675,7 +676,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Notification template */}
-        <div style={{ background: '#1a2332', border: '1px solid #1d4ed8', borderRadius: '12px', padding: '18px', marginBottom: '12px' }}>
+        <div style={{ background: 'rgba(96,165,250,0.05)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: '10px', padding: '14px', marginBottom: '10px' }}>
           <p style={{ color: '#60a5fa', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Notification Template</p>
           <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '10px' }}>
             When a new job matching your preferences is found, you&apos;ll receive:

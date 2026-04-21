@@ -28,8 +28,8 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
     <div
       style={{
         background: "#1a1a1a",
-        borderRadius: 16,
-        padding: 24,
+        borderRadius: 12,
+        padding: 16,
         color: "white",
       }}
     >
@@ -37,9 +37,9 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 12,
       }}>
-        <h3 style={{ fontSize: 16, fontWeight: 600 }}>
+        <h3 style={{ fontSize: 13, fontWeight: 600 }}>
           {title}
         </h3>
         <div style={{ fontSize: 12, color: "#888" }}>
@@ -47,7 +47,7 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {skills.map((skill, index) => {
           const percentage = Math.round((skill.totalCount / maxCount) * 100);
           const color = COLORS[index % COLORS.length];
@@ -81,10 +81,10 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
                 </span>
               </div>
 
-              <div style={{ 
-                fontSize: 16,
+              <div style={{
+                fontSize: 13,
                 fontWeight: 700,
-                minWidth: 50,
+                minWidth: 40,
                 textAlign: "right",
               }}>
                 {skill.totalCount}

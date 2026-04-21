@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Greenify - Sustainable Career Opportunities",
   description: "Discover sustainable job opportunities that match your values. Connect with eco-conscious companies building a better future.",
+  icons: {
+    icon: '/final_green.png',
+  },
 };
 
 export default function RootLayout({

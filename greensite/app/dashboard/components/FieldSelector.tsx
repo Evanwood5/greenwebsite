@@ -20,12 +20,12 @@ export default function FieldSelector({ value, onChange }: FieldSelectorProps) {
             key={field}
             onClick={() => onChange(field)}
             style={{
-              padding: "8px 20px",
+              padding: "5px 14px",
               borderRadius: 20,
               border: isSelected ? "none" : "1px solid #333",
               background: isSelected ? "#29C115" : "transparent",
               color: "white",
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: isSelected ? 600 : 400,
               cursor: "pointer",
               transition: "all 150ms",
