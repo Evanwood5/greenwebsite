@@ -77,11 +77,12 @@ function UserIcon({ size = 18 }: { size?: number }) {
   )
 }
 
+const HEADER_HEIGHT = 52
 
 const navItems = [
-  { label: 'Job Dashboard', href: '/jobs', icon: BriefcaseIcon },
+  { label: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
   { label: 'Analytics', href: '/dashboard', icon: TrendingUpIcon },
-  { label: 'Resume Jobs', href: '/custom_jobs/matches', icon: FileTextIcon },
+  { label: 'Custom Jobs', href: '/custom_jobs/matches', icon: FileTextIcon },
   null,
   { label: 'Saved Jobs', href: '/saved', icon: BookmarkIcon },
   { label: 'Settings', href: '/settings', icon: GearIcon },
@@ -96,173 +97,201 @@ export default function AppShell({ children }: AppShellProps) {
   const { user } = useAuth()
   const [collapsed, setCollapsed] = useState(false)
 
-  const sidebarWidth = collapsed ? 60 : 260
+  const sidebarWidth = collapsed ? 60 : 200
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#080808' }}>
-      <aside
-        style={{
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#111111' }}>
+
+      {/* Full-width top navbar */}
+      <header style={{
+        height: HEADER_HEIGHT,
+        background: '#1e1e1e',
+        display: 'flex',
+        alignItems: 'center',
+        flexShrink: 0,
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        zIndex: 50,
+      }}>
+        {/* Logo section — aligned to sidebar width */}
+        {/* Logo + title — single flex row, everything center-aligned */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 18px', flexShrink: 0 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none', flexShrink: 0 }}>
+            <Image
+              src="/grepic.png"
+              alt="Greenify logo"
+              width={38}
+              height={38}
+              style={{ display: 'block', borderRadius: '5px', flexShrink: 0 }}
+            />
+            {!collapsed && (
+              <span style={{ color: 'white', fontWeight: 700, fontSize: '15px', lineHeight: '1', whiteSpace: 'nowrap' }}>
+                Greenify
+              </span>
+            )}
+          </Link>
+
+          {!collapsed && (
+            <>
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '15px', lineHeight: '1', userSelect: 'none' }}>·</span>
+              <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 700, fontSize: '15px', lineHeight: '1', whiteSpace: 'nowrap' }}>
+                Member Dashboard
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Right: user info */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px', paddingRight: '20px' }}>
+          {user?.email && (
+            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>{user.email}</span>
+          )}
+          <div style={{
+            width: '30px',
+            height: '30px',
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}>
+            <UserIcon size={14} />
+          </div>
+        </div>
+      </header>
+
+      {/* Body row */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+
+        {/* Sidebar */}
+        <aside style={{
           width: sidebarWidth,
           minWidth: sidebarWidth,
-          height: '100vh',
-          position: 'sticky',
-          top: 0,
-          background: '#0a0a0a',
+          height: '100%',
+          background: '#161616',
           borderRight: '1px solid rgba(255,255,255,0.07)',
           display: 'flex',
           flexDirection: 'column',
           transition: 'width 200ms ease, min-width 200ms ease',
           overflow: 'hidden',
           flexShrink: 0,
-        }}
-      >
-        {/* Logo */}
-        <Link href="/" style={{ padding: collapsed ? '16px 14px' : '16px 18px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.07)', textDecoration: 'none', cursor: 'pointer' }}>
-          <div style={{ flexShrink: 0 }}>
-            <Image src="/final_green.png" alt="Greenify logo" width={32} height={32} />
+        }}>
+
+          {/* Nav items */}
+          <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', minHeight: 0 }}>
+            {navItems.map((item, idx) => {
+              if (item === null) {
+                return <div key={idx} style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '6px 8px' }} />
+              }
+
+              const Icon = item.icon
+              const isActive = pathname === item.href
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    marginBottom: '2px',
+                    background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                    color: isActive ? '#ffffff' : '#71717a',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: isActive ? 500 : 400,
+                    transition: 'background 150ms, color 150ms',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                      e.currentTarget.style.color = '#e4e4e7'
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.color = '#71717a'
+                    }
+                  }}
+                >
+                  <div style={{ flexShrink: 0 }}>
+                    <Icon size={18} />
+                  </div>
+                  {!collapsed && item.label}
+                </Link>
+              )
+            })}
+          </nav>
+
+          {/* Collapse button */}
+          <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                background: 'transparent',
+                border: 'none',
+                color: '#29C115',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                transition: 'background 150ms',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.background = '#1a1a1a')}
+              onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+            >
+              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              {!collapsed && 'Collapse'}
+            </button>
           </div>
-          {!collapsed && (
-            <span style={{ color: 'white', fontWeight: 700, fontSize: '16px', whiteSpace: 'nowrap' }}>
-              Greenify
-            </span>
-          )}
-        </Link>
+        </aside>
 
-        {/* Nav items */}
-        <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', minHeight: 0 }}>
-          {navItems.map((item, idx) => {
-            if (item === null) {
-              return <div key={idx} style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '6px 8px' }} />
-            }
-
-            const Icon = item.icon
-            const isActive = pathname === item.href
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: collapsed ? '10px 12px' : '10px 12px',
-                  borderRadius: '8px',
-                  marginBottom: '2px',
-                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  color: isActive ? '#ffffff' : '#71717a',
-                  textDecoration: 'none',
-                  fontSize: '13px',
-                  fontWeight: isActive ? 500 : 400,
-                  transition: 'background 150ms, color 150ms',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                }}
-                onMouseOver={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                    e.currentTarget.style.color = '#e4e4e7'
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'transparent'
-                    e.currentTarget.style.color = '#71717a'
-                  }
-                }}
-              >
-                <div style={{ flexShrink: 0 }}>
-                  <Icon size={18} />
-                </div>
-                {!collapsed && item.label}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* Collapse button */}
-        <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: '8px',
-              background: 'transparent',
-              border: 'none',
-              color: '#29C115',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'background 150ms',
-              whiteSpace: 'nowrap',
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.background = '#1a1a1a')}
-            onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
-          >
-            {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            {!collapsed && 'Collapse'}
-          </button>
-        </div>
-      </aside>
-
-      {/* Main content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Top bar */}
-        <header style={{ padding: '10px 20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-          {user?.email && (
-            <span style={{ color: '#52525b', fontSize: '12px' }}>{user.email}</span>
-          )}
-          <div
-            style={{
-              width: '30px',
-              height: '30px',
-              borderRadius: '50%',
-              background: 'rgba(41,193,21,0.08)',
-              border: '1px solid rgba(41,193,21,0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#29C115',
-              flexShrink: 0,
-            }}
-          >
-            <UserIcon size={14} />
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '18px 32px', background: '#080808' }}>
+        {/* Main content */}
+        <main style={{ flex: 1, overflowY: 'auto', padding: '20px 28px', background: '#111111' }}>
           {children}
         </main>
 
-        {/* Help button */}
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px' }}>
-          <button
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: '#242424',
-              border: 'none',
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            aria-label="Help"
-          >
-            ?
-          </button>
-        </div>
       </div>
+
+      {/* Help button */}
+      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 40 }}>
+        <button
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: '#1e1e1e',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#a1a1aa',
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          aria-label="Help"
+        >
+          ?
+        </button>
+      </div>
+
     </div>
   )
 }

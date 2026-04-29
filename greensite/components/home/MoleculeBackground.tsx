@@ -63,7 +63,7 @@ export default function MoleculeBackground() {
       }))
 
       nodes = [...leftAnchors, ...rightAnchors].flatMap(a =>
-        makeCluster(a.x, a.y, rand(5, 10), rand(35, 70))
+        makeCluster(a.x, a.y, rand(5, 10), rand(70, 130))
       )
     }
 

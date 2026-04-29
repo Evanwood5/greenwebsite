@@ -19,7 +19,7 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 cursor-pointer">
-          <Image src="/final_green.png" alt="Greenify logo" width={36} height={36} />
+          <Image src="/grepic.png" alt="Greenify logo" width={36} height={36} style={{ borderRadius: '6px' }} />
           <span className="text-[15px] font-semibold text-white tracking-tight">Greenify</span>
         </Link>
 

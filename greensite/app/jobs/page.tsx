@@ -14,6 +14,16 @@ interface FilterOptions {
   searchTerm: string
 }
 
+const sectionLabelStyle: React.CSSProperties = {
+  color: '#71717a',
+  fontSize: '10px',
+  fontWeight: 600,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  marginBottom: '6px',
+  marginTop: '14px',
+}
+
 function FilterIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -22,21 +32,6 @@ function FilterIcon() {
   )
 }
 
-function ChevronDownIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  )
-}
-
-function ChevronUpIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="18 15 12 9 6 15" />
-    </svg>
-  )
-}
 
 const JOBS_PER_PAGE = 20
 
@@ -44,8 +39,8 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '6px 10px',
   borderRadius: '6px',
-  border: '1px solid rgba(255,255,255,0.08)',
-  background: '#111',
+  border: '1px solid rgba(255,255,255,0.1)',
+  background: '#1e1e1e',
   color: '#e4e4e7',
   fontSize: '12px',
   outline: 'none',
@@ -61,7 +56,6 @@ export default function JobsPage() {
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
-  const [filtersOpen, setFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<FilterOptions>({ jobType: '', isRemote: '', state: '', searchTerm: '' })
   const [searchInput, setSearchInput] = useState('')
 
@@ -145,98 +139,98 @@ export default function JobsPage() {
     )
   }
 
+  const activeFilterCount = [filters.jobType, filters.isRemote, filters.state, filters.searchTerm].filter(Boolean).length
+
   return (
     <AppShell>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Job Dashboard</h1>
-          <p style={{ color: '#52525b', fontSize: '12px' }}>
-            {totalCount > 0 ? `${totalCount.toLocaleString()} opportunities from partner companies` : 'Loading opportunities...'}
-          </p>
-        </div>
+      <div style={{ display: 'flex', gap: '20px', maxWidth: '1300px', margin: '0 auto', alignItems: 'flex-start' }}>
 
-        {/* Filters */}
-        <div style={{ background: '#0d0d0d', borderRadius: '10px', marginBottom: '14px', border: '1px solid rgba(255,255,255,0.07)' }}>
-          <button
-            onClick={() => setFiltersOpen(!filtersOpen)}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '10px 16px', background: 'transparent', border: 'none', color: '#71717a', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}
-          >
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <FilterIcon />
-              Filters
-            </span>
-            {filtersOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          </button>
-
-          {filtersOpen && (
-            <div style={{ padding: '0 16px 16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px', paddingTop: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>Search</label>
-                  <input type="text" placeholder="Title or company..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>Job Type</label>
-                  <select value={filters.jobType} onChange={(e) => handleFilterChange('jobType', e.target.value)} style={inputStyle}>
-                    <option value="">All Types</option>
-                    <option value="Full Time">Full Time</option>
-                    <option value="Part Time">Part Time</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>Location</label>
-                  <select value={filters.isRemote} onChange={(e) => handleFilterChange('isRemote', e.target.value)} style={inputStyle}>
-                    <option value="">All Locations</option>
-                    <option value="remote">Remote Only</option>
-                    <option value="onsite">On-site Only</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#52525b', fontSize: '11px', marginBottom: '4px' }}>State</label>
-                  <select value={filters.state} onChange={(e) => handleFilterChange('state', e.target.value)} style={inputStyle}>
-                    <option value="">All States</option>
-                    {['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
+        {/* Main content */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
+            {statCards.map((card) => (
+              <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
+                <p style={{ color: '#52525b', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
+                <p style={{ color: card.color, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
               </div>
+            ))}
+          </div>
+
+          {error && (
+            <div style={{ background: '#2a1a1a', border: '1px solid #7f1d1d', borderRadius: '10px', padding: '16px', marginBottom: '20px', color: '#fca5a5', fontSize: '14px' }}>
+              {error}
+              <button onClick={() => fetchJobs(0)} style={{ marginLeft: '12px', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '13px' }}>
+                Try again
+              </button>
+            </div>
+          )}
+
+          <JobList jobs={jobs} loading={loading} />
+
+          {hasMore && jobs.length > 0 && !loading && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+              <button
+                onClick={() => fetchJobs(currentPage + 1, true)}
+                disabled={loadingMore}
+                style={{ padding: '8px 20px', background: 'rgba(41,193,21,0.1)', color: '#29C115', border: '1px solid rgba(41,193,21,0.2)', borderRadius: '7px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
+              >
+                {loadingMore ? 'Loading...' : `Load More (${totalCount - jobs.length} remaining)`}
+              </button>
             </div>
           )}
         </div>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
-          {statCards.map((card) => (
-            <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
-              <p style={{ color: '#52525b', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
-              <p style={{ color: card.color, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
+        {/* Right filter panel */}
+        <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '18px' }}>
+          <div style={{ background: '#1a1a1a', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', padding: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>
+                <FilterIcon />
+                Filters
+              </span>
+              {activeFilterCount > 0 && (
+                <button
+                  onClick={() => { setFilters({ jobType: '', isRemote: '', state: '' , searchTerm: '' }); setSearchInput('') }}
+                  style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: '0' }}
+                >
+                  Clear all
+                </button>
+              )}
             </div>
-          ))}
+
+            <p style={sectionLabelStyle}>Search</p>
+            <input
+              type="text"
+              placeholder="Title or company..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              style={inputStyle}
+            />
+
+            <p style={sectionLabelStyle}>Job Type</p>
+            <select value={filters.jobType} onChange={(e) => handleFilterChange('jobType', e.target.value)} style={inputStyle}>
+              <option value="">All Types</option>
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
+            </select>
+
+            <p style={sectionLabelStyle}>Location</p>
+            <select value={filters.isRemote} onChange={(e) => handleFilterChange('isRemote', e.target.value)} style={inputStyle}>
+              <option value="">All Locations</option>
+              <option value="remote">Remote Only</option>
+              <option value="onsite">On-site Only</option>
+            </select>
+
+            <p style={sectionLabelStyle}>State</p>
+            <select value={filters.state} onChange={(e) => handleFilterChange('state', e.target.value)} style={inputStyle}>
+              <option value="">All States</option>
+              {['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'].map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
         </div>
-
-        {error && (
-          <div style={{ background: '#2a1a1a', border: '1px solid #7f1d1d', borderRadius: '10px', padding: '16px', marginBottom: '20px', color: '#fca5a5', fontSize: '14px' }}>
-            {error}
-            <button onClick={() => fetchJobs(0)} style={{ marginLeft: '12px', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '13px' }}>
-              Try again
-            </button>
-          </div>
-        )}
-
-        <JobList jobs={jobs} loading={loading} />
-
-        {hasMore && jobs.length > 0 && !loading && (
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
-            <button
-              onClick={() => fetchJobs(currentPage + 1, true)}
-              disabled={loadingMore}
-              style={{ padding: '8px 20px', background: 'rgba(41,193,21,0.1)', color: '#29C115', border: '1px solid rgba(41,193,21,0.2)', borderRadius: '7px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
-            >
-              {loadingMore ? 'Loading...' : `Load More (${totalCount - jobs.length} remaining)`}
-            </button>
-          </div>
-        )}
 
       </div>
     </AppShell>
