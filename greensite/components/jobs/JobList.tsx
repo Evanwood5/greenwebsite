@@ -18,6 +18,8 @@ interface JobListProps {
   jobs: Job[]
   loading?: boolean
   fieldCategoryMap?: Record<number, string>
+  savedJobIds?: string[]
+  onSaveToggle?: (jobId: string, willBeSaved: boolean) => void
 }
 
 function ExternalLinkIcon() {
@@ -268,8 +270,22 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
   },
 }
 
-function JobTableRow({ job, isLast, fieldCategoryMap }: { job: Job; isLast?: boolean; fieldCategoryMap?: Record<number, string> }) {
+function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onSaveToggle }: {
+  job: Job
+  isLast?: boolean
+  fieldCategoryMap?: Record<number, string>
+  isSaved?: boolean
+  onSaveToggle?: (jobId: string, willBeSaved: boolean) => void
+}) {
   const [hovered, setHovered] = useState(false)
+  const [saved, setSaved] = useState(initialSaved ?? false)
+
+  function handleSave(e: React.MouseEvent) {
+    e.stopPropagation()
+    const next = !saved
+    setSaved(next)
+    onSaveToggle?.(job.job_id, next)
+  }
   const location = job.is_remote ? 'Remote' : [job.city, job.state].filter(Boolean).join(', ') || '—'
 
   const cellStyle: React.CSSProperties = {
@@ -340,17 +356,20 @@ function JobTableRow({ job, isLast, fieldCategoryMap }: { job: Job; isLast?: boo
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
           {/* Save */}
           <button
-            aria-label="Save job"
+            aria-label={saved ? 'Unsave job' : 'Save job'}
+            onClick={handleSave}
             style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              width: '28px', height: '28px', background: 'rgba(239,68,68,0.08)',
-              color: '#ef4444', borderRadius: '5px', border: '1px solid rgba(239,68,68,0.2)',
-              cursor: 'pointer', transition: 'background 150ms', flexShrink: 0,
+              width: '28px', height: '28px',
+              background: saved ? 'rgba(239,68,68,0.15)' : 'rgba(239,68,68,0.08)',
+              color: '#ef4444', borderRadius: '5px',
+              border: saved ? '1px solid rgba(239,68,68,0.35)' : '1px solid rgba(239,68,68,0.2)',
+              cursor: 'pointer', transition: 'background 150ms, border-color 150ms', flexShrink: 0,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.16)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.08)')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.22)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = saved ? 'rgba(239,68,68,0.15)' : 'rgba(239,68,68,0.08)')}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill={saved ? '#ef4444' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
             </svg>
           </button>
@@ -403,7 +422,8 @@ function JobTableRow({ job, isLast, fieldCategoryMap }: { job: Job; isLast?: boo
   )
 }
 
-export default function JobList({ jobs, loading, fieldCategoryMap }: JobListProps) {
+export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, onSaveToggle }: JobListProps) {
+  const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
       <div style={{ background: '#191919', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.09)', overflow: 'hidden' }}>
@@ -460,7 +480,14 @@ export default function JobList({ jobs, loading, fieldCategoryMap }: JobListProp
         </thead>
         <tbody>
           {jobs.map((job, i) => (
-            <JobTableRow key={job.job_id} job={job} isLast={i === jobs.length - 1} fieldCategoryMap={fieldCategoryMap} />
+            <JobTableRow
+              key={job.job_id}
+              job={job}
+              isLast={i === jobs.length - 1}
+              fieldCategoryMap={fieldCategoryMap}
+              isSaved={savedSet.has(job.job_id)}
+              onSaveToggle={onSaveToggle}
+            />
           ))}
         </tbody>
       </table>

@@ -7,7 +7,6 @@ import AppShell from '@/components/AppShell'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
 interface SavedJob {
-  id: number
   job_id: string
   created_at: string
   company_name: string | null
@@ -24,6 +23,7 @@ export default function SavedJobsPage() {
   const { user } = useAuth()
   const [jobs, setJobs] = useState<SavedJob[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (user?.id) loadSaved()
@@ -33,59 +33,55 @@ export default function SavedJobsPage() {
   const loadSaved = async () => {
     if (!user?.id) return
     setLoading(true)
+    setError(null)
     try {
-      const { data: savedRows } = await supabase
+      const { data, error: fetchError } = await supabase
         .from('saved_jobs')
-        .select('job_id, created_at')
+        .select('*, job_postings_ingest_test(*)')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .order('saved_at', { ascending: false })
 
-      if (!savedRows || savedRows.length === 0) { setJobs([]); return }
+      if (fetchError) throw fetchError
 
-      const jobIds = savedRows.map((r: any) => r.job_id)
-      const { data: jobRows } = await supabase
-        .from('job_postings_ingest_test')
-        .select('*')
-        .in('job_id', jobIds)
+      const mapped: SavedJob[] = (data ?? [])
+        .map((row: any) => {
+          const job = row.job_postings_ingest_test
+          if (!job) return null
+          return { ...job, saved_at: row.saved_at }
+        })
+        .filter(Boolean) as SavedJob[]
 
-      if (jobRows) {
-        const merged: SavedJob[] = savedRows
-          .map((row: any) => {
-            const job = (jobRows as any[]).find((j: any) => j.job_id === row.job_id)
-            if (!job) return null
-            return { ...job, id: job.id || job.job_id, saved_at: row.created_at }
-          })
-          .filter(Boolean) as SavedJob[]
-        setJobs(merged)
-      }
-    } catch (err) {
+      setJobs(mapped)
+    } catch (err: any) {
       console.error('Error loading saved jobs:', err)
+      setError(err.message ?? 'Failed to load saved jobs')
     } finally {
       setLoading(false)
     }
   }
 
-  const removeSaved = async (jobId: number) => {
+  const removeSaved = async (jobId: string) => {
     if (!user?.id) return
-    try {
-      await supabase.from('saved_jobs').delete().eq('user_id', user.id).eq('job_id', jobId)
-      setJobs(prev => prev.filter(j => j.id !== jobId))
-    } catch (err) {
-      console.error('Error removing saved job:', err)
-    }
+    await supabase.from('saved_jobs').delete().eq('user_id', user.id).eq('job_id', jobId)
+    setJobs(prev => prev.filter(j => j.job_id !== jobId))
   }
 
   return (
     <AppShell>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
-        {/* Header */}
         <div style={{ marginBottom: '16px' }}>
           <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Saved Jobs</h1>
           <p style={{ color: '#52525b', fontSize: '12px' }}>
             {loading ? 'Loading...' : `${jobs.length} job${jobs.length !== 1 ? 's' : ''} saved for later`}
           </p>
         </div>
+
+        {error && (
+          <div style={{ background: '#2a1a1a', border: '1px solid #7f1d1d', borderRadius: '10px', padding: '14px', marginBottom: '16px', color: '#fca5a5', fontSize: '13px' }}>
+            {error}
+          </div>
+        )}
 
         {loading ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
@@ -103,18 +99,18 @@ export default function SavedJobsPage() {
           }}>
             <p style={{ color: 'white', fontSize: '15px', fontWeight: 600, marginBottom: '6px' }}>No saved jobs yet</p>
             <p style={{ color: '#52525b', fontSize: '12px' }}>
-              Bookmark jobs from the dashboard to find them here later.
+              Hit the red bookmark on any job to save it here.
             </p>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
             {jobs.map((job) => (
               <DarkJobCard
-                key={job.id}
+                key={job.job_id}
                 job={job}
                 showSave={false}
                 showDelete={true}
-                onDelete={() => removeSaved(job.id)}
+                onDelete={() => removeSaved(job.job_id)}
               />
             ))}
           </div>

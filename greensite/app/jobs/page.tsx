@@ -147,7 +147,8 @@ function DropdownSelect({ value, onChange, options }: { value: string; onChange:
 }
 
 export default function JobsPage() {
-  const { loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set())
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -159,6 +160,32 @@ export default function JobsPage() {
   const [searchInput, setSearchInput] = useState('')
   const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
+
+  // Load saved job IDs for the current user
+  useEffect(() => {
+    if (!user?.id) return
+    supabase
+      .from('saved_jobs')
+      .select('job_id')
+      .eq('user_id', user.id)
+      .then(({ data }) => {
+        setSavedJobIds(new Set(data?.map((r: any) => r.job_id) ?? []))
+      })
+  }, [user?.id])
+
+  const handleSaveToggle = async (jobId: string, willBeSaved: boolean) => {
+    if (!user?.id) return
+    setSavedJobIds(prev => {
+      const next = new Set(prev)
+      willBeSaved ? next.add(jobId) : next.delete(jobId)
+      return next
+    })
+    if (willBeSaved) {
+      await supabase.from('saved_jobs').insert({ user_id: user.id, job_id: jobId })
+    } else {
+      await supabase.from('saved_jobs').delete().eq('user_id', user.id).eq('job_id', jobId)
+    }
+  }
 
   // Fetch full id→category map once on mount so job icons are accurate
   useEffect(() => {
@@ -250,7 +277,7 @@ export default function JobsPage() {
   const statCards = [
     { label: 'Total Jobs', value: totalCount > 0 ? totalCount.toLocaleString() : '...', color: '#29C115', bg: 'rgba(41,193,21,0.08)', border: 'rgba(41,193,21,0.15)' },
     { label: 'New This Week', value: '89', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
-    { label: 'Saved Jobs', value: '0', color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.15)' },
+    { label: 'Saved Jobs', value: savedJobIds.size.toString(), color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.15)' },
     { label: 'Applications', value: '0', color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
   ]
 
@@ -291,7 +318,13 @@ export default function JobsPage() {
             </div>
           )}
 
-          <JobList jobs={jobs} loading={loading} fieldCategoryMap={fieldCategoryMap} />
+          <JobList
+            jobs={jobs}
+            loading={loading}
+            fieldCategoryMap={fieldCategoryMap}
+            savedJobIds={[...savedJobIds]}
+            onSaveToggle={handleSaveToggle}
+          />
 
           {hasMore && jobs.length > 0 && !loading && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
