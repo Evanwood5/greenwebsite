@@ -1,16 +1,19 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import JobList from '@/components/jobs/JobList'
 import { Job } from '@/lib/jobsApi'
+import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 interface FilterOptions {
+  category: string
+  level: string
   jobType: string
   isRemote: string
-  state: string
+  city: string
   searchTerm: string
 }
 
@@ -32,19 +35,115 @@ function FilterIcon() {
   )
 }
 
-
 const JOBS_PER_PAGE = 20
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '6px 10px',
-  borderRadius: '6px',
-  border: '1px solid rgba(255,255,255,0.1)',
-  background: '#1e1e1e',
-  color: '#e4e4e7',
-  fontSize: '12px',
-  outline: 'none',
-  boxSizing: 'border-box',
+
+interface DropdownOption { label: string; value: string; icon?: React.ReactNode; iconColor?: string }
+
+function DropdownSelect({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: DropdownOption[] }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const selected = options.find(o => o.value === value) ?? options[0]
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    if (open) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  return (
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+      {/* Trigger */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '7px 10px',
+          borderRadius: '7px',
+          border: `1px solid ${open ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.1)'}`,
+          background: open ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.04)',
+          color: value ? '#e4e4e7' : '#52525b',
+          fontSize: '12px',
+          cursor: 'pointer',
+          textAlign: 'left',
+          transition: 'border-color 150ms, background 150ms',
+          gap: '6px',
+        }}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
+          {selected.icon && (
+            <span style={{ flexShrink: 0, color: selected.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
+              {selected.icon}
+            </span>
+          )}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selected.label}</span>
+        </span>
+        <svg
+          width="11" height="11" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ flexShrink: 0, color: '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: 'calc(100% + 4px)',
+          left: 0,
+          right: 0,
+          background: '#1e1e1e',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderRadius: '8px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          zIndex: 100,
+          overflow: 'hidden',
+          maxHeight: '200px',
+          overflowY: 'auto',
+        }}>
+          {options.map(opt => {
+            const isActive = opt.value === value
+            return (
+              <button
+                key={opt.value}
+                onClick={() => { onChange(opt.value); setOpen(false) }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  textAlign: 'left',
+                  padding: '8px 10px',
+                  fontSize: '12px',
+                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  color: isActive ? '#ffffff' : '#c4c4c7',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 100ms',
+                }}
+                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+              >
+                {opt.icon && (
+                  <span style={{ flexShrink: 0, color: opt.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
+                    {opt.icon}
+                  </span>
+                )}
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function JobsPage() {
@@ -56,8 +155,31 @@ export default function JobsPage() {
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
-  const [filters, setFilters] = useState<FilterOptions>({ jobType: '', isRemote: '', state: '', searchTerm: '' })
+  const [filters, setFilters] = useState<FilterOptions>({ category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' })
   const [searchInput, setSearchInput] = useState('')
+  const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
+  const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
+
+  // Fetch full id→category map once on mount so job icons are accurate
+  useEffect(() => {
+    supabase
+      .from('job_field_counts')
+      .select('id, category')
+      .then(({ data }) => {
+        const map: Record<number, string> = {}
+        data?.forEach(r => { map[r.id] = r.category.toLowerCase() })
+        setFieldCategoryMap(map)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (!filters.category) { setCategoryFieldIds([]); return }
+    supabase
+      .from('job_field_counts')
+      .select('id')
+      .ilike('category', filters.category)
+      .then(({ data }) => setCategoryFieldIds(data?.map(r => r.id) ?? []))
+  }, [filters.category])
 
   const buildQuery = useCallback(() => {
     let query = supabase
@@ -66,13 +188,16 @@ export default function JobsPage() {
       .order('created_at', { ascending: false })
 
     if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
+    if (filters.category && categoryFieldIds.length > 0) query = query.in('job_field_id', categoryFieldIds)
+    if (filters.category && categoryFieldIds.length === 0 && filters.category !== '') query = query.eq('job_field_id', -1)
+    if (filters.level) query = query.eq('experience_level', filters.level)
     if (filters.jobType) query = query.eq('job_type', filters.jobType)
-    if (filters.state) query = query.eq('state', filters.state)
+    if (filters.city) query = query.eq('city', filters.city)
     if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
     else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
     return query
-  }, [filters])
+  }, [filters, categoryFieldIds])
 
   const fetchJobs = useCallback(async (page: number = 0, append: boolean = false) => {
     try {
@@ -139,7 +264,7 @@ export default function JobsPage() {
     )
   }
 
-  const activeFilterCount = [filters.jobType, filters.isRemote, filters.state, filters.searchTerm].filter(Boolean).length
+  const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.isRemote, filters.city, filters.searchTerm].filter(Boolean).length
 
   return (
     <AppShell>
@@ -166,7 +291,7 @@ export default function JobsPage() {
             </div>
           )}
 
-          <JobList jobs={jobs} loading={loading} />
+          <JobList jobs={jobs} loading={loading} fieldCategoryMap={fieldCategoryMap} />
 
           {hasMore && jobs.length > 0 && !loading && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
@@ -182,7 +307,7 @@ export default function JobsPage() {
         </div>
 
         {/* Right filter panel */}
-        <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '18px' }}>
+        <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
           <div style={{ background: '#1a1a1a', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', padding: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>
@@ -191,7 +316,7 @@ export default function JobsPage() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setFilters({ jobType: '', isRemote: '', state: '' , searchTerm: '' }); setSearchInput('') }}
+                  onClick={() => { setFilters({ category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }); setSearchInput('') }}
                   style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: '0' }}
                 >
                   Clear all
@@ -199,36 +324,113 @@ export default function JobsPage() {
               )}
             </div>
 
-            <p style={sectionLabelStyle}>Search</p>
-            <input
-              type="text"
-              placeholder="Title or company..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              style={inputStyle}
+            {/* Search — visually distinct from dropdowns */}
+            <div style={{ position: 'relative', margin: '10px 0 14px' }}>
+              <svg
+                width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: '#52525b', pointerEvents: 'none' }}
+              >
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Title or company..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 28px 8px 28px',
+                  borderRadius: '7px',
+                  border: '1px solid rgba(255,255,255,0.14)',
+                  background: '#111111',
+                  color: '#e4e4e7',
+                  fontSize: '12px',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+              {searchInput && (
+                <button
+                  onClick={() => setSearchInput('')}
+                  style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px' }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+            <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', marginBottom: '4px' }} />
+
+            <p style={sectionLabelStyle}>Category</p>
+            <DropdownSelect
+              value={filters.category}
+              onChange={(v) => handleFilterChange('category', v)}
+              options={[
+                { label: 'All Categories', value: '' },
+                {
+                  label: 'Tech', value: 'Tech', iconColor: '#60a5fa',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+                },
+                {
+                  label: 'Engineering', value: 'Engineering', iconColor: '#f97316',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
+                },
+                {
+                  label: 'Health', value: 'Health', iconColor: '#f43f5e',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
+                },
+                {
+                  label: 'Business', value: 'Business', iconColor: '#a78bfa',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+                },
+              ]}
+            />
+
+            <p style={sectionLabelStyle}>Level</p>
+            <DropdownSelect
+              value={filters.level}
+              onChange={(v) => handleFilterChange('level', v)}
+              options={[
+                { label: 'All Levels', value: '' },
+                { label: 'Moderate', value: 'moderate' },
+                { label: 'Advanced', value: 'advanced' },
+              ]}
             />
 
             <p style={sectionLabelStyle}>Job Type</p>
-            <select value={filters.jobType} onChange={(e) => handleFilterChange('jobType', e.target.value)} style={inputStyle}>
-              <option value="">All Types</option>
-              <option value="Full Time">Full Time</option>
-              <option value="Part Time">Part Time</option>
-            </select>
+            <DropdownSelect
+              value={filters.jobType}
+              onChange={(v) => handleFilterChange('jobType', v)}
+              options={[
+                { label: 'All Types', value: '' },
+                { label: 'Full Time', value: 'Full Time' },
+                { label: 'Part Time', value: 'Part Time' },
+                { label: 'Internship', value: 'Internship' },
+              ]}
+            />
 
             <p style={sectionLabelStyle}>Location</p>
-            <select value={filters.isRemote} onChange={(e) => handleFilterChange('isRemote', e.target.value)} style={inputStyle}>
-              <option value="">All Locations</option>
-              <option value="remote">Remote Only</option>
-              <option value="onsite">On-site Only</option>
-            </select>
+            <DropdownSelect
+              value={filters.isRemote}
+              onChange={(v) => handleFilterChange('isRemote', v)}
+              options={[
+                { label: 'All Locations', value: '' },
+                { label: 'Remote Only', value: 'remote' },
+                { label: 'On-site Only', value: 'onsite' },
+              ]}
+            />
 
-            <p style={sectionLabelStyle}>State</p>
-            <select value={filters.state} onChange={(e) => handleFilterChange('state', e.target.value)} style={inputStyle}>
-              <option value="">All States</option>
-              {['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'].map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            <p style={sectionLabelStyle}>City</p>
+            <DropdownSelect
+              value={filters.city}
+              onChange={(v) => handleFilterChange('city', v)}
+              options={[
+                { label: 'All Cities', value: '' },
+                ...MICHIGAN_CITIES
+                  .filter(c => c.value !== 'MI:all')
+                  .map(c => ({ label: c.label, value: c.label }))
+              ]}
+            />
           </div>
         </div>
 

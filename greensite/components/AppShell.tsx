@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -94,8 +94,26 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname()
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
+  const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
+  const profileMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false)
+      }
+    }
+    if (profileMenuOpen) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [profileMenuOpen])
+
+  async function handleSignOut() {
+    await signOut()
+    router.push('/')
+  }
 
   const sidebarWidth = collapsed ? 60 : 200
 
@@ -115,13 +133,13 @@ export default function AppShell({ children }: AppShellProps) {
         {/* Logo section — aligned to sidebar width */}
         {/* Logo + title — single flex row, everything center-aligned */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 18px', flexShrink: 0 }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none', flexShrink: 0 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
             <Image
-              src="/grepic.png"
+              src="/yup.png"
               alt="Greenify logo"
-              width={38}
-              height={38}
-              style={{ display: 'block', borderRadius: '5px', flexShrink: 0 }}
+              width={34}
+              height={34}
+              style={{ display: 'block', flexShrink: 0 }}
             />
             {!collapsed && (
               <span style={{ color: 'white', fontWeight: 700, fontSize: '15px', lineHeight: '1', whiteSpace: 'nowrap' }}>
@@ -145,20 +163,84 @@ export default function AppShell({ children }: AppShellProps) {
           {user?.email && (
             <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>{user.email}</span>
           )}
-          <div style={{
-            width: '30px',
-            height: '30px',
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,255,255,0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}>
-            <UserIcon size={14} />
+          <div ref={profileMenuRef} style={{ position: 'relative' }}>
+            <div
+              onClick={() => setProfileMenuOpen(o => !o)}
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                background: profileMenuOpen ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <UserIcon size={14} />
+            </div>
+            {profileMenuOpen && (
+              <div style={{
+                position: 'absolute',
+                top: '38px',
+                right: 0,
+                background: '#1e1e1e',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                minWidth: '140px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                zIndex: 100,
+              }}>
+                <Link
+                  href="/settings"
+                  onClick={() => setProfileMenuOpen(false)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 14px',
+                    color: '#d4d4d8',
+                    fontSize: '13px',
+                    textDecoration: 'none',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                  onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <GearIcon size={14} />
+                  Settings
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    padding: '10px 14px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#f87171',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(248,113,113,0.07)')}
+                  onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>

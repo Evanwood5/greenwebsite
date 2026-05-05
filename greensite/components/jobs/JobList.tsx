@@ -11,11 +11,13 @@ interface Job {
   state: string | null
   is_remote: boolean | null
   experience_level?: string | null
+  job_field_id?: number | null
 }
 
 interface JobListProps {
   jobs: Job[]
   loading?: boolean
+  fieldCategoryMap?: Record<number, string>
 }
 
 function ExternalLinkIcon() {
@@ -266,7 +268,7 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
   },
 }
 
-function JobTableRow({ job, isLast }: { job: Job; isLast?: boolean }) {
+function JobTableRow({ job, isLast, fieldCategoryMap }: { job: Job; isLast?: boolean; fieldCategoryMap?: Record<number, string> }) {
   const [hovered, setHovered] = useState(false)
   const location = job.is_remote ? 'Remote' : [job.city, job.state].filter(Boolean).join(', ') || '—'
 
@@ -285,11 +287,12 @@ function JobTableRow({ job, isLast }: { job: Job; isLast?: boolean }) {
       onMouseLeave={() => setHovered(false)}
       style={{ background: hovered ? 'rgba(255,255,255,0.03)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.04)' }}
     >
-      {/* Category icon */}
+      {/* Category icon — prefer DB category, fall back to title inference */}
       <td style={{ ...cellStyle, width: '36px', paddingRight: '4px' }}>
         {(() => {
-          const cat = inferCategory(job.job_title)
-          const meta = CATEGORY_META[cat]
+          const dbCat = job.job_field_id != null ? fieldCategoryMap?.[job.job_field_id] : undefined
+          const cat = (dbCat as JobCategory | undefined) ?? inferCategory(job.job_title)
+          const meta = CATEGORY_META[cat] ?? CATEGORY_META.other
           return (
             <div style={{ width: '26px', height: '26px', borderRadius: '6px', background: meta.bg, color: meta.color, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
               {meta.icon}
@@ -400,7 +403,7 @@ function JobTableRow({ job, isLast }: { job: Job; isLast?: boolean }) {
   )
 }
 
-export default function JobList({ jobs, loading }: JobListProps) {
+export default function JobList({ jobs, loading, fieldCategoryMap }: JobListProps) {
   if (loading) {
     return (
       <div style={{ background: '#191919', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.09)', overflow: 'hidden' }}>
@@ -457,7 +460,7 @@ export default function JobList({ jobs, loading }: JobListProps) {
         </thead>
         <tbody>
           {jobs.map((job, i) => (
-            <JobTableRow key={job.job_id} job={job} isLast={i === jobs.length - 1} />
+            <JobTableRow key={job.job_id} job={job} isLast={i === jobs.length - 1} fieldCategoryMap={fieldCategoryMap} />
           ))}
         </tbody>
       </table>

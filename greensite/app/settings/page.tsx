@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
+import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 interface Preference {
   jobTypes: string[]
@@ -11,55 +13,6 @@ interface Preference {
   experienceLevel: string
   includeRemote: boolean
 }
-
-const MICHIGAN_CITIES = [
-  { value: 'MI:all', label: 'All Michigan (statewide)' },
-  { value: 'MI:Ann Arbor', label: 'Ann Arbor' },
-  { value: 'MI:Battle Creek', label: 'Battle Creek' },
-  { value: 'MI:Bay City', label: 'Bay City' },
-  { value: 'MI:Dearborn', label: 'Dearborn' },
-  { value: 'MI:Detroit', label: 'Detroit' },
-  { value: 'MI:East Lansing', label: 'East Lansing' },
-  { value: 'MI:Farmington Hills', label: 'Farmington Hills' },
-  { value: 'MI:Flint', label: 'Flint' },
-  { value: 'MI:Jackson', label: 'Jackson' },
-  { value: 'MI:Lansing', label: 'Lansing' },
-  { value: 'MI:Livonia', label: 'Livonia' },
-  { value: 'MI:Monroe', label: 'Monroe' },
-  { value: 'MI:Novi', label: 'Novi' },
-  { value: 'MI:Pontiac', label: 'Pontiac' },
-  { value: 'MI:Port Huron', label: 'Port Huron' },
-  { value: 'MI:Rochester Hills', label: 'Rochester Hills' },
-  { value: 'MI:Southfield', label: 'Southfield' },
-  { value: 'MI:Sterling Heights', label: 'Sterling Heights' },
-  { value: 'MI:Taylor', label: 'Taylor' },
-  { value: 'MI:Troy', label: 'Troy' },
-  { value: 'MI:Warren', label: 'Warren' },
-  { value: 'MI:Westland', label: 'Westland' },
-  { value: 'MI:Grand Rapids', label: 'Grand Rapids' },
-  { value: 'MI:Holland', label: 'Holland' },
-  { value: 'MI:Muskegon', label: 'Muskegon' },
-  { value: 'MI:Ludington', label: 'Ludington' },
-  { value: 'MI:Wyoming', label: 'Wyoming' },
-  { value: 'MI:Benton Harbor', label: 'Benton Harbor' },
-  { value: 'MI:St. Joseph', label: 'St. Joseph' },
-  { value: 'MI:Kalamazoo', label: 'Kalamazoo' },
-  { value: 'MI:Three Rivers', label: 'Three Rivers' },
-  { value: 'MI:Midland', label: 'Midland' },
-  { value: 'MI:Saginaw', label: 'Saginaw' },
-  { value: 'MI:Mount Pleasant', label: 'Mount Pleasant' },
-  { value: 'MI:Traverse City', label: 'Traverse City' },
-  { value: 'MI:Petoskey', label: 'Petoskey' },
-  { value: 'MI:Gaylord', label: 'Gaylord' },
-  { value: 'MI:Cadillac', label: 'Cadillac' },
-  { value: 'MI:Alpena', label: 'Alpena' },
-  { value: 'MI:Bad Axe', label: 'Bad Axe' },
-  { value: 'MI:Marquette', label: 'Marquette' },
-  { value: 'MI:Escanaba', label: 'Escanaba' },
-  { value: 'MI:Houghton', label: 'Houghton' },
-  { value: 'MI:Sault Ste. Marie', label: 'Sault Ste. Marie' },
-  { value: 'MI:Menominee', label: 'Menominee' },
-]
 
 function CheckCircleIcon({ color = '#29C115' }: { color?: string }) {
   return (
@@ -291,8 +244,18 @@ function PrefEditor({ pref, onChange }: PrefEditorProps) {
   )
 }
 
+function getUniversityFromDomain(domain: string | null | undefined): string {
+  if (!domain) return 'None'
+  if (domain.includes('msu.edu')) return 'Michigan State'
+  if (domain.includes('umich.edu')) return 'University of Michigan'
+  if (domain.includes('wayne.edu')) return 'Wayne State'
+  return domain
+}
+
 export default function SettingsPage() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
+  const router = useRouter()
+  const [orgDomain, setOrgDomain] = useState<string | null | undefined>(undefined)
   const [resumeUploaded, setResumeUploaded] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [removing, setRemoving] = useState(false)
@@ -313,8 +276,14 @@ export default function SettingsPage() {
 
   const loadResumeStatus = async () => {
     if (!user?.id) return
-    const { data } = await supabase.from('profiles').select('resume').eq('user_id', user.id).single()
+    const { data } = await supabase.from('profiles').select('resume, org_id').eq('user_id', user.id).single()
     setResumeUploaded(!!(data?.resume))
+    if (data?.org_id) {
+      const { data: orgData } = await supabase.from('orgs').select('domain').eq('id', data.org_id).single()
+      setOrgDomain(orgData?.domain ?? null)
+    } else {
+      setOrgDomain(null)
+    }
   }
 
   const loadPreferences = async () => {
@@ -419,10 +388,12 @@ export default function SettingsPage() {
     if (editingPref === id) setEditingPref(null)
   }
 
-  const university = user?.email?.includes('umich') ? 'University of Michigan'
-    : user?.email?.includes('msu') ? 'Michigan State University'
-    : user?.email?.includes('wayne') ? 'Wayne State University'
-    : 'Michigan University'
+  const university = orgDomain === undefined ? '—' : getUniversityFromDomain(orgDomain)
+
+  async function handleSignOut() {
+    await signOut()
+    router.push('/')
+  }
 
   const prefItems = [
     { id: 1 as const, pref: pref1, label: 'Job Preference #1', sub: 'Set up your first job search criteria' },
@@ -432,9 +403,37 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <div style={{ maxWidth: '980px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Settings</h1>
-          <p style={{ color: '#52525b', fontSize: '12px' }}>Manage your account, resume, and job preferences</p>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div>
+            <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Settings</h1>
+            <p style={{ color: '#52525b', fontSize: '12px' }}>Manage your account, resume, and job preferences</p>
+          </div>
+          <button
+            onClick={handleSignOut}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '7px',
+              padding: '8px 14px',
+              background: 'transparent',
+              border: '1px solid rgba(248,113,113,0.3)',
+              borderRadius: '8px',
+              color: '#f87171',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(248,113,113,0.07)')}
+            onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sign Out
+          </button>
         </div>
 
         {/* Profile Information */}
