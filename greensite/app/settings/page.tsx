@@ -56,10 +56,11 @@ function displayLocation(loc: string) {
 const emptyPref: Preference = { jobTypes: [], location: '', experienceLevel: 'any', includeRemote: true }
 
 const cardStyle: React.CSSProperties = {
-  background: '#0d0d0d',
+  background: '#1c1c1c',
   borderRadius: '10px',
   padding: '16px',
-  border: '1px solid rgba(255,255,255,0.07)',
+  border: '1px solid rgba(255,255,255,0.18)',
+  boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset',
   marginBottom: '10px',
 }
 

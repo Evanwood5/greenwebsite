@@ -22,8 +22,8 @@ export default function LargeStatCard({
   return (
     <div
       style={{
-        background: "#1a1a1a",
-        borderRadius: 12,
+        background: "#1c1c1c",
+        borderRadius: 12, border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset",
         padding: "14px 16px",
         color: "white",
         display: "flex",

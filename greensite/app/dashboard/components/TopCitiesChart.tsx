@@ -25,8 +25,8 @@ export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
   return (
     <div
       style={{
-        background: "#1a1a1a",
-        borderRadius: 16,
+        background: "#1c1c1c",
+        borderRadius: 16, border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset",
         padding: 24,
         color: "white",
         height: "100%",

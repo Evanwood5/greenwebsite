@@ -339,7 +339,7 @@ function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onS
       onMouseLeave={() => setHovered(false)}
       style={{ background: hovered ? 'rgba(255,255,255,0.03)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.04)' }}
     >
-      {/* Category icon — prefer DB category, fall back to title inference */}
+      {/* Category icon — from DB fieldCategoryMap, fall back to title inference */}
       <td style={{ ...cellStyle, width: '36px', paddingRight: '4px' }}>
         {(() => {
           const dbCat = job.job_field_id != null ? fieldCategoryMap?.[job.job_field_id] : undefined
@@ -462,7 +462,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, 
   const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
-      <div style={{ background: '#191919', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.09)', overflow: 'hidden' }}>
+      <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', overflow: 'hidden', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
         {[...Array(8)].map((_, i) => (
           <div key={i} style={{ height: '44px', borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }} />
         ))}
@@ -492,7 +492,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, 
   }
 
   return (
-    <div style={{ background: '#191919', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.09)', overflow: 'hidden' }}>
+    <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', overflow: 'hidden', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: '44px' }} />

@@ -93,7 +93,7 @@ export default function DashboardPage() {
                   data={data.subcategoryCounts || {}}
                   title="Top Skills in Demand"
                 />
-                <div style={{ background: "#1a1a1a", borderRadius: 12, padding: 14, flex: 1, display: "flex", flexDirection: "column" }}>
+                <div style={{ background: "#1c1c1c", borderRadius: 12, padding: 14, flex: 1, display: "flex", flexDirection: "column", border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset" }}>
                   <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "white", flexShrink: 0 }}>
                     Job Posting Trends by Category
                   </h3>
