@@ -80,13 +80,15 @@ useEffect(() => {
       <div
         style={{
           height: "100%",
-          background: "#1a1a1a",
+          background: "#1c1c1c",
           borderRadius: 16,
           padding: 16,
           color: "white",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          border: "1px solid rgba(255,255,255,0.18)",
+          boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset",
         }}
       >
         Loading trends...
@@ -98,7 +100,7 @@ useEffect(() => {
     <div
       style={{
         height: "100%",
-        background: "#1a1a1a",
+        background: "#1c1c1c",
         borderRadius: 16,
         padding: 16,
         color: "white",

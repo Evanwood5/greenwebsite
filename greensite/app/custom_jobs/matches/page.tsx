@@ -65,11 +65,15 @@ export default function ResumeJobsPage() {
     }
   }
 
+  const newThisWeek = jobs.filter(j => {
+    const days = Math.floor((Date.now() - new Date(j.matched_at).getTime()) / 86400000)
+    return days < 7
+  }).length
+
   const statCards = [
-    { label: 'Total Matches', value: jobs.length.toString(), color: '#29C115', bg: 'rgba(41,193,21,0.08)', border: 'rgba(41,193,21,0.15)' },
-    { label: 'New This Week', value: jobs.length > 0 ? jobs.length.toString() : '0', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
-    { label: 'Saved Jobs', value: '0', color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.15)' },
-    { label: 'Applications', value: '0', color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
+    { label: 'Total Matches', value: jobs.length.toString(), color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
+    { label: 'New This Week',  value: newThisWeek.toString(),  color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)',  border: 'rgba(96,165,250,0.28)' },
+    { label: 'Saved Jobs',     value: '0',                     color: '#fb923c', labelColor: '#fdba74', bg: 'rgba(249,115,22,0.13)',  border: 'rgba(249,115,22,0.28)' },
   ]
 
   return (
@@ -79,16 +83,17 @@ export default function ResumeJobsPage() {
         {/* Header */}
         <div style={{ marginBottom: '16px' }}>
           <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Resume Jobs</h1>
-          <p style={{ color: '#52525b', fontSize: '12px' }}>AI-powered matches based on your resume and preferences</p>
+          <p style={{ color: '#71717a', fontSize: '12px' }}>AI-powered matches based on your resume and preferences</p>
         </div>
 
         {/* Resume settings banner */}
         <div style={{
-          background: '#0d0d0d',
+          background: '#1c1c1c',
           borderRadius: '10px',
           padding: '10px 16px',
           marginBottom: '14px',
-          border: '1px solid rgba(255,255,255,0.07)',
+          border: '1px solid rgba(255,255,255,0.18)',
+          boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -107,7 +112,7 @@ export default function ResumeJobsPage() {
             </div>
             <div>
               <p style={{ color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>Resume Settings</p>
-              <p style={{ color: '#52525b', fontSize: '11px' }}>Manage your resume and job preferences</p>
+              <p style={{ color: '#71717a', fontSize: '11px' }}>Manage your resume and job preferences</p>
             </div>
           </div>
           <Link
@@ -127,49 +132,67 @@ export default function ResumeJobsPage() {
           </Link>
         </div>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
+        {/* Stats — 3 cards, no Applications */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '14px' }}>
           {statCards.map((card) => (
             <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
-              <p style={{ color: '#52525b', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
+              <p style={{ color: card.labelColor, fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
               <p style={{ color: card.color, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
             </div>
           ))}
         </div>
 
-        {/* Jobs list */}
-        {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} style={{ background: '#0d0d0d', borderRadius: '10px', height: '180px', border: '1px solid rgba(255,255,255,0.07)' }} />
-            ))}
-          </div>
-        ) : jobs.length === 0 ? (
+        {/* Jobs panel */}
+        <div style={{
+          background: '#1c1c1c',
+          border: '1px solid rgba(255,255,255,0.18)',
+          borderRadius: '12px',
+          minHeight: '300px',
+          overflow: 'hidden',
+          boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset',
+        }}>
+          {/* Panel header */}
           <div style={{
-            background: '#0d0d0d',
-            borderRadius: '10px',
-            padding: '60px 20px',
-            textAlign: 'center',
-            border: '1px solid rgba(255,255,255,0.07)',
+            padding: '12px 16px',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}>
-            <p style={{ color: 'white', fontSize: '15px', fontWeight: 600, marginBottom: '6px' }}>No matches yet</p>
-            <p style={{ color: '#52525b', fontSize: '12px', marginBottom: '18px' }}>
-              Upload your resume and set job preferences to receive AI-powered matches.
-            </p>
-            <Link
-              href="/settings"
-              style={{ padding: '7px 16px', background: '#22a010', color: 'white', borderRadius: '7px', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}
-            >
-              Set Up Resume
-            </Link>
+            <span style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600 }}>Matched Jobs</span>
+            {!loading && jobs.length > 0 && (
+              <span style={{ color: '#52525b', fontSize: '11px' }}>{jobs.length} result{jobs.length !== 1 ? 's' : ''}</span>
+            )}
           </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-            {jobs.map((job) => (
-              <DarkJobCard key={job.id} job={job} />
-            ))}
+
+          <div style={{ padding: '16px' }}>
+            {loading ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} style={{ background: '#0d0d0d', borderRadius: '10px', height: '180px', border: '1px solid rgba(255,255,255,0.07)' }} />
+                ))}
+              </div>
+            ) : jobs.length === 0 ? (
+              <div style={{ padding: '48px 20px', textAlign: 'center' }}>
+                <div style={{ color: '#3f3f46', marginBottom: '10px', display: 'flex', justifyContent: 'center' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                </div>
+                <p style={{ color: '#e4e4e7', fontSize: '14px', fontWeight: 500, marginBottom: '4px' }}>No matches yet</p>
+                <p style={{ color: '#71717a', fontSize: '12px' }}>
+                  Upload your resume and set job preferences to receive AI-powered matches.
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                {jobs.map((job) => (
+                  <DarkJobCard key={job.id} job={job} />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
       </div>
     </AppShell>

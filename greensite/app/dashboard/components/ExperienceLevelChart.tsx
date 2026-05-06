@@ -59,7 +59,7 @@ export default function ExperienceLevelChart({ data, title }: ExperienceLevelCha
           />
           <Tooltip
             contentStyle={{
-              background: '#1a1a1a',
+              background: '#1c1c1c',
               border: '1px solid #333',
               borderRadius: 8,
               color: 'white'

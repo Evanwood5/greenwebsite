@@ -292,10 +292,10 @@ export default function JobsPage() {
   }
 
   const statCards = [
-    { label: 'Total Jobs', value: totalCount > 0 ? totalCount.toLocaleString() : '...', color: '#29C115', bg: 'rgba(41,193,21,0.08)', border: 'rgba(41,193,21,0.15)' },
-    { label: 'New This Week', value: '89', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.15)' },
-    { label: 'Saved Jobs', value: savedJobIds.size.toString(), color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.15)' },
-    { label: 'Applications', value: '0', color: '#a78bfa', bg: 'rgba(167,139,250,0.08)', border: 'rgba(167,139,250,0.15)' },
+    { label: 'Total Jobs', value: totalCount > 0 ? totalCount.toLocaleString() : '...', color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
+    { label: 'New This Week', value: '89', color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)', border: 'rgba(96,165,250,0.28)' },
+    { label: 'Saved Jobs', value: savedJobIds.size.toString(), color: '#fb923c', labelColor: '#fdba74', bg: 'rgba(249,115,22,0.13)', border: 'rgba(249,115,22,0.28)' },
+    { label: 'Tracking', value: '0', color: '#c4b5fd', labelColor: '#ddd6fe', bg: 'rgba(139,92,246,0.18)', border: 'rgba(139,92,246,0.38)' },
   ]
 
   if (authLoading) {
@@ -320,7 +320,7 @@ export default function JobsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
             {statCards.map((card) => (
               <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
-                <p style={{ color: '#52525b', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
+                <p style={{ color: (card as any).labelColor ?? '#71717a', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
                 <p style={{ color: card.color, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
               </div>
             ))}
@@ -358,7 +358,7 @@ export default function JobsPage() {
 
         {/* Right filter panel */}
         <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
-          <div style={{ background: '#1a1a1a', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', padding: '14px' }}>
+          <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '14px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>
                 <FilterIcon />
