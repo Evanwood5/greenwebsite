@@ -57,7 +57,7 @@ export default function CTASection() {
                 For personal support, questions, or technical issues, join our Discord. Our team and fellow students are ready to help you get the most out of Greenify.
               </p>
               <a
-                href="https://discord.gg/greenify"
+                href="https://discord.gg/SduTEu4C6w"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-all duration-200 cursor-pointer"

@@ -46,13 +46,10 @@ export default function MoleculeBackground() {
     const buildNodes = () => {
       const W = canvas.width
       const H = canvas.height
-      // Margin zone: left 0–340px, right (W-340)–W
       const LX = 340
       const RX = W - 340
-
       const rand = (min: number, max: number) => Math.random() * (max - min) + min
 
-      // Random anchor points scattered across both margin zones
       const leftAnchors = Array.from({ length: 7 }, () => ({
         x: rand(30, LX),
         y: rand(40, H - 40),
@@ -63,7 +60,7 @@ export default function MoleculeBackground() {
       }))
 
       nodes = [...leftAnchors, ...rightAnchors].flatMap(a =>
-        makeCluster(a.x, a.y, rand(5, 10), rand(70, 130))
+        makeCluster(a.x, a.y, rand(5, 10), rand(140, 220))
       )
     }
 
@@ -81,15 +78,11 @@ export default function MoleculeBackground() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       for (const n of nodes) {
-        // Very gentle pull toward home — loose enough to feel chaotic
         n.vx += (n.homeX - n.x) * 0.00015
         n.vy += (n.homeY - n.y) * 0.00015
-
-        // Small random jitter for organic feel
         n.vx += (Math.random() - 0.5) * 0.02
         n.vy += (Math.random() - 0.5) * 0.02
 
-        // Speed cap
         const speed = Math.sqrt(n.vx * n.vx + n.vy * n.vy)
         if (speed > 0.6) { n.vx *= 0.6 / speed; n.vy *= 0.6 / speed }
 

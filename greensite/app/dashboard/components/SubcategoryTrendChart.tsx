@@ -22,6 +22,30 @@ const COLORS = [
   "#a855f7",  // Purple alt
 ];
 
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null
+  const filtered = payload.filter((entry: any) => entry.value > 0)
+  if (!filtered.length) return null
+  return (
+    <div style={{
+      background: '#111111',
+      border: '1px solid #2a2a2a',
+      borderRadius: 8,
+      padding: '10px 14px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.95)',
+      pointerEvents: 'none',
+      minWidth: 180,
+    }}>
+      <p style={{ color: '#888', fontSize: 11, marginBottom: 8, fontWeight: 600 }}>{label}</p>
+      {filtered.map((entry: any) => (
+        <p key={entry.name} style={{ color: entry.color, fontSize: 12, margin: '3px 0' }}>
+          {entry.name}: <span style={{ color: 'white', fontWeight: 600 }}>{entry.value}</span>
+        </p>
+      ))}
+    </div>
+  )
+}
+
 export default function SubcategoryTrendChart({ title, category }: SubcategoryTrendChartProps) {
   const [trendData, setTrendData] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
@@ -97,13 +121,9 @@ useEffect(() => {
             stroke="#888"
             tick={{ fill: '#888' }}
           />
-          <Tooltip 
-            contentStyle={{ 
-              background: '#1a1a1a', 
-              border: '1px solid #333',
-              borderRadius: 8,
-              color: 'white'
-            }}
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ stroke: 'rgba(255,255,255,0.15)', strokeWidth: 1 }}
           />
           <Legend 
             wrapperStyle={{ paddingTop: '10px' }}

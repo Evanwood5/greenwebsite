@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Job {
   job_id: string
@@ -138,6 +138,8 @@ export function DarkJobCard({
   matchScore?: number
 }) {
   const location = [job.city, job.state].filter(Boolean).join(', ') || (job.is_remote ? 'Remote' : 'Not listed')
+  const cat = inferCategory(job.job_title)
+  const meta = CATEGORY_META[cat] ?? CATEGORY_META.other
 
   return (
     <div style={{
@@ -160,9 +162,10 @@ export function DarkJobCard({
           {matchScore}% Match
         </div>
       )}
+
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-        <div style={{ width: '30px', height: '30px', borderRadius: '7px', background: 'rgba(41,193,21,0.08)', border: '1px solid rgba(41,193,21,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <BriefcaseIcon />
+        <div style={{ width: '32px', height: '32px', borderRadius: '7px', background: meta.bg, color: meta.color, border: `1px solid ${meta.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {meta.icon}
         </div>
         <div style={{ flex: 1, minWidth: 0, paddingRight: matchScore !== undefined ? '72px' : '0' }}>
           <h3 style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, marginBottom: '2px', lineHeight: '1.35', letterSpacing: '-0.01em' }}>
@@ -171,6 +174,7 @@ export function DarkJobCard({
           <p style={{ color: '#71717a', fontSize: '11px' }}>{job.company_name || 'Company not listed'}</p>
         </div>
       </div>
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <PinIcon />
@@ -181,10 +185,14 @@ export function DarkJobCard({
           <span style={{ color: '#52525b', fontSize: '11px' }}>Posted {postedAgo(job.created_at)}</span>
         </div>
       </div>
-      {job.job_type && (
-        <div><JobTypeBadge type={job.job_type} /></div>
-      )}
+
+      <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+        {job.job_type && <JobTypeBadge type={job.job_type} />}
+        {job.experience_level && <LevelBadge level={job.experience_level} />}
+      </div>
+
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} />
+
       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
         {job.job_href ? (
           <a href={job.job_href} target="_blank" rel="noopener noreferrer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '7px 10px', background: '#29C115', color: 'white', borderRadius: '6px', fontWeight: 500, fontSize: '12px', textDecoration: 'none' }}>
@@ -195,14 +203,40 @@ export function DarkJobCard({
             No link
           </span>
         )}
+
+        {/* LinkedIn */}
+        <a
+          href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company_name ?? '')}&origin=FACETED_SEARCH&geoUrn=%5B%22103051080%22%5D`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Search on LinkedIn"
+          style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(59,130,246,0.08)', color: '#3b82f6', borderRadius: '6px', border: '1px solid rgba(59,130,246,0.2)', textDecoration: 'none', flexShrink: 0 }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(59,130,246,0.16)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(59,130,246,0.08)')}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+
+        {/* Unsave bookmark */}
+        {showDelete && onDelete && (
+          <button
+            onClick={onDelete}
+            aria-label="Unsave job"
+            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(239,68,68,0.1)', color: '#ef4444', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.25)', cursor: 'pointer', flexShrink: 0 }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.2)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+            </svg>
+          </button>
+        )}
+
         {showSave && (
           <button style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#52525b', cursor: 'pointer' }} aria-label="Save job">
             <BookmarkOutlineIcon />
-          </button>
-        )}
-        {showDelete && onDelete && (
-          <button onClick={onDelete} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#52525b', cursor: 'pointer' }} aria-label="Remove saved job">
-            <TrashIcon />
           </button>
         )}
       </div>
@@ -279,6 +313,8 @@ function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onS
 }) {
   const [hovered, setHovered] = useState(false)
   const [saved, setSaved] = useState(initialSaved ?? false)
+
+  useEffect(() => { setSaved(initialSaved ?? false) }, [initialSaved])
 
   function handleSave(e: React.MouseEvent) {
     e.stopPropagation()
@@ -376,10 +412,10 @@ function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onS
 
           {/* LinkedIn */}
           <a
-            href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent((job.job_title ?? '') + ' ' + (job.company_name ?? ''))}`}
+            href={`https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(job.company_name ?? '')}&origin=FACETED_SEARCH&geoUrn=%5B%22103051080%22%5D`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Search on LinkedIn"
+            aria-label="Find company employees on LinkedIn"
             style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               width: '28px', height: '28px', background: 'rgba(59,130,246,0.08)',
