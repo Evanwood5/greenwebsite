@@ -156,10 +156,27 @@ export default function JobsPage() {
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
-  const [filters, setFilters] = useState<FilterOptions>({ category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' })
-  const [searchInput, setSearchInput] = useState('')
+  const [filters, setFilters] = useState<FilterOptions>(() => {
+    if (typeof window === 'undefined') return { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
+    try {
+      const saved = localStorage.getItem('jobFilters')
+      return saved ? JSON.parse(saved) : { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
+    } catch { return { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' } }
+  })
+  const [searchInput, setSearchInput] = useState(() => {
+    if (typeof window === 'undefined') return ''
+    try {
+      const saved = localStorage.getItem('jobFilters')
+      return saved ? JSON.parse(saved).searchTerm ?? '' : ''
+    } catch { return '' }
+  })
   const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
+
+  // Persist filters to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem('jobFilters', JSON.stringify(filters))
+  }, [filters])
 
   // Load saved job IDs for the current user
   useEffect(() => {
@@ -349,7 +366,7 @@ export default function JobsPage() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setFilters({ category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }); setSearchInput('') }}
+                  onClick={() => { const empty = { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }; setFilters(empty); setSearchInput(''); localStorage.setItem('jobFilters', JSON.stringify(empty)) }}
                   style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: '0' }}
                 >
                   Clear all

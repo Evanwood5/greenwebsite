@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { geoPath, geoAlbersUsa } from "d3-geo";
 import { scaleQuantize } from "d3-scale";
 import { feature } from "topojson-client";
-import { aggregateByCounty } from "../data/michiganCounties";
 
 interface CountyData {
   county: string;
@@ -180,7 +179,7 @@ useEffect(() => {
                     strokeWidth={isHovered ? 2.5 : 1}
                     style={{
                       cursor: "pointer",
-                      transition: "all 0.2s",
+                      transition: "fill 0.15s",
                     }}
                     onMouseEnter={() => setHoveredCounty(countyName)}
                     onMouseLeave={() => setHoveredCounty(null)}
@@ -196,18 +195,19 @@ useEffect(() => {
         {/* RIGHT SIDE - Legend & Info (60%) */}
         <div style={{ flex: "0 0 60%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
 
-          {/* Hover Info */}
-          {hoveredCounty && (
-            <div style={{
-              textAlign: "center",
-              fontSize: 18,
-              color: "#60a5fa",
-              marginBottom: 20,
-              fontWeight: 600,
-            }}>
-              {hoveredCounty} County: {countyJobMap[hoveredCounty] || 0} jobs
-            </div>
-          )}
+          {/* Hover Info — always rendered to prevent layout shift */}
+          <div style={{
+            textAlign: "center",
+            fontSize: 14,
+            color: "#60a5fa",
+            marginBottom: 20,
+            fontWeight: 600,
+            height: 22,
+            opacity: hoveredCounty ? 1 : 0,
+            transition: "opacity 0.15s",
+          }}>
+            {hoveredCounty ? `${hoveredCounty} County: ${countyJobMap[hoveredCounty] || 0} jobs` : "\u200E"}
+          </div>
 
           {/* Color Legend */}
           <div style={{

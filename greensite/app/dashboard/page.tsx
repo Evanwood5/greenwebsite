@@ -73,7 +73,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Row 2: Two-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr", gap: 14, alignItems: "start" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.8fr", gap: 14, alignItems: "stretch" }}>
 
               {/* Left: Companies + Cities stacked */}
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -93,11 +93,11 @@ export default function DashboardPage() {
                   data={data.subcategoryCounts || {}}
                   title="Top Skills in Demand"
                 />
-                <div style={{ background: "#1a1a1a", borderRadius: 12, padding: 14 }}>
-                  <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "white" }}>
+                <div style={{ background: "#1a1a1a", borderRadius: 12, padding: 14, flex: 1, display: "flex", flexDirection: "column" }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "white", flexShrink: 0 }}>
                     Job Posting Trends by Category
                   </h3>
-                  <div style={{ height: 240 }}>
+                  <div style={{ flex: 1, minHeight: 240 }}>
                     <SubcategoryTrendChart
                       title=""
                       category={field.charAt(0).toUpperCase() + field.slice(1)}

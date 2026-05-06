@@ -133,12 +133,12 @@ export default function AppShell({ children }: AppShellProps) {
         {/* Logo section — aligned to sidebar width */}
         {/* Logo + title — single flex row, everything center-aligned */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 18px', flexShrink: 0 }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', flexShrink: 0 }}>
             <Image
-              src="/yup.png"
+              src="/finally.png"
               alt="Greenify logo"
-              width={34}
-              height={34}
+              width={24}
+              height={24}
               style={{ display: 'block', flexShrink: 0 }}
             />
             {!collapsed && (
