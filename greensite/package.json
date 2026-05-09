@@ -20,6 +20,7 @@
     "react-dom": "19.2.3",
     "react-is": "^19.2.4",
     "recharts": "^3.7.0",
+    "swiper": "^12.1.4",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {

@@ -9,7 +9,7 @@ interface HeroSectionProps {
 function HeroMockup() {
   const jobs = [
     { company: 'Microsoft', role: 'Software Engineer Intern', time: 'Just now', isNew: true },
-    { company: 'Google', role: 'SWE — New Grad', time: '2h ago', isNew: false },
+    { company: 'Google', role: 'SWE New Grad', time: '2h ago', isNew: false },
     { company: 'Tesla', role: 'Data Engineer', time: '5h ago', isNew: false },
     { company: 'Amazon', role: 'Product Manager', time: '8h ago', isNew: false },
   ];
@@ -47,7 +47,7 @@ function HeroMockup() {
 
       {/* Live indicator */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-        <span style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7', letterSpacing: '-0.01em' }}>Live Job Feed — Michigan</span>
+        <span style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7', letterSpacing: '-0.01em' }}>Live Job Feed · Michigan</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <div
             style={{ width: 6, height: 6, borderRadius: '50%', background: '#29C115' }}
@@ -149,7 +149,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
           className="text-center text-[17px] text-zinc-400 leading-relaxed max-w-xl mx-auto mb-10"
           style={{ letterSpacing: '-0.01em' }}
         >
-          Real-time job tracking from 1,000+ company career pages. Get notified before jobs appear on LinkedIn or Indeed — and get hired first.
+          Real-time job tracking from 1,000+ company career pages. Get notified before jobs appear on major job boards and get hired first.
         </p>
 
         {/* CTAs */}
@@ -187,7 +187,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
                 onMouseOver={(e) => (e.currentTarget.style.background = '#1a8a0d')}
                 onMouseOut={(e) => (e.currentTarget.style.background = '#22a010')}
               >
-                Get started — it&apos;s free
+                Get started, it&apos;s free
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>

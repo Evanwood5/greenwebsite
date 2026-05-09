@@ -31,6 +31,63 @@ function DocumentIcon() {
   );
 }
 
+function StarIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+  );
+}
+
+function CompanyTrackMockup() {
+  const companies = [
+    { name: 'Ford', role: 'Software Engineer', color: '#3B82F6', colorRgb: '59,130,246', status: 'Watching', newJobs: 2 },
+    { name: 'Sparrow Hospital', role: 'Product Manager', color: '#A855F7', colorRgb: '168,85,247', status: 'Watching', newJobs: 1 },
+    { name: 'Amazon', role: 'Data Analyst', color: '#F97316', colorRgb: '249,115,22', status: 'Watching', newJobs: 0 },
+    { name: 'Rocket Companies', role: 'Any role', color: '#29C115', colorRgb: '41,193,21', status: 'Watching', newJobs: 3 },
+  ];
+  return (
+    <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7' }}>Tracked Companies</div>
+        <div style={{ fontSize: '9px', color: '#29C115', background: 'rgba(41,193,21,0.08)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(41,193,21,0.15)' }}>
+          4 active
+        </div>
+      </div>
+      {companies.map((c, i) => (
+        <div
+          key={i}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '9px 10px',
+            background: c.newJobs > 0 ? `rgba(${c.colorRgb},0.04)` : 'rgba(255,255,255,0.02)',
+            borderRadius: '8px',
+            marginBottom: i < companies.length - 1 ? '6px' : 0,
+            border: c.newJobs > 0 ? `1px solid rgba(${c.colorRgb},0.12)` : '1px solid rgba(255,255,255,0.04)',
+          }}
+        >
+          <div style={{ width: 28, height: 28, borderRadius: '6px', background: `rgba(${c.colorRgb},0.12)`, border: `1px solid rgba(${c.colorRgb},0.2)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: c.color }}>{c.name[0]}</div>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7' }}>{c.name}</div>
+            <div style={{ fontSize: '9px', color: '#52525b' }}>{c.role}</div>
+          </div>
+          {c.newJobs > 0 ? (
+            <div style={{ fontSize: '9px', fontWeight: 700, color: c.color, background: `rgba(${c.colorRgb},0.1)`, padding: '2px 7px', borderRadius: '4px', border: `1px solid rgba(${c.colorRgb},0.2)`, flexShrink: 0 }}>
+              +{c.newJobs} new
+            </div>
+          ) : (
+            <div style={{ fontSize: '9px', color: '#3f3f3f', flexShrink: 0 }}>No new</div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function DashboardMockup() {
   const rows = [
     { company: 'Stripe', role: 'Backend Engineer', color: '#29C115', isTop: true },
@@ -228,9 +285,18 @@ const features = [
     label: 'RESUME MATCHING',
     title: 'Jobs matched to you.',
     description: 'Upload your resume and get personalized recommendations powered by AI. Our algorithm analyzes your skills against every open role.',
-    sub: 'Stop scrolling through irrelevant listings — see only jobs that match your profile.',
+    sub: 'Stop scrolling through irrelevant listings. See only jobs that match your profile.',
     mockup: <ResumeMatchMockup />,
     flip: false,
+  },
+  {
+    icon: <StarIcon />,
+    label: 'COMPANY TRACKING',
+    title: 'Follow the companies you want.',
+    description: 'Pin specific companies and get notified the moment they post a new role. Never miss an opening at the employer you actually want to work for.',
+    sub: 'Track Ford, Sparrow Hospital, Amazon, or any Michigan employer. All in one place.',
+    mockup: <CompanyTrackMockup />,
+    flip: true,
   },
 ];
 
@@ -238,7 +304,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
       className="px-6 py-24"
     >
       <div className="max-w-6xl mx-auto">
