@@ -25,6 +25,12 @@ export default function Navbar() {
 
         <div className="flex items-center gap-6">
           <Link
+            href="#how-it-works"
+            className="text-[13px] text-zinc-400 hover:text-white transition-colors duration-200 cursor-pointer"
+          >
+            How It Works
+          </Link>
+          <Link
             href="#features"
             className="text-[13px] text-zinc-400 hover:text-white transition-colors duration-200 cursor-pointer"
           >
@@ -46,6 +52,17 @@ export default function Navbar() {
                 onMouseOut={(e) => (e.currentTarget.style.background = '#22a010')}
               >
                 Dashboard
+              </Link>
+              <Link
+                href="https://discord.gg/SduTEu4C6w"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200"
+                style={{ background: 'rgba(88,101,242,0.12)', border: '1px solid rgba(88,101,242,0.25)' }}
+                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(88,101,242,0.22)' }}
+                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(88,101,242,0.12)' }}
+              >
+                <Image src="/disc.png" alt="Discord" width={18} height={18} />
               </Link>
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center"

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import StatsSection from "@/components/home/StatsSection";
+import WrapperSection from "@/components/home/WrapperSection";
 import CTASection from "@/components/home/CTASection";
 import MoleculeBackground from "@/components/home/MoleculeBackground";
 
@@ -28,6 +29,7 @@ export default function Home() {
       <Navbar />
       <HeroSection user={user} />
       <StatsSection />
+      <WrapperSection />
       <FeaturesSection />
       <CTASection />
     </div>
