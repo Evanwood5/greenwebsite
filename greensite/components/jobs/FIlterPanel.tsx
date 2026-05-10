@@ -37,9 +37,13 @@ const JOB_FIELDS: Record<string, string[]> = {
     'Aerospace',
     'Materials',
     'Environmental',
+    'Automotive',
+    'Manufacturing',
+    'Trades',
   ],
   'Business': [
     'Finance / Accounting',
+    'Banking / Finance',
     'Marketing / Sales',
     'Operations / Logistics',
     'HR / Recruiting',
@@ -49,6 +53,7 @@ const JOB_FIELDS: Record<string, string[]> = {
   ],
   'Health': [
     'Clinical / Nursing',
+    'Allied Health',
     'Pharmacy',
     'Healthcare Administration',
     'Research / Lab',
@@ -60,21 +65,28 @@ const JOB_FIELDS: Record<string, string[]> = {
 const JOB_TYPES = ['Full Time', 'Part Time', 'Internship']
 
 const LOCATIONS = [
-  'Ada', 'Allen Park', 'Alpena', 'Ann Arbor', 'Auburn Hills',
-  'Bad Axe', 'Battle Creek', 'Bay City', 'Benton Harbor', 'Bloomfield Hills',
-  'Brownstown Charter Township', 'Cadillac', 'Canton', 'Chelsea', 'Chesterfield',
-  'Comstock Park', 'Dearborn', 'Dearborn Heights', 'Detroit', 'Dundee',
-  'East Lansing', 'Eastpointe', 'Escanaba', 'Farmington Hills', 'Farwell',
-  'Flint', 'Gaylord', 'Grand Rapids', 'Holland', 'Houghton',
-  'Iron Mountain', 'Jackson', 'Kalamazoo', 'Kentwood', 'Lansing',
-  'Livonia', 'Ludington', 'Macomb', 'Madison Heights', 'Marquette',
-  'Marshall', 'Menominee', 'Midland', 'Monroe', 'Mount Pleasant',
-  'Muskegon', 'Novi', 'Petoskey', 'Plymouth', 'Pontiac',
-  'Port Huron', 'Portage', 'Rochester Hills', 'Roscommon', 'Royal Oak',
-  'Saginaw', 'Sault Ste. Marie', 'Southfield', 'St. Clair Shores', 'St. Joseph',
-  'Sterling Heights', 'Taylor', 'Three Rivers', 'Traverse City', 'Troy',
-  'Van Buren Twp', 'Walker', 'Warren', 'Westland', 'White Lake',
-  'Wyoming', 'Ypsilanti', 'Zeeland',
+  'Ada', 'Allegan', 'Allen Park', 'Alpena', 'Ann Arbor', 'Auburn', 'Auburn Hills',
+  'Bad Axe', 'Battle Creek', 'Bay City', 'Belleville', 'Benton Harbor', 'Bloomfield Hills', 'Brownstown Township',
+  'Cadillac', 'Canton', 'Chelsea', 'Chesterfield', 'Clinton Township', 'Comstock Park',
+  'Dearborn', 'Dearborn Heights', 'Detroit', 'Dundee',
+  'East Lansing', 'Eastpointe', 'Escanaba',
+  'Farmington Hills', 'Farwell', 'Flint', 'Flushing',
+  'Gaylord', 'Grand Rapids',
+  'Holland', 'Houghton',
+  'Iron Mountain',
+  'Jackson',
+  'Kalamazoo', 'Kalkaska', 'Kentwood',
+  'Lansing', 'Leslie', 'Livonia', 'Ludington',
+  'Macomb', 'Madison Heights', 'Marquette', 'Marshall', 'Menominee', 'Midland', 'Monroe', 'Mount Pleasant', 'Muskegon',
+  'Newport', 'Novi',
+  'Petoskey', 'Plymouth', 'Pontiac', 'Port Huron', 'Portage',
+  'Rochester Hills', 'Rockford', 'Roscommon', 'Royal Oak',
+  'Saginaw', 'Sault Ste. Marie', 'Shelby Township', 'Southfield', 'St. Clair Shores', 'St. Joseph', 'Sterling Heights',
+  'Taylor', 'Three Rivers', 'Traverse City', 'Troy',
+  'Van Buren Township',
+  'Walker', 'Warren', 'Westland', 'White Lake', 'Wyoming',
+  'Ypsilanti',
+  'Zeeland',
 ]
 
 export default function FilterPanel({ onFiltersChange, loading }: FilterPanelProps) {
@@ -85,6 +97,11 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
   const [searchInput, setSearchInput] = useState('')
   const [isRemote, setIsRemote] = useState('')
   const [selectedCity, setSelectedCity] = useState('')
+  const [citySearch, setCitySearch] = useState('')
+
+  const filteredLocations = citySearch
+    ? LOCATIONS.filter(c => c.toLowerCase().includes(citySearch.toLowerCase()))
+    : LOCATIONS
 
   // Debounce search
   useEffect(() => {
@@ -154,6 +171,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
     setSearchInput('')
     setIsRemote('')
     setSelectedCity('')
+    setCitySearch('')
     onFiltersChange({
       jobType: '',
       isRemote: '',
@@ -326,9 +344,23 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
 
             {/* City */}
             <div>
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-3">City</p>
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                {LOCATIONS.map(city => (
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">City</p>
+              {/* City search input */}
+              <input
+                type="text"
+                placeholder="Search city..."
+                value={citySearch}
+                onChange={(e) => setCitySearch(e.target.value)}
+                className="w-full px-2 py-1 mb-2 rounded text-xs text-white placeholder-gray-600 border border-gray-700/50 focus:outline-none focus:border-gray-500"
+                style={{ backgroundColor: '#2a2a2a' }}
+              />
+              {selectedCity && (
+                <div className="mb-2 text-xs" style={{ color: '#29C115' }}>
+                  ✓ {selectedCity}
+                </div>
+              )}
+              <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                {filteredLocations.map(city => (
                   <label key={city} className="flex items-center gap-2 cursor-pointer group">
                     <input
                       type="radio"
@@ -343,6 +375,9 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                     </span>
                   </label>
                 ))}
+                {filteredLocations.length === 0 && (
+                  <p className="text-xs text-gray-600 italic">No cities found</p>
+                )}
               </div>
             </div>
 
