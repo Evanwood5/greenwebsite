@@ -67,7 +67,7 @@ const JOB_TYPES = ['Full Time', 'Part Time', 'Internship']
 const LOCATIONS = [
   'Ada', 'Allegan', 'Allen Park', 'Alpena', 'Ann Arbor', 'Auburn', 'Auburn Hills',
   'Bad Axe', 'Battle Creek', 'Bay City', 'Belleville', 'Benton Harbor', 'Bloomfield Hills', 'Brownstown Township',
-  'Cadillac', 'Canton', 'Chelsea', 'Chesterfield', 'Clinton Township', 'Comstock Park',
+  'Cadillac', 'Canton', 'Chelsea', 'Chesterfield', 'Comstock Park',
   'Dearborn', 'Dearborn Heights', 'Detroit', 'Dundee',
   'East Lansing', 'Eastpointe', 'Escanaba',
   'Farmington Hills', 'Farwell', 'Flint', 'Flushing',
@@ -81,9 +81,8 @@ const LOCATIONS = [
   'Newport', 'Novi',
   'Petoskey', 'Plymouth', 'Pontiac', 'Port Huron', 'Portage',
   'Rochester Hills', 'Rockford', 'Roscommon', 'Royal Oak',
-  'Saginaw', 'Sault Ste. Marie', 'Shelby Township', 'Southfield', 'St. Clair Shores', 'St. Joseph', 'Sterling Heights',
+  'Saginaw', 'Sault Ste. Marie', 'Southfield', 'St. Clair Shores', 'St. Joseph', 'Sterling Heights',
   'Taylor', 'Three Rivers', 'Traverse City', 'Troy',
-  'Van Buren Township',
   'Walker', 'Warren', 'Westland', 'White Lake', 'Wyoming',
   'Ypsilanti',
   'Zeeland',
@@ -103,7 +102,6 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
     ? LOCATIONS.filter(c => c.toLowerCase().includes(citySearch.toLowerCase()))
     : LOCATIONS
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       onFiltersChange({
@@ -194,7 +192,6 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
   return (
     <div className="mb-6">
 
-      {/* Search — always visible */}
       <div className="mb-3">
         <input
           type="text"
@@ -207,7 +204,6 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
         />
       </div>
 
-      {/* Filter toggle */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-gray-800/50 hover:border-gray-700/50 transition-colors"
@@ -241,7 +237,6 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
         </svg>
       </button>
 
-      {/* Expanded filters */}
       {isExpanded && (
         <div
           className="border border-t-0 border-gray-800/50 rounded-b-lg p-4"
@@ -345,7 +340,6 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
             {/* City */}
             <div>
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">City</p>
-              {/* City search input */}
               <input
                 type="text"
                 placeholder="Search city..."
@@ -383,7 +377,6 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
 
           </div>
 
-          {/* Clear filters */}
           {activeCount > 0 && (
             <div className="mt-4 pt-4 border-t border-gray-800/50">
               <button
