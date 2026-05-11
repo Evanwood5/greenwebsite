@@ -172,6 +172,8 @@ export default function JobsPage() {
   })
   const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
+  // Track the job_field_id for "Other/Irrelevant" to exclude from results
+  const [irrelevantFieldId, setIrrelevantFieldId] = useState<number | null>(null)
 
   // Persist filters to localStorage on every change
   useEffect(() => {
@@ -205,13 +207,19 @@ export default function JobsPage() {
   }
 
   // Fetch full id→category map once on mount so job icons are accurate
+  // Also grab the Irrelevant field id so we can exclude those jobs from the list
   useEffect(() => {
     supabase
       .from('job_field_counts')
-      .select('id, category')
+      .select('id, category, subcategory')
       .then(({ data }) => {
         const map: Record<number, string> = {}
-        data?.forEach(r => { map[r.id] = r.category.toLowerCase() })
+        data?.forEach(r => {
+          map[r.id] = r.category.toLowerCase()
+          if (r.category === 'Other' && r.subcategory === 'Irrelevant') {
+            setIrrelevantFieldId(r.id)
+          }
+        })
         setFieldCategoryMap(map)
       })
   }, [])
@@ -230,6 +238,13 @@ export default function JobsPage() {
       .from('job_postings_ingest_test')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
+      // Only show relevant jobs — excludes old jobs and irrelevant categorized jobs
+      .eq('is_relevant', true)
+
+    // Exclude jobs categorized as Other/Irrelevant
+    if (irrelevantFieldId !== null) {
+      query = query.neq('job_field_id', irrelevantFieldId)
+    }
 
     if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
     if (filters.category && categoryFieldIds.length > 0) query = query.in('job_field_id', categoryFieldIds)
@@ -241,7 +256,7 @@ export default function JobsPage() {
     else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
     return query
-  }, [filters, categoryFieldIds])
+  }, [filters, categoryFieldIds, irrelevantFieldId])
 
   const fetchJobs = useCallback(async (page: number = 0, append: boolean = false) => {
     try {
@@ -374,7 +389,7 @@ export default function JobsPage() {
               )}
             </div>
 
-            {/* Search — visually distinct from dropdowns */}
+            {/* Search */}
             <div style={{ position: 'relative', margin: '10px 0 14px' }}>
               <svg
                 width="12" height="12" viewBox="0 0 24 24" fill="none"
