@@ -5,11 +5,12 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import JobList from '@/components/jobs/JobList'
-import { Job } from '@/lib/jobsApi'
+import { Job, JOB_FIELDS, fetchSubCategoryFieldIds } from '@/lib/jobsApi'
 import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 interface FilterOptions {
   category: string
+  subCategory: string
   level: string
   jobType: string
   isRemote: string
@@ -40,7 +41,7 @@ const JOBS_PER_PAGE = 20
 
 interface DropdownOption { label: string; value: string; icon?: React.ReactNode; iconColor?: string }
 
-function DropdownSelect({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: DropdownOption[] }) {
+function DropdownSelect({ value, onChange, options, disabled }: { value: string; onChange: (v: string) => void; options: DropdownOption[]; disabled?: boolean }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const selected = options.find(o => o.value === value) ?? options[0]
@@ -54,10 +55,10 @@ function DropdownSelect({ value, onChange, options }: { value: string; onChange:
   }, [open])
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+    <div ref={ref} style={{ position: 'relative', width: '100%', opacity: disabled ? 0.45 : 1 }}>
       {/* Trigger */}
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { if (!disabled) setOpen(o => !o) }}
         style={{
           width: '100%',
           display: 'flex',
@@ -69,7 +70,7 @@ function DropdownSelect({ value, onChange, options }: { value: string; onChange:
           background: open ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.04)',
           color: value ? '#e4e4e7' : '#52525b',
           fontSize: '12px',
-          cursor: 'pointer',
+          cursor: disabled ? 'not-allowed' : 'pointer',
           textAlign: 'left',
           transition: 'border-color 150ms, background 150ms',
           gap: '6px',
@@ -157,11 +158,12 @@ export default function JobsPage() {
   const [currentPage, setCurrentPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [filters, setFilters] = useState<FilterOptions>(() => {
-    if (typeof window === 'undefined') return { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
+    const empty: FilterOptions = { category: '', subCategory: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
+    if (typeof window === 'undefined') return empty
     try {
       const saved = localStorage.getItem('jobFilters')
-      return saved ? JSON.parse(saved) : { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
-    } catch { return { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' } }
+      return saved ? { ...empty, ...JSON.parse(saved) } : empty
+    } catch { return empty }
   })
   const [searchInput, setSearchInput] = useState(() => {
     if (typeof window === 'undefined') return ''
@@ -171,6 +173,7 @@ export default function JobsPage() {
     } catch { return '' }
   })
   const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
+  const [subCategoryFieldIds, setSubCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
   // Track the job_field_id for "Other/Irrelevant" to exclude from results
   const [irrelevantFieldId, setIrrelevantFieldId] = useState<number | null>(null)
@@ -233,6 +236,12 @@ export default function JobsPage() {
       .then(({ data }) => setCategoryFieldIds(data?.map(r => r.id) ?? []))
   }, [filters.category])
 
+  useEffect(() => {
+    if (!filters.category || !filters.subCategory) { setSubCategoryFieldIds([]); return }
+    fetchSubCategoryFieldIds(filters.category, filters.subCategory)
+      .then(setSubCategoryFieldIds)
+  }, [filters.category, filters.subCategory])
+
   const buildQuery = useCallback(() => {
     let query = supabase
       .from('job_postings_ingest_test')
@@ -247,8 +256,11 @@ export default function JobsPage() {
     }
 
     if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
-    if (filters.category && categoryFieldIds.length > 0) query = query.in('job_field_id', categoryFieldIds)
-    if (filters.category && categoryFieldIds.length === 0 && filters.category !== '') query = query.eq('job_field_id', -1)
+    if (filters.category) {
+      const activeIds = filters.subCategory ? subCategoryFieldIds : categoryFieldIds
+      if (activeIds.length > 0) query = query.in('job_field_id', activeIds)
+      else query = query.eq('job_field_id', -1)
+    }
     if (filters.level) query = query.eq('experience_level', filters.level)
     if (filters.jobType) query = query.eq('job_type', filters.jobType)
     if (filters.city) query = query.eq('city', filters.city)
@@ -302,7 +314,10 @@ export default function JobsPage() {
   }, [searchInput, filters.searchTerm])
 
   const handleFilterChange = (key: keyof FilterOptions, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
+    setFilters(prev => key === 'category'
+      ? { ...prev, category: value, subCategory: '' }
+      : { ...prev, [key]: value }
+    )
     setJobs([])
   }
 
@@ -323,7 +338,7 @@ export default function JobsPage() {
     )
   }
 
-  const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.isRemote, filters.city, filters.searchTerm].filter(Boolean).length
+  const activeFilterCount = [filters.category, filters.subCategory, filters.level, filters.jobType, filters.isRemote, filters.city, filters.searchTerm].filter(Boolean).length
 
   return (
     <AppShell>
@@ -354,6 +369,7 @@ export default function JobsPage() {
             jobs={jobs}
             loading={loading}
             fieldCategoryMap={fieldCategoryMap}
+            fieldSubCategoryMap={fieldSubCategoryMap}
             savedJobIds={[...savedJobIds]}
             onSaveToggle={handleSaveToggle}
           />
@@ -381,7 +397,7 @@ export default function JobsPage() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { const empty = { category: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }; setFilters(empty); setSearchInput(''); localStorage.setItem('jobFilters', JSON.stringify(empty)) }}
+                  onClick={() => { const empty = { category: '', subCategory: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }; setFilters(empty); setSearchInput(''); localStorage.setItem('jobFilters', JSON.stringify(empty)) }}
                   style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: '0' }}
                 >
                   Clear all
@@ -448,6 +464,17 @@ export default function JobsPage() {
                   label: 'Business', value: 'Business', iconColor: '#a78bfa',
                   icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
                 },
+              ]}
+            />
+
+            <p style={{ ...sectionLabelStyle, color: filters.category ? '#71717a' : '#3f3f46' }}>Sub-category</p>
+            <DropdownSelect
+              value={filters.subCategory}
+              onChange={(v) => handleFilterChange('subCategory', v)}
+              disabled={!filters.category}
+              options={[
+                { label: filters.category ? 'All Sub-categories' : 'Select a category first', value: '' },
+                ...(filters.category ? (JOB_FIELDS[filters.category] ?? []).map(s => ({ label: s, value: s })) : []),
               ]}
             />
 

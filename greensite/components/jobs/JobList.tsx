@@ -18,6 +18,7 @@ interface JobListProps {
   jobs: Job[]
   loading?: boolean
   fieldCategoryMap?: Record<number, string>
+  fieldSubCategoryMap?: Record<number, string>
   savedJobIds?: string[]
   onSaveToggle?: (jobId: string, willBeSaved: boolean) => void
 }
@@ -304,10 +305,11 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
   },
 }
 
-function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onSaveToggle }: {
+function JobTableRow({ job, isLast, fieldCategoryMap, fieldSubCategoryMap, isSaved: initialSaved, onSaveToggle }: {
   job: Job
   isLast?: boolean
   fieldCategoryMap?: Record<number, string>
+  fieldSubCategoryMap?: Record<number, string>
   isSaved?: boolean
   onSaveToggle?: (jobId: string, willBeSaved: boolean) => void
 }) {
@@ -368,6 +370,13 @@ function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onS
         {job.experience_level
           ? <LevelBadge level={job.experience_level} />
           : <span style={{ color: '#3f3f46', fontSize: '11px' }}>—</span>}
+      </td>
+
+      {/* Sub-category */}
+      <td style={{ ...cellStyle, width: '120px', color: '#52525b', fontSize: '11px' }}>
+        {job.job_field_id != null && fieldSubCategoryMap?.[job.job_field_id]
+          ? <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', whiteSpace: 'nowrap' }}>{fieldSubCategoryMap[job.job_field_id]}</span>
+          : <span style={{ color: '#3f3f46' }}>—</span>}
       </td>
 
       {/* Type */}
@@ -458,7 +467,7 @@ function JobTableRow({ job, isLast, fieldCategoryMap, isSaved: initialSaved, onS
   )
 }
 
-export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, onSaveToggle }: JobListProps) {
+export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCategoryMap, savedJobIds, onSaveToggle }: JobListProps) {
   const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
@@ -496,8 +505,9 @@ export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, 
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: '44px' }} />
-          <col style={{ width: '320px' }} />
+          <col style={{ width: '280px' }} />
           <col style={{ width: '95px' }} />
+          <col style={{ width: '120px' }} />
           <col style={{ width: '100px' }} />
           <col style={{ width: '115px' }} />
           <col style={{ width: '62px' }} />
@@ -508,6 +518,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, 
             <th style={{ ...thStyle, width: '36px' }}></th>
             <th style={thStyle}>Position</th>
             <th style={thStyle}>Level</th>
+            <th style={thStyle}>Sub-category</th>
             <th style={thStyle}>Type</th>
             <th style={thStyle}>Location</th>
             <th style={thStyle}>Posted</th>
@@ -521,6 +532,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, savedJobIds, 
               job={job}
               isLast={i === jobs.length - 1}
               fieldCategoryMap={fieldCategoryMap}
+              fieldSubCategoryMap={fieldSubCategoryMap}
               isSaved={savedSet.has(job.job_id)}
               onSaveToggle={onSaveToggle}
             />

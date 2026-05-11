@@ -1,6 +1,60 @@
 import { supabase } from '@/lib/supabase'
 import { FilterOptions } from '@/components/jobs/FIlterPanel'
 
+export const JOB_FIELDS: Record<string, string[]> = {
+  Tech: [
+    'Software Engineering',
+    'Data Science / AI',
+    'IT / Sysadmin',
+    'Cybersecurity',
+    'Cloud / DevOps',
+    'QA / Testing',
+    'UI / UX',
+    'Hardware / Embedded',
+  ],
+  Engineering: [
+    'Mechanical',
+    'Electrical',
+    'Civil / Structural',
+    'Chemical',
+    'Industrial',
+    'Aerospace',
+    'Materials',
+    'Environmental',
+  ],
+  Business: [
+    'Finance / Accounting',
+    'Marketing / Sales',
+    'Operations / Logistics',
+    'HR / Recruiting',
+    'Business Analytics',
+    'Consulting / Strategy',
+    'Project Management',
+  ],
+  Health: [
+    'Clinical / Nursing',
+    'Pharmacy',
+    'Healthcare Administration',
+    'Research / Lab',
+    'Public Health',
+    'Medical Technology',
+  ],
+}
+
+export async function fetchSubCategoryFieldIds(
+  category: string,
+  subCategory: string
+): Promise<number[]> {
+  const { data, error } = await supabase
+    .from('job_field_counts')
+    .select('id')
+    .eq('category', category)
+    .eq('subcategory', subCategory)
+
+  if (error || !data) return []
+  return data.map((r: { id: number }) => r.id)
+}
+
 export interface Job {
     job_id: string
     created_at: string
