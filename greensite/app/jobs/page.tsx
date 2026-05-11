@@ -38,7 +38,6 @@ function FilterIcon() {
 
 const JOBS_PER_PAGE = 20
 
-
 interface DropdownOption { label: string; value: string; icon?: React.ReactNode; iconColor?: string }
 
 function DropdownSelect({ value, onChange, options, disabled }: { value: string; onChange: (v: string) => void; options: DropdownOption[]; disabled?: boolean }) {
@@ -56,7 +55,6 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
 
   return (
     <div ref={ref} style={{ position: 'relative', width: '100%', opacity: disabled ? 0.45 : 1 }}>
-      {/* Trigger */}
       <button
         onClick={() => { if (!disabled) setOpen(o => !o) }}
         style={{
@@ -93,7 +91,6 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
         </svg>
       </button>
 
-      {/* Dropdown panel */}
       {open && (
         <div style={{
           position: 'absolute',
@@ -175,15 +172,12 @@ export default function JobsPage() {
   const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
   const [subCategoryFieldIds, setSubCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
-  // Track the job_field_id for "Other/Irrelevant" to exclude from results
   const [irrelevantFieldId, setIrrelevantFieldId] = useState<number | null>(null)
 
-  // Persist filters to localStorage on every change
   useEffect(() => {
     localStorage.setItem('jobFilters', JSON.stringify(filters))
   }, [filters])
 
-  // Load saved job IDs for the current user
   useEffect(() => {
     if (!user?.id) return
     supabase
@@ -209,8 +203,6 @@ export default function JobsPage() {
     }
   }
 
-  // Fetch full id→category map once on mount so job icons are accurate
-  // Also grab the Irrelevant field id so we can exclude those jobs from the list
   useEffect(() => {
     supabase
       .from('job_field_counts')
@@ -247,10 +239,8 @@ export default function JobsPage() {
       .from('job_postings_ingest_test')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
-      // Only show relevant jobs — excludes old jobs and irrelevant categorized jobs
       .eq('is_relevant', true)
 
-    // Exclude jobs categorized as Other/Irrelevant
     if (irrelevantFieldId !== null) {
       query = query.neq('job_field_id', irrelevantFieldId)
     }
@@ -268,7 +258,7 @@ export default function JobsPage() {
     else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
     return query
-  }, [filters, categoryFieldIds, irrelevantFieldId])
+  }, [filters, categoryFieldIds, subCategoryFieldIds, irrelevantFieldId])
 
   const fetchJobs = useCallback(async (page: number = 0, append: boolean = false) => {
     try {
@@ -346,7 +336,6 @@ export default function JobsPage() {
 
         {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
             {statCards.map((card) => (
               <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
@@ -369,7 +358,6 @@ export default function JobsPage() {
             jobs={jobs}
             loading={loading}
             fieldCategoryMap={fieldCategoryMap}
-            fieldSubCategoryMap={fieldSubCategoryMap}
             savedJobIds={[...savedJobIds]}
             onSaveToggle={handleSaveToggle}
           />
@@ -405,7 +393,6 @@ export default function JobsPage() {
               )}
             </div>
 
-            {/* Search */}
             <div style={{ position: 'relative', margin: '10px 0 14px' }}>
               <svg
                 width="12" height="12" viewBox="0 0 24 24" fill="none"
