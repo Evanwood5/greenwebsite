@@ -172,6 +172,7 @@ export default function JobsPage() {
   const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
   const [subCategoryFieldIds, setSubCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
+  const [fieldSubCategoryMap, setFieldSubCategoryMap] = useState<Record<number, string>>({})
   const [irrelevantFieldId, setIrrelevantFieldId] = useState<number | null>(null)
 
   useEffect(() => {
@@ -203,19 +204,23 @@ export default function JobsPage() {
     }
   }
 
+  // Build both fieldCategoryMap AND fieldSubCategoryMap from job_field_counts
   useEffect(() => {
     supabase
       .from('job_field_counts')
       .select('id, category, subcategory')
       .then(({ data }) => {
-        const map: Record<number, string> = {}
+        const catMap: Record<number, string> = {}
+        const subMap: Record<number, string> = {}
         data?.forEach(r => {
-          map[r.id] = r.category.toLowerCase()
+          catMap[r.id] = r.category.toLowerCase()
+          subMap[r.id] = r.subcategory
           if (r.category === 'Other' && r.subcategory === 'Irrelevant') {
             setIrrelevantFieldId(r.id)
           }
         })
-        setFieldCategoryMap(map)
+        setFieldCategoryMap(catMap)
+        setFieldSubCategoryMap(subMap)
       })
   }, [])
 
@@ -334,7 +339,6 @@ export default function JobsPage() {
     <AppShell>
       <div style={{ display: 'flex', gap: '20px', maxWidth: '1300px', margin: '0 auto', alignItems: 'flex-start' }}>
 
-        {/* Main content */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
             {statCards.map((card) => (
@@ -358,6 +362,7 @@ export default function JobsPage() {
             jobs={jobs}
             loading={loading}
             fieldCategoryMap={fieldCategoryMap}
+            fieldSubCategoryMap={fieldSubCategoryMap}
             savedJobIds={[...savedJobIds]}
             onSaveToggle={handleSaveToggle}
           />
