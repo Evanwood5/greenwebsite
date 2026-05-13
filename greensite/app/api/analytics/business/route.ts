@@ -2,7 +2,6 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET() {
     try {
-        // Get all business jobs using the new JOIN structure
         const { data: jobs, error } = await supabase
             .from('job_postings_ingest_test')
             .select(`
@@ -13,14 +12,13 @@ export async function GET() {
                     subcategory
                 )
             `)
-            .eq('job_field_counts.category', 'Business');
+            .eq('job_field_counts.category', 'Business')
+            .eq('is_relevant', true);
 
         if (error) throw error;
 
-        // Calculate metrics
         const totalJobs = jobs?.length || 0;
 
-        // Top companies
         const companyCounts = jobs?.reduce((acc: any, job) => {
             const company = job.company_name || 'Unknown';
             acc[company] = (acc[company] || 0) + 1;
@@ -31,23 +29,21 @@ export async function GET() {
             .map(([company, jobCount]) => ({ company, jobCount }))
             .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
-            const totalCompanies = Object.keys(companyCounts || {}).length;
 
-        // Jobs by experience level
+        const totalCompanies = Object.keys(companyCounts || {}).length;
+
         const experienceLevels = jobs?.reduce((acc: any, job) => {
             const level = job.experience_level || 'N/A';
             acc[level] = (acc[level] || 0) + 1;
             return acc;
         }, {});
 
-        // Jobs by type
         const jobTypes = jobs?.reduce((acc: any, job) => {
             const type = job.job_type || 'Unknown';
             acc[type] = (acc[type] || 0) + 1;
             return acc;
         }, {});
 
-        // Top cities
         const cityCounts = jobs?.reduce((acc: any, job) => {
             const city = job.city || 'Unknown';
             acc[city] = (acc[city] || 0) + 1;
@@ -59,18 +55,15 @@ export async function GET() {
             .sort((a: any, b: any) => b.jobCount - a.jobCount)
             .slice(0, 5);
 
-        // Jobs by subcategory
         const subcategoryCounts = jobs?.reduce((acc: any, job) => {
             const subcategory = job.job_field_counts?.subcategory || 'Unknown';
             acc[subcategory] = (acc[subcategory] || 0) + 1;
             return acc;
         }, {});
 
-        // Month-over-month growth calculation
         const now = new Date();
         const thisMonth = now.getMonth();
         const thisYear = now.getFullYear();
-        
         const lastMonthDate = new Date(thisYear, thisMonth - 1, 1);
         const lastMonth = lastMonthDate.getMonth();
         const lastMonthYear = lastMonthDate.getFullYear();
@@ -85,11 +78,10 @@ export async function GET() {
             return created.getMonth() === lastMonth && created.getFullYear() === lastMonthYear;
         }).length || 0;
 
-        const percentChange = lastMonthJobs > 0 
+        const percentChange = lastMonthJobs > 0
             ? Math.round(((thisMonthJobs - lastMonthJobs) / lastMonthJobs) * 100)
             : 0;
 
-        // Job posting trends over last 30 days
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -98,7 +90,6 @@ export async function GET() {
             return created >= thirtyDaysAgo;
         }) || [];
 
-        // Group by date
         const jobsByDate: { [date: string]: number } = {};
         recentJobs.forEach(job => {
             const date = new Date(job.created_at);
@@ -106,16 +97,12 @@ export async function GET() {
             jobsByDate[dateKey] = (jobsByDate[dateKey] || 0) + 1;
         });
 
-        // Create array of last 30 days with counts
         const trendData = [];
         for (let i = 29; i >= 0; i--) {
             const date = new Date();
             date.setDate(date.getDate() - i);
             const dateKey = `${date.getMonth() + 1}/${date.getDate()}`;
-            trendData.push({
-                date: dateKey,
-                count: jobsByDate[dateKey] || 0,
-            });
+            trendData.push({ date: dateKey, count: jobsByDate[dateKey] || 0 });
         }
 
         return Response.json({
@@ -129,7 +116,7 @@ export async function GET() {
             subcategoryCounts,
             monthlyStats: {
                 totalJobs: thisMonthJobs,
-                percentChange: percentChange,
+                percentChange,
                 previousMonth: lastMonthJobs,
             },
             trendData,
