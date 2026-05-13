@@ -8,6 +8,10 @@ import JobList from '@/components/jobs/JobList'
 import { Job, JOB_FIELDS, fetchSubCategoryFieldIds } from '@/lib/jobsApi'
 import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
+// Stable IDs that never change — avoids async race condition on first load
+// Other/Irrelevant field id from job_field_counts
+const IRRELEVANT_FIELD_ID = 29244
+
 interface FilterOptions {
   category: string
   subCategory: string
@@ -173,7 +177,6 @@ export default function JobsPage() {
   const [subCategoryFieldIds, setSubCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
   const [fieldSubCategoryMap, setFieldSubCategoryMap] = useState<Record<number, string>>({})
-  const [irrelevantFieldId, setIrrelevantFieldId] = useState<number | null>(null)
 
   useEffect(() => {
     localStorage.setItem('jobFilters', JSON.stringify(filters))
@@ -204,7 +207,7 @@ export default function JobsPage() {
     }
   }
 
-  // Build both fieldCategoryMap AND fieldSubCategoryMap from job_field_counts
+  // Build fieldCategoryMap and fieldSubCategoryMap for job icons and subcategory display
   useEffect(() => {
     supabase
       .from('job_field_counts')
@@ -215,9 +218,6 @@ export default function JobsPage() {
         data?.forEach(r => {
           catMap[r.id] = r.category.toLowerCase()
           subMap[r.id] = r.subcategory
-          if (r.category === 'Other' && r.subcategory === 'Irrelevant') {
-            setIrrelevantFieldId(r.id)
-          }
         })
         setFieldCategoryMap(catMap)
         setFieldSubCategoryMap(subMap)
@@ -245,10 +245,8 @@ export default function JobsPage() {
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
       .eq('is_relevant', true)
-
-    if (irrelevantFieldId !== null) {
-      query = query.neq('job_field_id', irrelevantFieldId)
-    }
+      // Always exclude irrelevant jobs — hardcoded to avoid async race condition
+      .neq('job_field_id', IRRELEVANT_FIELD_ID)
 
     if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
     if (filters.category) {
@@ -263,7 +261,7 @@ export default function JobsPage() {
     else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
     return query
-  }, [filters, categoryFieldIds, subCategoryFieldIds, irrelevantFieldId])
+  }, [filters, categoryFieldIds, subCategoryFieldIds])
 
   const fetchJobs = useCallback(async (page: number = 0, append: boolean = false) => {
     try {
