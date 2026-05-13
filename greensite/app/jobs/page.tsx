@@ -493,17 +493,6 @@ export default function JobsPage() {
               ]}
             />
 
-            <p style={sectionLabelStyle}>Location</p>
-            <DropdownSelect
-              value={filters.isRemote}
-              onChange={(v) => handleFilterChange('isRemote', v)}
-              options={[
-                { label: 'All Locations', value: '' },
-                { label: 'Remote Only', value: 'remote' },
-                { label: 'On-site Only', value: 'onsite' },
-              ]}
-            />
-
             <p style={sectionLabelStyle}>City</p>
             <DropdownSelect
               value={filters.city}
@@ -513,6 +502,17 @@ export default function JobsPage() {
                 ...MICHIGAN_CITIES
                   .filter(c => c.value !== 'MI:all')
                   .map(c => ({ label: c.label, value: c.label }))
+              ]}
+            />
+
+            <p style={sectionLabelStyle}>Remote</p>
+            <DropdownSelect
+              value={filters.isRemote}
+              onChange={(v) => handleFilterChange('isRemote', v)}
+              options={[
+                { label: 'All', value: '' },
+                { label: 'Remote Only', value: 'remote' },
+                { label: 'On-site Only', value: 'onsite' },
               ]}
             />
           </div>

@@ -52,18 +52,20 @@ function GearIcon({ size = 18 }: { size?: number }) {
   )
 }
 
-function ChevronLeftIcon({ size = 16 }: { size?: number }) {
+function ChevronsLeftIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
+      <polyline points="11 17 6 12 11 7"/>
+      <polyline points="18 17 13 12 18 7"/>
     </svg>
   )
 }
 
-function ChevronRightIcon({ size = 16 }: { size?: number }) {
+function ChevronsRightIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
+      <polyline points="13 17 18 12 13 7"/>
+      <polyline points="6 17 11 12 6 7"/>
     </svg>
   )
 }
@@ -86,14 +88,23 @@ function UserIcon({ size = 18 }: { size?: number }) {
   )
 }
 
-const HEADER_HEIGHT = 52
+function ChevronDownIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  )
+}
+
+const HEADER_HEIGHT = 56
 
 const navItems = [
   { label: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
   { label: 'Analytics', href: '/dashboard', icon: TrendingUpIcon },
-  { label: 'Custom Jobs', href: '/custom_jobs/matches', icon: FileTextIcon },
   null,
+  { label: 'Custom Jobs', href: '/custom_jobs/matches', icon: FileTextIcon },
   { label: 'Tracking', href: '/tracking', icon: EyeIcon },
+  null,
   { label: 'Saved Jobs', href: '/saved', icon: BookmarkIcon },
   { label: 'Settings', href: '/settings', icon: GearIcon },
 ]
@@ -133,125 +144,180 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Full-width top navbar */}
       <header style={{
         height: HEADER_HEIGHT,
-        background: '#1e1e1e',
+        background: 'rgba(22, 22, 22, 0.75)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         flexShrink: 0,
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
         zIndex: 50,
+        padding: '0 20px',
       }}>
-        {/* Logo section — aligned to sidebar width */}
-        {/* Logo + title — single flex row, everything center-aligned */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 18px', flexShrink: 0 }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', flexShrink: 0 }}>
+        {/* Logo section */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', position: 'relative' }}>
+            <div style={{
+              position: 'absolute',
+              width: '32px',
+              height: '32px',
+              background: 'rgba(41, 193, 21, 0.15)',
+              filter: 'blur(12px)',
+              borderRadius: '50%',
+              left: '-4px',
+              top: '-4px',
+              zIndex: -1
+            }} />
             <Image
               src="/finally.png"
               alt="Greenify logo"
-              width={24}
-              height={24}
-              style={{ display: 'block', flexShrink: 0 }}
+              width={26}
+              height={26}
+              style={{ display: 'block' }}
             />
-            {!collapsed && (
-              <span style={{ color: 'white', fontWeight: 700, fontSize: '15px', lineHeight: '1', whiteSpace: 'nowrap' }}>
-                Greenify
-              </span>
-            )}
+            <span style={{
+              color: 'white',
+              fontWeight: 700,
+              fontSize: '17px',
+              letterSpacing: '-0.02em',
+              lineHeight: '1',
+              display: collapsed ? 'none' : 'block'
+            }}>
+              Greenify
+            </span>
           </Link>
 
           {!collapsed && (
-            <>
-              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '15px', lineHeight: '1', userSelect: 'none' }}>·</span>
-              <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 700, fontSize: '15px', lineHeight: '1', whiteSpace: 'nowrap' }}>
-                Member Dashboard
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.1)' }} />
+              <span style={{
+                color: 'rgba(255,255,255,0.45)',
+                fontWeight: 500,
+                fontSize: '13px',
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase'
+              }}>
+                Dashboard
               </span>
-            </>
+            </div>
           )}
         </div>
 
         {/* Right: user info */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px', paddingRight: '20px' }}>
-          {user?.email && (
-            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>{user.email}</span>
-          )}
-          <div ref={profileMenuRef} style={{ position: 'relative' }}>
-            <div
-              onClick={() => setProfileMenuOpen(o => !o)}
-              style={{
-                width: '30px',
-                height: '30px',
-                borderRadius: '50%',
-                background: profileMenuOpen ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.15)',
-                border: '1px solid rgba(255,255,255,0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
+        <div style={{ marginLeft: 'auto', position: 'relative' }} ref={profileMenuRef}>
+          <button
+            onClick={() => setProfileMenuOpen(o => !o)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '5px 5px 5px 12px',
+              background: profileMenuOpen ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '24px',
+              cursor: 'pointer',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+            onMouseOver={(e) => {
+              if (!profileMenuOpen) {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!profileMenuOpen) {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+              }
+            }}
+          >
+            {user?.email && (
+              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: 500 }}>
+                {user.email.split('@')[0]}
+              </span>
+            )}
+            <div style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #29C115 0%, #1a8a0d 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              boxShadow: '0 2px 8px rgba(41, 193, 21, 0.2)',
+            }}>
               <UserIcon size={14} />
             </div>
-            {profileMenuOpen && (
-              <div style={{
-                position: 'absolute',
-                top: '38px',
-                right: 0,
-                background: '#1e1e1e',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                minWidth: '140px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-                zIndex: 100,
-              }}>
-                <Link
-                  href="/settings"
-                  onClick={() => setProfileMenuOpen(false)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 14px',
-                    color: '#d4d4d8',
-                    fontSize: '13px',
-                    textDecoration: 'none',
-                    borderBottom: '1px solid rgba(255,255,255,0.06)',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
-                  onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <GearIcon size={14} />
-                  Settings
-                </Link>
-                <button
-                  onClick={handleSignOut}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    width: '100%',
-                    padding: '10px 14px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#f87171',
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(248,113,113,0.07)')}
-                  onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                  </svg>
-                  Sign Out
-                </button>
+            <div style={{ color: 'rgba(255,255,255,0.3)', marginRight: '4px' }}>
+              <ChevronDownIcon size={12} />
+            </div>
+          </button>
+
+          {profileMenuOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '42px',
+              right: 0,
+              background: 'rgba(26, 26, 26, 0.95)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              minWidth: '180px',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
+              zIndex: 100,
+              animation: 'fadeIn 0.2s ease-out',
+            }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <p style={{ color: 'white', fontSize: '12px', fontWeight: 600, marginBottom: '2px' }}>{user?.email?.split('@')[0]}</p>
+                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
               </div>
-            )}
-          </div>
+              <Link
+                href="/settings"
+                onClick={() => setProfileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '10px 16px',
+                  color: '#d4d4d8',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                <GearIcon size={14} />
+                Settings
+              </Link>
+              <button
+                onClick={handleSignOut}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  width: '100%',
+                  padding: '10px 16px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#f87171',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(248,113,113,0.07)')}
+                onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -332,24 +398,32 @@ export default function AppShell({ children }: AppShellProps) {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '10px',
                 width: '100%',
                 padding: '10px 12px',
                 borderRadius: '8px',
                 background: 'transparent',
                 border: 'none',
-                color: '#29C115',
-                fontSize: '14px',
+                color: 'rgba(255,255,255,0.65)',
+                fontSize: '13px',
                 fontWeight: 500,
                 cursor: 'pointer',
-                transition: 'background 150ms',
+                transition: 'background 150ms, color 150ms',
                 whiteSpace: 'nowrap',
               }}
-              onMouseOver={(e) => (e.currentTarget.style.background = '#1a1a1a')}
-              onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+                e.currentTarget.style.color = '#ffffff'
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
+              }}
             >
-              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-              {!collapsed && 'Collapse'}
+              <div style={{ flexShrink: 0 }}>
+                {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}
+              </div>
+              {!collapsed && 'Collapse Sidebar'}
             </button>
           </div>
         </aside>
