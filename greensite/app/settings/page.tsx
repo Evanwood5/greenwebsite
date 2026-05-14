@@ -120,7 +120,6 @@ function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Prefer
 
   function toggleCategory(cat: string) {
     if (pref.jobCategories.includes(cat)) {
-      // Remove category and all its subcategories
       const subsToRemove = JOB_FIELDS[cat] ?? []
       onChange({
         ...pref,
@@ -183,13 +182,21 @@ function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Prefer
         </div>
       </div>
 
-      {/* Job Categories */}
+      {/* Job Categories — required */}
       <div>
-        <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
-          Job Categories
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+          <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Job Categories
+          </p>
+          <span style={{
+            fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '4px',
+            background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.25)',
+          }}>
+            Required
+          </span>
+        </div>
         <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '10px' }}>
-          Select categories to focus your matches — all categories matched if none selected
+          Select at least one category — subcategories help focus your matches further
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
           {Object.keys(JOB_FIELDS).map(cat => {
@@ -210,7 +217,7 @@ function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Prefer
           })}
         </div>
 
-        {/* Subcategories for selected categories */}
+        {/* Subcategories */}
         {pref.jobCategories.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {pref.jobCategories.map(cat => {
@@ -242,6 +249,22 @@ function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Prefer
             })}
             <p style={{ color: '#52525b', fontSize: '11px' }}>
               Leave subcategories unselected to match all within a category
+            </p>
+          </div>
+        )}
+
+        {/* Warning when no category selected */}
+        {pref.jobCategories.length === 0 && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            padding: '10px 12px', borderRadius: '8px',
+            background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.2)',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p style={{ color: '#f87171', fontSize: '12px' }}>
+              Select at least one category to save your preferences
             </p>
           </div>
         )}
@@ -453,6 +476,17 @@ export default function SettingsPage() {
 
   async function handleSignOut() { await signOut(); router.push('/') }
 
+  // Save is disabled if: no job type, no category, or currently saving
+  const isSaveDisabled = saving
+    || editDraft.jobTypes.length === 0
+    || editDraft.jobCategories.length === 0
+
+  const saveDisabledReason = editDraft.jobTypes.length === 0
+    ? 'Select a job type'
+    : editDraft.jobCategories.length === 0
+      ? 'Select at least one category'
+      : null
+
   const prefItems = [
     { id: 1 as const, pref: pref1, label: 'Job Preference #1', sub: 'Set up your first job search criteria' },
     { id: 2 as const, pref: pref2, label: 'Job Preference #2', sub: 'Set up your second job search criteria' },
@@ -573,15 +607,34 @@ export default function SettingsPage() {
               {isEditing ? (
                 <>
                   <PrefEditor pref={editDraft} onChange={setEditDraft} />
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center' }}>
-                    <button onClick={() => savePreference(id)} disabled={saving || editDraft.jobTypes.length === 0}
-                      style={{ padding: '9px 20px', background: '#29C115', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: saving || editDraft.jobTypes.length === 0 ? 'not-allowed' : 'pointer', opacity: saving || editDraft.jobTypes.length === 0 ? 0.6 : 1 }}>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={() => savePreference(id)}
+                      disabled={isSaveDisabled}
+                      title={saveDisabledReason ?? ''}
+                      style={{
+                        padding: '9px 20px', background: isSaveDisabled ? '#1a1a1a' : '#29C115',
+                        color: isSaveDisabled ? '#52525b' : 'white',
+                        border: isSaveDisabled ? '1px solid #2a2a2a' : 'none',
+                        borderRadius: '8px', fontWeight: 600, fontSize: '13px',
+                        cursor: isSaveDisabled ? 'not-allowed' : 'pointer',
+                      }}
+                    >
                       {saving ? 'Saving...' : 'Save'}
                     </button>
                     <button onClick={cancelEdit} disabled={saving}
                       style={{ padding: '9px 20px', background: 'transparent', color: '#9ca3af', border: '1px solid #3a3a3a', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
                       Cancel
                     </button>
+                    {/* Inline reason why save is disabled */}
+                    {saveDisabledReason && !saving && (
+                      <span style={{ color: '#f87171', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        {saveDisabledReason}
+                      </span>
+                    )}
                     {saveMsg && <span style={{ color: saveMsg === 'Saved!' ? '#29C115' : '#f87171', fontSize: '13px' }}>{saveMsg}</span>}
                   </div>
                 </>
