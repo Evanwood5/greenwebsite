@@ -115,7 +115,7 @@ function HeroMockup() {
 
 export default function HeroSection({ user }: HeroSectionProps) {
   return (
-    <section style={{ background: '#080808' }} className="px-6 pt-20 pb-28">
+    <section style={{ background: '#000000' }} className="px-6 pt-20 pb-28">
       <div className="max-w-6xl mx-auto">
         {/* Badge */}
         <div className="flex justify-center mb-8">
@@ -229,8 +229,16 @@ export default function HeroSection({ user }: HeroSectionProps) {
         </div>
 
         {/* Hero visual */}
-        <div className="max-w-md mx-auto">
-          <HeroMockup />
+        <div className="max-w-4xl mx-auto flex justify-center">
+          <img 
+            src="/michigan-map.png" 
+            alt="Michigan Job Tracking Map" 
+            className="w-full h-auto rounded-3xl"
+            style={{ 
+              boxShadow: '0 0 50px rgba(41,193,21,0.15)',
+              border: '1px solid rgba(255,255,255,0.05)'
+            }}
+          />
         </div>
       </div>
     </section>

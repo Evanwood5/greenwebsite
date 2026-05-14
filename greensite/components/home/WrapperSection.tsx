@@ -142,7 +142,7 @@ export default function WrapperSection() {
   return (
     <section
       id="how-it-works"
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
+      style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
       className="px-6 py-24"
     >
       <style>{`

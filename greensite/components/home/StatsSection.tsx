@@ -232,7 +232,7 @@ export default function StatsSection() {
 
   return (
     <section
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)' }}
       className="px-6 py-24"
     >
       <div className="max-w-6xl mx-auto">

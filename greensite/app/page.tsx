@@ -14,7 +14,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center" style={{ background: '#1a1a1a' }}>
+      <div className="flex min-h-screen items-center justify-center" style={{ background: '#1e1e1e' }}>
         <div className="flex items-center space-x-2">
           <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse" />
           <div className="text-lg text-gray-300">Loading...</div>
@@ -24,7 +24,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#1a1a1a' }}>
+    <div className="min-h-screen" style={{ background: '#000000' }}>
       <MoleculeBackground />
       <Navbar />
       <HeroSection user={user} />

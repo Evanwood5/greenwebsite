@@ -8,7 +8,7 @@ export default function CTASection() {
     <>
       <section
         id="contact"
-        style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
+        style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
         className="px-6 py-24"
       >
         <div className="max-w-6xl mx-auto">
@@ -112,7 +112,7 @@ export default function CTASection() {
       </section>
 
       <footer
-        style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)' }}
         className="px-6 py-6"
       >
         <div className="max-w-6xl mx-auto flex items-center justify-center">
