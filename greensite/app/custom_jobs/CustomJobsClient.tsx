@@ -3,36 +3,37 @@
 import { useState, useEffect } from 'react';
 import ResumeUpload from '../../components/custom/resume-upload';
 import PreferencesForm from '../../components/custom/preferences-form';
-import JobCard from '../../components/custom/job-card';
+import { DarkJobCard } from '../../components/jobs/JobList';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import AppShell from '../../components/AppShell';
+
+const MATCH_EXPIRY_DAYS = 7;
 
 export default function CustomJobsClient() {
     const { user } = useAuth();
     const [resumeUploaded, setResumeUploaded] = useState(false);
-    const [currentView, setCurrentView] = useState('main'); // 'main', 'preference1', 'preference2'
+    const [currentView, setCurrentView] = useState('main');
     const [loading, setLoading] = useState(false);
     const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [resumeUrl, setResumeUrl] = useState<string | null>(null);
     const [matchedJobs, setMatchedJobs] = useState<any[]>([]);
     const [loadingJobs, setLoadingJobs] = useState(false);
 
-    // State for two separate job preferences - NO DEFAULT LOCATION
     const [preference1, setPreference1] = useState({
         jobTypes: [] as string[],
         experienceLevel: 'any' as 'moderate' | 'advanced' | 'any',
-        location: '', // Empty string, no default
+        location: '',
         includeRemote: true,
     });
 
     const [preference2, setPreference2] = useState({
         jobTypes: [] as string[],
         experienceLevel: 'any' as 'moderate' | 'advanced' | 'any',
-        location: '', // Empty string, no default
+        location: '',
         includeRemote: true,
     });
 
-    // Load existing preferences, resume status, and matched jobs on component mount
     useEffect(() => {
         if (user?.id) {
             loadUserPreferences();
@@ -43,70 +44,38 @@ export default function CustomJobsClient() {
 
     const loadMatchedJobs = async () => {
         if (!user?.id) return;
-
         setLoadingJobs(true);
         try {
+            // Only fetch matches from the last 7 days
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - MATCH_EXPIRY_DAYS);
+
             const { data: matchesData, error: matchesError } = await supabase
                 .from('user_job_matches')
                 .select('job_id, created_at')
                 .eq('user_id', user.id)
+                .gte('created_at', cutoff.toISOString())
                 .order('created_at', { ascending: false });
 
-            if (matchesError) {
-                console.error('Error loading matches:', matchesError);
-                throw matchesError;
-            }
-
-            if (!matchesData || matchesData.length === 0) {
-                setMatchedJobs([]);
-                return;
-            }
+            if (matchesError) throw matchesError;
+            if (!matchesData || matchesData.length === 0) { setMatchedJobs([]); return; }
 
             const jobIds = matchesData.map(match => match.job_id);
             const { data: jobsData, error: jobsError } = await supabase
                 .from('job_postings_ingest_test')
-                .select(`
-                    job_id,
-                    job_title,
-                    company_name,
-                    city,
-                    state,
-                    job_type,
-                    is_remote,
-                    job_href,
-                    created_at
-                `)
+                .select('job_id, job_title, company_name, city, state, job_type, is_remote, job_href, created_at, experience_level, job_field_id')
                 .in('job_id', jobIds);
 
-            if (jobsError) {
-                console.error('Error loading job details:', jobsError);
-                const basicJobs = matchesData.map(match => ({
-                    job_id: match.job_id,
-                    title: 'Job Details Unavailable',
-                    company: 'Unknown Company',
-                    location: 'Unknown Location',
-                    matched_at: match.created_at
-                }));
-                setMatchedJobs(basicJobs);
-                return;
-            }
+            if (jobsError) throw jobsError;
 
             const jobs = matchesData.map(match => {
                 const jobDetails = jobsData?.find(job => job.job_id === match.job_id);
                 if (!jobDetails) return null;
-
                 return {
-                    job_id: jobDetails.job_id,
-                    title: jobDetails.job_title,
-                    company: jobDetails.company_name,
-                    location: `${jobDetails.city}, ${jobDetails.state}`.replace(', null', '').replace('null, ', ''),
-                    job_type: jobDetails.job_type,
-                    is_remote: jobDetails.is_remote,
-                    application_url: jobDetails.job_href,
-                    posted_date: jobDetails.created_at,
-                    matched_at: match.created_at
+                    ...jobDetails,
+                    matched_at: match.created_at,
                 };
-            }).filter(job => job !== null);
+            }).filter(Boolean);
 
             setMatchedJobs(jobs);
         } catch (error: any) {
@@ -118,629 +87,262 @@ export default function CustomJobsClient() {
 
     const loadResumeStatus = async () => {
         if (!user?.id) return;
-
         try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('resume')
-                .eq('user_id', user.id)
-                .single();
-
-            if (error && error.code !== 'PGRST116') {
-                throw error;
-            }
-
-            const hasResume = data?.resume && data.resume !== null;
-            setResumeUploaded(hasResume);
+            const { data, error } = await supabase.from('profiles').select('resume').eq('user_id', user.id).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            setResumeUploaded(!!(data?.resume));
             setResumeUrl(data?.resume || null);
-        } catch (error) {
-            console.error('Error loading resume status:', error);
-        }
+        } catch (error) { console.error('Error loading resume status:', error); }
     };
 
     const removeResume = async () => {
         if (!user?.id) return;
-
         setLoading(true);
         try {
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({ resume: null })
-                .eq('user_id', user.id);
-
-            if (updateError) throw updateError;
-
+            await supabase.from('profiles').update({ resume: null }).eq('user_id', user.id);
             setResumeUploaded(false);
             setResumeUrl(null);
-
             setSaveStatus({ type: 'success', message: 'Resume removed successfully!' });
             setTimeout(() => setSaveStatus(null), 3000);
         } catch (err: any) {
-            console.error('Remove error:', err);
             setSaveStatus({ type: 'error', message: err.message || 'Failed to remove resume' });
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     };
 
     const loadUserPreferences = async () => {
         if (!user?.id) return;
-
         try {
-            const { data, error } = await supabase
-                .from('user_job_preferences')
-                .select('*')
-                .eq('user_id', user.id)
-                .in('preference_id', [1, 2]);
-
+            const { data, error } = await supabase.from('user_job_preferences').select('*').eq('user_id', user.id).in('preference_id', [1, 2]);
             if (error) throw error;
-
             data?.forEach(pref => {
-                // Join locations array back to comma-separated string for multi-select
-                const locationString = pref.locations?.join(',') || '';
-
                 const prefData = {
                     jobTypes: pref.job_types || [],
-                    experienceLevel: (pref.job_types?.includes('full-time') && pref.experience_level)
-                        ? (pref.experience_level as 'moderate' | 'advanced' | 'any')
-                        : 'any',
-                    location: locationString,
+                    experienceLevel: (pref.job_types?.includes('full-time') && pref.experience_level) ? (pref.experience_level as 'moderate' | 'advanced' | 'any') : 'any',
+                    location: pref.locations?.join(',') || '',
                     includeRemote: pref.include_remote || false,
                 };
-
-                if (pref.preference_id === 1) {
-                    setPreference1(prefData);
-                } else if (pref.preference_id === 2) {
-                    setPreference2(prefData);
-                }
+                if (pref.preference_id === 1) setPreference1(prefData);
+                else if (pref.preference_id === 2) setPreference2(prefData);
             });
-        } catch (error) {
-            console.error('Error loading preferences:', error);
-        }
+        } catch (error) { console.error('Error loading preferences:', error); }
     };
 
     const savePreference = async (preferenceId: 1 | 2) => {
-        if (!user?.id) {
-            setSaveStatus({ type: 'error', message: 'You must be logged in to save preferences' });
-            return;
-        }
-
+        if (!user?.id) return;
         const prefData = preferenceId === 1 ? preference1 : preference2;
-        setLoading(true);
-        setSaveStatus(null);
-
+        setLoading(true); setSaveStatus(null);
         try {
-            // FIXED: Split by comma and filter empty strings
-            // Location string format: "MI:Detroit,MI:Lansing,MI:Ann Arbor"
-            const locationsArray = prefData.location
-                .split(',')
-                .map(loc => loc.trim())  // Remove whitespace
-                .filter(loc => loc.startsWith('MI:'));  // Only keep valid MI:City format
-
-            const { error } = await supabase
-                .from('user_job_preferences')
-                .upsert({
-                    user_id: user.id,
-                    preference_id: preferenceId,
-                    job_types: prefData.jobTypes,
-                    max_distance_miles: 30,
-                    include_remote: prefData.includeRemote,
-                    locations: locationsArray, // Clean array
-                    experience_level: prefData.jobTypes.includes('full-time') ? prefData.experienceLevel : null,
-                }, {
-                    onConflict: 'user_id,preference_id'
-                });
-
+            const locationsArray = prefData.location.split(',').map(loc => loc.trim()).filter(loc => loc.startsWith('MI:'));
+            const { error } = await supabase.from('user_job_preferences').upsert({
+                user_id: user.id, preference_id: preferenceId,
+                job_types: prefData.jobTypes, max_distance_miles: 30,
+                include_remote: prefData.includeRemote, locations: locationsArray,
+                experience_level: prefData.jobTypes.includes('full-time') ? prefData.experienceLevel : null,
+            }, { onConflict: 'user_id,preference_id' });
             if (error) throw error;
-
-            setSaveStatus({ type: 'success', message: `Preference #${preferenceId} saved successfully!` });
-            setTimeout(() => setSaveStatus(null), 3000);
-            await loadUserPreferences();
-            await loadResumeStatus();
-            await loadMatchedJobs();
-            setCurrentView('main');
+            setSaveStatus({ type: 'success', message: `Preference #${preferenceId} saved!` });
+            setTimeout(() => { setSaveStatus(null); setCurrentView('main'); }, 1000);
+            await Promise.all([loadUserPreferences(), loadResumeStatus(), loadMatchedJobs()]);
         } catch (error: any) {
-            console.error('Error saving preference:', error);
             setSaveStatus({ type: 'error', message: error.message || 'Failed to save preference' });
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     };
 
     const removePreference = async (preferenceId: 1 | 2) => {
-        if (!user?.id) {
-            setSaveStatus({ type: 'error', message: 'You must be logged in to remove preferences' });
-            return;
-        }
-
-        setLoading(true);
-        setSaveStatus(null);
-
+        if (!user?.id) return;
+        setLoading(true); setSaveStatus(null);
         try {
-            const { error } = await supabase
-                .from('user_job_preferences')
-                .delete()
-                .eq('user_id', user.id)
-                .eq('preference_id', preferenceId);
-
-            if (error) throw error;
-
-            const defaultPreference = {
-                jobTypes: [] as string[],
-                experienceLevel: 'any' as 'moderate' | 'advanced' | 'any',
-                location: '', // No default
-                includeRemote: true,
-            };
-
-            if (preferenceId === 1) {
-                setPreference1(defaultPreference);
-            } else {
-                setPreference2(defaultPreference);
-            }
-
-            setSaveStatus({ type: 'success', message: `Preference #${preferenceId} removed successfully!` });
-            setTimeout(() => setSaveStatus(null), 3000);
-            await loadUserPreferences();
-            await loadResumeStatus();
-            await loadMatchedJobs();
-            setCurrentView('main');
+            await supabase.from('user_job_preferences').delete().eq('user_id', user.id).eq('preference_id', preferenceId);
+            const empty = { jobTypes: [] as string[], experienceLevel: 'any' as const, location: '', includeRemote: true };
+            if (preferenceId === 1) setPreference1(empty);
+            else setPreference2(empty);
+            setSaveStatus({ type: 'success', message: `Preference #${preferenceId} removed!` });
+            setTimeout(() => { setSaveStatus(null); setCurrentView('main'); }, 1000);
         } catch (error: any) {
-            console.error('Error removing preference:', error);
             setSaveStatus({ type: 'error', message: error.message || 'Failed to remove preference' });
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     };
 
     const updatePreference1 = (field: string, value: any) => {
-        setPreference1(prev => {
-            const updated = { ...prev, [field]: value };
-            if (field === 'jobTypes' && !value.includes('full-time')) {
-                updated.experienceLevel = 'any';
-            }
-            return updated;
-        });
+        setPreference1(prev => { const u = { ...prev, [field]: value }; if (field === 'jobTypes' && !value.includes('full-time')) u.experienceLevel = 'any'; return u; });
     };
-
     const updatePreference2 = (field: string, value: any) => {
-        setPreference2(prev => {
-            const updated = { ...prev, [field]: value };
-            if (field === 'jobTypes' && !value.includes('full-time')) {
-                updated.experienceLevel = 'any';
-            }
-            return updated;
-        });
+        setPreference2(prev => { const u = { ...prev, [field]: value }; if (field === 'jobTypes' && !value.includes('full-time')) u.experienceLevel = 'any'; return u; });
     };
 
-    // Helper function to display location nicely
-    const displayLocation = (locationString: string) => {
-        if (!locationString) return 'Not set';
-        const cities = locationString.split(',');
+    const displayLocation = (loc: string) => {
+        if (!loc) return 'Not set';
+        const cities = loc.split(',');
         if (cities.includes('MI:all')) return 'All Michigan';
         if (cities.length === 1) return cities[0].replace('MI:', '');
         return `${cities.length} cities selected`;
     };
 
-    // Render preference setup screens
-    if (currentView === 'preference1') {
+    // Preference setup screens
+    if (currentView === 'preference1' || currentView === 'preference2') {
+        const prefId = currentView === 'preference1' ? 1 : 2;
+        const prefData = prefId === 1 ? preference1 : preference2;
+        const updateFn = prefId === 1 ? updatePreference1 : updatePreference2;
+
         return (
-            <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
-                <div className="max-w-3xl mx-auto">
-                    <div className="mb-6">
-                        <button
-                            onClick={() => setCurrentView('main')}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
-                        >
-                            ← Back to Dashboard
+            <AppShell>
+                <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+                    <div style={{ marginBottom: '16px' }}>
+                        <button onClick={() => setCurrentView('main')} style={{ background: 'none', border: 'none', color: '#71717a', fontSize: '13px', cursor: 'pointer', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            ← Back
                         </button>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                            🎯 Job Preference #1
-                        </h1>
-                        <p className="text-gray-600">
-                            Set up your first job preference
-                        </p>
+                        <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px' }}>Job Preference #{prefId}</h1>
+                        <p style={{ color: '#52525b', fontSize: '12px' }}>Set up your job search criteria</p>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                    <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '20px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
                         {saveStatus && (
-                            <div className={`mb-6 p-4 rounded-lg border ${saveStatus.type === 'success'
-                                ? 'bg-green-50 border-green-200 text-green-700'
-                                : 'bg-red-50 border-red-200 text-red-700'
-                                }`}>
+                            <div style={{ marginBottom: '14px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', background: saveStatus.type === 'success' ? 'rgba(41,193,21,0.08)' : 'rgba(239,68,68,0.08)', color: saveStatus.type === 'success' ? '#29C115' : '#ef4444', border: `1px solid ${saveStatus.type === 'success' ? 'rgba(41,193,21,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
                                 {saveStatus.message}
                             </div>
                         )}
-
-                        <PreferencesForm
-                            formData={preference1}
-                            updateFormData={updatePreference1}
-                        />
-                        <div className="mt-6 flex justify-between">
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setCurrentView('main')}
-                                    disabled={loading}
-                                    className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-gray-500 text-white hover:bg-gray-600'
-                                        }`}
-                                >
+                        <PreferencesForm formData={prefData} updateFormData={updateFn} />
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', gap: '10px' }}>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button onClick={() => setCurrentView('main')} disabled={loading} style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.04)', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
                                     Cancel
                                 </button>
-                                {preference1.jobTypes.length > 0 && (
-                                    <button
-                                        onClick={() => {
-                                            if (confirm('Are you sure you want to delete this preference?')) {
-                                                removePreference(1);
-                                            }
-                                        }}
-                                        disabled={loading}
-                                        className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-red-600 text-white hover:bg-red-700'
-                                            }`}
-                                    >
-                                        {loading ? '🔄 Deleting...' : '🗑️ Delete Preference'}
+                                {prefData.jobTypes.length > 0 && (
+                                    <button onClick={() => { if (confirm('Delete this preference?')) removePreference(prefId); }} disabled={loading} style={{ padding: '8px 16px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
+                                        Delete
                                     </button>
                                 )}
                             </div>
-                            <button
-                                onClick={() => savePreference(1)}
-                                disabled={loading}
-                                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-green-600 text-white hover:bg-green-700'
-                                    }`}
-                            >
-                                {loading ? '🔄 Saving...' : '💾 Save Preference #1'}
+                            <button onClick={() => savePreference(prefId)} disabled={loading} style={{ padding: '8px 20px', background: loading ? '#1a1a1a' : '#29C115', color: loading ? '#52525b' : 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}>
+                                {loading ? 'Saving...' : 'Save'}
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            </AppShell>
         );
     }
 
-    if (currentView === 'preference2') {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
-                <div className="max-w-3xl mx-auto">
-                    <div className="mb-6">
-                        <button
-                            onClick={() => setCurrentView('main')}
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
-                        >
-                            ← Back to Dashboard
-                        </button>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                            🎯 Job Preference #2
-                        </h1>
-                        <p className="text-gray-600">
-                            Set up your second job preference
-                        </p>
-                    </div>
-
-                    <div className="bg-white rounded-2xl shadow-xl p-8">
-                        {saveStatus && (
-                            <div className={`mb-6 p-4 rounded-lg border ${saveStatus.type === 'success'
-                                ? 'bg-green-50 border-green-200 text-green-700'
-                                : 'bg-red-50 border-red-200 text-red-700'
-                                }`}>
-                                {saveStatus.message}
-                            </div>
-                        )}
-
-                        <PreferencesForm
-                            formData={preference2}
-                            updateFormData={updatePreference2}
-                        />
-                        <div className="mt-6 flex justify-between">
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setCurrentView('main')}
-                                    disabled={loading}
-                                    className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-gray-500 text-white hover:bg-gray-600'
-                                        }`}
-                                >
-                                    Cancel
-                                </button>
-                                {preference2.jobTypes.length > 0 && (
-                                    <button
-                                        onClick={() => {
-                                            if (confirm('Are you sure you want to delete this preference?')) {
-                                                removePreference(2);
-                                            }
-                                        }}
-                                        disabled={loading}
-                                        className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-red-600 text-white hover:bg-red-700'
-                                            }`}
-                                    >
-                                        {loading ? '🔄 Deleting...' : '🗑️ Delete Preference'}
-                                    </button>
-                                )}
-                            </div>
-                            <button
-                                onClick={() => savePreference(2)}
-                                disabled={loading}
-                                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${loading
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-green-600 text-white hover:bg-green-700'
-                                    }`}
-                            >
-                                {loading ? '🔄 Saving...' : '💾 Save Preference #2'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // Main dashboard view
+    // Main dashboard
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
-            <div className="max-w-6xl mx-auto">
+        <AppShell>
+            <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        Custom Job Matching
-                    </h1>
-                    <p className="text-gray-600">
-                        Upload your resume, set your preferences, and find your perfect job matches
-                    </p>
+                <div style={{ marginBottom: '16px' }}>
+                    <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Custom Job Matching</h1>
+                    <p style={{ color: '#52525b', fontSize: '12px' }}>Upload your resume and set preferences to get personalized job matches</p>
                 </div>
 
-                {/* Success/Error Messages */}
-                {saveStatus && currentView === 'main' && (
-                    <div className={`mb-6 p-4 rounded-lg border ${saveStatus.type === 'success'
-                        ? 'bg-green-50 border-green-200 text-green-700'
-                        : 'bg-red-50 border-red-200 text-red-700'
-                        }`}>
+                {saveStatus && (
+                    <div style={{ marginBottom: '14px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', background: saveStatus.type === 'success' ? 'rgba(41,193,21,0.08)' : 'rgba(239,68,68,0.08)', color: saveStatus.type === 'success' ? '#29C115' : '#ef4444', border: `1px solid ${saveStatus.type === 'success' ? 'rgba(41,193,21,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
                         {saveStatus.message}
                     </div>
                 )}
 
-                {/* Top Section: Resume Upload + Preference Buttons */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    {/* Left: Resume Upload */}
-                    <div className="bg-white rounded-2xl shadow-xl p-8">
-                        <ResumeUpload
-                            onResumeUploaded={(uploaded) => {
-                                setResumeUploaded(uploaded);
-                                loadResumeStatus();
-                            }}
-                            userId={user?.id}
-                            existingResumeUrl={resumeUrl}
-                        />
+                {/* Resume + Preferences row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
 
-                        {/* Resume Action Buttons */}
+                    {/* Resume */}
+                    <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '16px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+                        <ResumeUpload onResumeUploaded={(uploaded) => { setResumeUploaded(uploaded); loadResumeStatus(); }} userId={user?.id} existingResumeUrl={resumeUrl} />
                         {resumeUploaded && (
-                            <div className="flex gap-3 mt-6 pt-6 border-t border-gray-200">
-                                <button
-                                    onClick={() => document.getElementById('resume-upload-update')?.click()}
-                                    disabled={loading}
-                                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${loading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                                        }`}
-                                >
-                                    {loading ? '🔄 Updating...' : '📝 Update Resume'}
+                            <div style={{ display: 'flex', gap: '8px', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                <button onClick={() => document.getElementById('resume-upload-update')?.click()} disabled={loading} style={{ flex: 1, padding: '7px 12px', background: 'rgba(29,78,216,0.15)', color: '#60a5fa', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '7px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
+                                    Update Resume
                                 </button>
-                                <button
-                                    onClick={removeResume}
-                                    disabled={loading}
-                                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${loading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-red-600 text-white hover:bg-red-700'
-                                        }`}
-                                >
-                                    {loading ? '🔄 Removing...' : '🗑️ Remove Resume'}
+                                <button onClick={removeResume} disabled={loading} style={{ flex: 1, padding: '7px 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '7px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
+                                    Remove
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    {/* Right: Preference Buttons */}
-                    <div className="flex flex-col gap-4">
-                        {/* Preference 1 Button */}
-                        <div className="bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-green-200 hover:shadow-2xl flex-1 relative transition-all duration-200">
-                            <div
-                                onClick={() => setCurrentView('preference1')}
-                                className="p-6 cursor-pointer h-full min-h-[200px] flex flex-col"
-                            >
-                                <div className="flex items-start gap-4">
-                                    <div className="text-4xl">🎯</div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-1">
-                                            Job Preference #1
-                                        </h3>
-                                        <p className="text-gray-600 text-sm mb-3">
-                                            Set up your first job search criteria
-                                        </p>
-
-                                        {preference1.jobTypes.length > 0 ? (
-                                            <div className="space-y-2 text-sm">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-600 font-semibold">✓ Job Types:</span>
-                                                    <span className="text-gray-700">{preference1.jobTypes.join(', ')}</span>
+                    {/* Preferences */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {([1, 2] as const).map(prefId => {
+                            const pref = prefId === 1 ? preference1 : preference2;
+                            const configured = pref.jobTypes.length > 0;
+                            return (
+                                <div key={prefId} style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '14px', flex: 1, cursor: 'pointer', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset', position: 'relative' }} onClick={() => setCurrentView(`preference${prefId}`)}>
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px' }}>
+                                        <div>
+                                            <p style={{ color: 'white', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Job Preference #{prefId}</p>
+                                            {configured ? (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                                    <span style={{ color: '#29C115', fontSize: '11px' }}>✓ {pref.jobTypes.join(', ')}</span>
+                                                    <span style={{ color: '#52525b', fontSize: '11px' }}>📍 {displayLocation(pref.location)}</span>
+                                                    {pref.includeRemote && <span style={{ color: '#52525b', fontSize: '11px' }}>🌐 Remote included</span>}
                                                 </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-600 font-semibold">📍 Location:</span>
-                                                    <span className="text-gray-700">{displayLocation(preference1.location)}</span>
-                                                </div>
-
-                                                {preference1.jobTypes.includes('full-time') && preference1.experienceLevel !== 'any' && (
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-green-600 font-semibold">💼 Experience:</span>
-                                                        <span className="text-gray-700 capitalize">{preference1.experienceLevel}</span>
-                                                    </div>
-                                                )}
-
-                                                {preference1.includeRemote && (
-                                                    <div className="flex items-center gap-2 text-blue-600">
-                                                        <span>🌐 Remote jobs included</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <div className="text-orange-500 text-sm font-medium">⚠ Not configured yet</div>
-                                        )}
+                                            ) : (
+                                                <span style={{ color: '#f97316', fontSize: '11px' }}>⚠ Not configured yet</span>
+                                            )}
+                                        </div>
+                                        <span style={{ color: '#52525b', fontSize: '16px', flexShrink: 0 }}>→</span>
                                     </div>
-                                    <div className="text-2xl text-gray-400">→</div>
+                                    {configured && (
+                                        <button onClick={(e) => { e.stopPropagation(); if (confirm(`Delete Preference #${prefId}?`)) removePreference(prefId); }} disabled={loading} style={{ position: 'absolute', bottom: '10px', right: '10px', padding: '3px 8px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '5px', fontSize: '10px', fontWeight: 600, cursor: 'pointer' }}>
+                                            Delete
+                                        </button>
+                                    )}
                                 </div>
-                            </div>
-
-                            {/* Delete button */}
-                            {preference1.jobTypes.length > 0 && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (confirm('Are you sure you want to delete Preference #1?')) {
-                                            removePreference(1);
-                                        }
-                                    }}
-                                    disabled={loading}
-                                    className="absolute bottom-3 right-3 px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-full hover:bg-red-700 transition-colors shadow-lg border-2 border-red-600 hover:border-red-700"
-                                    title="Delete preference"
-                                >
-                                    🗑️ Delete
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Preference 2 Button */}
-                        <div className="bg-white rounded-2xl shadow-xl border-2 border-transparent hover:border-green-200 hover:shadow-2xl flex-1 relative transition-all duration-200">
-                            <div
-                                onClick={() => setCurrentView('preference2')}
-                                className="p-6 cursor-pointer h-full min-h-[200px] flex flex-col"
-                            >
-                                <div className="flex items-start gap-4">
-                                    <div className="text-4xl">🎯</div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-1">
-                                            Job Preference #2
-                                        </h3>
-                                        <p className="text-gray-600 text-sm mb-3">
-                                            Set up your second job search criteria
-                                        </p>
-
-                                        {preference2.jobTypes.length > 0 ? (
-                                            <div className="space-y-2 text-sm">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-600 font-semibold">✓ Job Types:</span>
-                                                    <span className="text-gray-700">{preference2.jobTypes.join(', ')}</span>
-                                                </div>
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-green-600 font-semibold">📍 Location:</span>
-                                                    <span className="text-gray-700">{displayLocation(preference2.location)}</span>
-                                                </div>
-
-                                                {preference2.jobTypes.includes('full-time') && preference2.experienceLevel !== 'any' && (
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-green-600 font-semibold">💼 Experience:</span>
-                                                        <span className="text-gray-700 capitalize">{preference2.experienceLevel}</span>
-                                                    </div>
-                                                )}
-
-                                                {preference2.includeRemote && (
-                                                    <div className="flex items-center gap-2 text-blue-600">
-                                                        <span>🌐 Remote jobs included</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <div className="text-orange-500 text-sm font-medium">⚠ Not configured yet</div>
-                                        )}
-                                    </div>
-                                    <div className="text-2xl text-gray-400">→</div>
-                                </div>
-                            </div>
-
-                            {/* Delete button */}
-                            {preference2.jobTypes.length > 0 && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (confirm('Are you sure you want to delete Preference #2?')) {
-                                            removePreference(2);
-                                        }
-                                    }}
-                                    disabled={loading}
-                                    className="absolute bottom-3 right-3 px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-full hover:bg-red-700 transition-colors shadow-lg border-2 border-red-600 hover:border-red-700"
-                                    title="Delete preference"
-                                >
-                                    🗑️ Delete
-                                </button>
-                            )}
-                        </div>
+                            );
+                        })}
                     </div>
                 </div>
 
-                {/* Bottom Section: Matched Jobs */}
-                <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <div className="mb-6 flex justify-between items-start">
+                {/* Matched Jobs */}
+                <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '16px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px', gap: '12px' }}>
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                                🔍 Your Job Matches
-                            </h2>
-                            <p className="text-gray-600">
+                            <h2 style={{ color: 'white', fontSize: '14px', fontWeight: 600, marginBottom: '3px' }}>Your Job Matches</h2>
+                            <p style={{ color: '#52525b', fontSize: '11px' }}>
                                 {matchedJobs.length > 0
-                                    ? `Found ${matchedJobs.length} job match${matchedJobs.length > 1 ? 'es' : ''} based on your preferences`
-                                    : 'Job matches will appear here when available'
+                                    ? `${matchedJobs.length} match${matchedJobs.length !== 1 ? 'es' : ''} from the last ${MATCH_EXPIRY_DAYS} days`
+                                    : 'Matches appear here when the daily run finds jobs for you'
                                 }
                             </p>
                         </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+                            <button onClick={loadMatchedJobs} disabled={loadingJobs} style={{ padding: '6px 12px', background: 'rgba(255,255,255,0.04)', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '7px', fontSize: '11px', fontWeight: 500, cursor: loadingJobs ? 'not-allowed' : 'pointer' }}>
+                                {loadingJobs ? 'Refreshing...' : 'Refresh'}
+                            </button>
+                        </div>
+                    </div>
 
-                        <button
-                            onClick={loadMatchedJobs}
-                            disabled={loadingJobs}
-                            className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${loadingJobs
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-blue-600 text-white hover:bg-blue-700'
-                                }`}
-                        >
-                            {loadingJobs ? '🔄 Refreshing...' : '🔄 Refresh Matches'}
-                        </button>
+                    {/* Expiry notice */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 12px', background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)', borderRadius: '7px', marginBottom: '14px' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <p style={{ color: '#fbbf24', fontSize: '11px' }}>
+                            Matched jobs are shown for <strong>{MATCH_EXPIRY_DAYS} days</strong>. Save any jobs you want to keep using the bookmark icon — saved jobs don't expire.
+                        </p>
                     </div>
 
                     {loadingJobs ? (
-                        <div className="text-center py-12">
-                            <div className="text-4xl mb-4">🔄</div>
-                            <p className="text-gray-600">Loading your job matches...</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {[...Array(6)].map((_, i) => (
+                                <div key={i} style={{ background: '#0d0d0d', borderRadius: '10px', height: '180px', border: '1px solid rgba(255,255,255,0.07)' }} />
+                            ))}
                         </div>
                     ) : matchedJobs.length > 0 ? (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                             {matchedJobs.map((job) => (
-                                <JobCard key={job.job_id} job={job} />
+                                <DarkJobCard key={job.job_id} job={job} showSave={true} showDelete={false} />
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-12">
-                            <div className="bg-gray-50 rounded-lg p-12 border-2 border-dashed border-gray-300">
-                                <div className="text-6xl mb-4">🔍</div>
-                                <p className="text-lg font-semibold text-gray-700 mb-2">
-                                    No Job Matches Yet
-                                </p>
-                                <p className="text-sm text-gray-500 mb-4">
-                                    Complete your resume upload and preference setup to start receiving personalized job matches
-                                </p>
-                                <div className="text-xs text-gray-400">
-                                    {!resumeUploaded && '• Upload your resume'}
-                                    {(!preference1.jobTypes.length && !preference2.jobTypes.length) &&
-                                        <div>• Configure at least one job preference</div>
-                                    }
-                                </div>
-                            </div>
+                        <div style={{ textAlign: 'center', padding: '40px 20px', background: '#0d0d0d', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <p style={{ color: '#71717a', fontSize: '14px', fontWeight: 600, marginBottom: '6px' }}>No matches yet</p>
+                            <p style={{ color: '#3f3f46', fontSize: '12px' }}>
+                                {!resumeUploaded ? 'Upload your resume and ' : ''}
+                                {(!preference1.jobTypes.length && !preference2.jobTypes.length) ? 'Set up a job preference to get started.' : 'Matches arrive once per day during the nightly run.'}
+                            </p>
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </AppShell>
     );
 }
