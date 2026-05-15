@@ -28,7 +28,11 @@ interface MatchedJob {
 export default function ResumeJobsPage() {
   const { user } = useAuth()
   const [jobs, setJobs] = useState<MatchedJob[]>([])
+  const [totalMatchCount, setTotalMatchCount] = useState(0)
+  const [newThisWeekCount, setNewThisWeekCount] = useState(0)
+  const [savedCount, setSavedCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (user?.id) loadMatches()
@@ -37,25 +41,45 @@ export default function ResumeJobsPage() {
   const loadMatches = async () => {
     if (!user?.id) return
     setLoading(true)
+    setError(null)
     try {
-      // Only fetch matches from the last 7 days
       const cutoff = new Date()
       cutoff.setDate(cutoff.getDate() - MATCH_EXPIRY_DAYS)
+      const cutoffISO = cutoff.toISOString()
 
-      const { data: matchRows } = await supabase
-        .from('user_job_matches')
-        .select('job_id, created_at')
-        .eq('user_id', user.id)
-        .gte('created_at', cutoff.toISOString())
-        .order('created_at', { ascending: false })
+      const [{ data: matchRows, error: matchErr }, { count: saved }] = await Promise.all([
+        supabase
+          .from('user_job_matches')
+          .select('job_id, created_at')
+          .eq('user_id', user.id)
+          .gte('created_at', cutoffISO)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('saved_jobs')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id),
+      ])
+
+      if (matchErr) throw matchErr
+
+      // Count stats directly from match rows so they're accurate even if job details are unavailable
+      const total = matchRows?.length ?? 0
+      const weekAgoMs = Date.now() - 7 * 86400000
+      const newWeek = (matchRows ?? []).filter(m => new Date(m.created_at).getTime() >= weekAgoMs).length
+
+      setTotalMatchCount(total)
+      setNewThisWeekCount(newWeek)
+      setSavedCount(saved ?? 0)
 
       if (!matchRows || matchRows.length === 0) { setJobs([]); return }
 
       const jobIds = matchRows.map(m => m.job_id)
-      const { data: jobRows } = await supabase
+      const { data: jobRows, error: jobErr } = await supabase
         .from('job_postings_ingest_test')
         .select('*')
         .in('job_id', jobIds)
+
+      if (jobErr) throw jobErr
 
       if (jobRows) {
         const merged: MatchedJob[] = matchRows
@@ -67,22 +91,18 @@ export default function ResumeJobsPage() {
           .filter(Boolean) as MatchedJob[]
         setJobs(merged)
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error loading matches:', err)
+      setError(err.message || 'Failed to load matches')
     } finally {
       setLoading(false)
     }
   }
 
-  const newThisWeek = jobs.filter(j => {
-    const days = Math.floor((Date.now() - new Date(j.matched_at).getTime()) / 86400000)
-    return days < 7
-  }).length
-
   const statCards = [
-    { label: 'Total Matches', value: jobs.length.toString(), color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
-    { label: 'New This Week',  value: newThisWeek.toString(),  color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)',  border: 'rgba(96,165,250,0.28)' },
-    { label: 'Saved Jobs',     value: '0',                     color: '#fb923c', labelColor: '#fdba74', bg: 'rgba(249,115,22,0.13)',  border: 'rgba(249,115,22,0.28)' },
+    { label: 'Total Matches', value: loading ? '...' : totalMatchCount.toString(), color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
+    { label: 'New This Week',  value: loading ? '...' : newThisWeekCount.toString(),  color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)',  border: 'rgba(96,165,250,0.28)' },
+    { label: 'Saved Jobs',     value: loading ? '...' : savedCount.toString(),         color: '#fb923c', labelColor: '#fdba74', bg: 'rgba(249,115,22,0.13)',  border: 'rgba(249,115,22,0.28)' },
   ]
 
   return (
@@ -140,6 +160,14 @@ export default function ResumeJobsPage() {
             Go to Settings
           </Link>
         </div>
+
+        {error && (
+          <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '12px', color: '#ef4444', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {error}
+            <button onClick={loadMatches} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '11px', textDecoration: 'underline' }}>Retry</button>
+          </div>
+        )}
 
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '14px' }}>

@@ -5,6 +5,12 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { supabase } from '@/lib/supabase'
+
+const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
+  '/custom_jobs/matches': { bg: 'rgba(239,68,68,0.15)',   text: '#ef4444', border: 'rgba(239,68,68,0.35)',   shadow: '#161616' },
+  '/tracking':            { bg: 'rgba(139,92,246,0.18)',  text: '#a78bfa', border: 'rgba(139,92,246,0.45)',  shadow: '#161616' },
+}
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
   return (
@@ -120,6 +126,35 @@ export default function AppShell({ children }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const profileMenuRef = useRef<HTMLDivElement>(null)
+  const [badges, setBadges] = useState<Record<string, number>>({
+    '/custom_jobs/matches': 0,
+    '/tracking': 0,
+  })
+
+  // Fetch unread custom job matches count
+  useEffect(() => {
+    if (!user?.id) return
+    const lastViewed = localStorage.getItem('customJobsLastViewed') ?? new Date(0).toISOString()
+    supabase
+      .from('user_job_matches')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gt('created_at', lastViewed)
+      .then(({ count }) => {
+        setBadges(prev => ({ ...prev, '/custom_jobs/matches': count ?? 0 }))
+      })
+  }, [user?.id])
+
+  // Clear badge when user lands on the page (any navigation method)
+  useEffect(() => {
+    if (pathname === '/custom_jobs/matches') {
+      localStorage.setItem('customJobsLastViewed', new Date().toISOString())
+      setBadges(prev => ({ ...prev, '/custom_jobs/matches': 0 }))
+    } else if (pathname === '/tracking') {
+      localStorage.setItem('trackingLastViewed', new Date().toISOString())
+      setBadges(prev => ({ ...prev, '/tracking': 0 }))
+    }
+  }, [pathname])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -348,6 +383,9 @@ export default function AppShell({ children }: AppShellProps) {
               const Icon = item.icon
               const isActive = pathname === item.href
 
+              const badgeCount = badges[item.href] ?? 0
+              const badgeColor = BADGE_COLORS[item.href]
+
               return (
                 <Link
                   key={item.href}
@@ -366,8 +404,9 @@ export default function AppShell({ children }: AppShellProps) {
                     fontWeight: isActive ? 500 : 400,
                     transition: 'background 150ms, color 150ms',
                     whiteSpace: 'nowrap',
-                    overflow: 'hidden',
+                    overflow: 'visible',
                     cursor: 'pointer',
+                    position: 'relative',
                   }}
                   onMouseOver={(e) => {
                     if (!isActive) {
@@ -382,10 +421,62 @@ export default function AppShell({ children }: AppShellProps) {
                     }
                   }}
                 >
-                  <div style={{ flexShrink: 0 }}>
+                  {/* Icon with overlaid badge when collapsed */}
+                  <div style={{ flexShrink: 0, position: 'relative' }}>
                     <Icon size={18} />
+                    {collapsed && badgeColor && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '-5px',
+                        right: '-5px',
+                        minWidth: '14px',
+                        height: '14px',
+                        borderRadius: '7px',
+                        background: badgeColor.bg,
+                        color: badgeColor.text,
+                        border: `1px solid ${badgeColor.border}`,
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '0 3px',
+                        lineHeight: 1,
+                        boxShadow: `0 0 0 1.5px ${badgeColor.shadow}`,
+                      }}>
+                        {badgeCount > 99 ? '99+' : badgeCount}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Label */}
                   {!collapsed && item.label}
+
+                  {/* Badge: absolute top-right corner, partially overflows the tab */}
+                  {!collapsed && badgeColor && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-7px',
+                      right: '-6px',
+                      minWidth: '18px',
+                      height: '18px',
+                      borderRadius: '9px',
+                      background: badgeColor.bg,
+                      color: badgeColor.text,
+                      border: `1px solid ${badgeColor.border}`,
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0 5px',
+                      lineHeight: 1,
+                      boxShadow: `0 0 0 2px ${badgeColor.shadow}`,
+                      zIndex: 1,
+                    }}>
+                      {badgeCount > 99 ? '99+' : badgeCount}
+                    </span>
+                  )}
                 </Link>
               )
             })}

@@ -385,6 +385,25 @@ export default function TrackingPage() {
           </div>
         </div>
 
+        {/* Expiry notice */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 12px',
+          background: 'rgba(251,191,36,0.06)',
+          border: '1px solid rgba(251,191,36,0.18)',
+          borderRadius: '8px',
+          marginBottom: '14px',
+        }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <p style={{ color: '#fbbf24', fontSize: '11px', lineHeight: '1.5' }}>
+            Matched jobs are shown for <strong>7 days</strong> then removed. Save any jobs you want to keep — saved jobs never expire.
+          </p>
+        </div>
+
         {/* Tracked companies list */}
         <div>
           <p style={{ color: '#c4b5fd', fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '10px' }}>
