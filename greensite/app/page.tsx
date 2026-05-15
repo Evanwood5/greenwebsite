@@ -7,7 +7,7 @@ import FeaturesSection from "@/components/home/FeaturesSection";
 import StatsSection from "@/components/home/StatsSection";
 import WrapperSection from "@/components/home/WrapperSection";
 import CTASection from "@/components/home/CTASection";
-import MoleculeBackground from "@/components/home/MoleculeBackground";
+
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ background: '#000000' }}>
-      <MoleculeBackground />
+
       <Navbar />
       <HeroSection user={user} />
       <StatsSection />

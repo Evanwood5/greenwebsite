@@ -77,10 +77,10 @@ const slides = [...testimonials, ...testimonials, ...testimonials]
 function Card({ t }: { t: typeof testimonials[0] }) {
   return (
     <div
-      className="rounded-2xl p-6 flex flex-col"
+      className="rounded-xl p-6 flex flex-col transition-all duration-300 hover:shadow-xl"
       style={{
-        background: '#0d0d0d',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#1A1A1A',
+        border: '1px solid rgba(255,255,255,0.08)',
         height: '100%',
         boxSizing: 'border-box',
       }}
