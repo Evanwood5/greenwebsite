@@ -7,6 +7,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
+const MATCH_EXPIRY_DAYS = 7
+
 interface MatchedJob {
   id: number
   job_id: string
@@ -18,6 +20,8 @@ interface MatchedJob {
   city: string | null
   state: string | null
   is_remote: boolean | null
+  experience_level?: string | null
+  job_field_id?: number | null
   matched_at: string
 }
 
@@ -34,10 +38,15 @@ export default function ResumeJobsPage() {
     if (!user?.id) return
     setLoading(true)
     try {
+      // Only fetch matches from the last 7 days
+      const cutoff = new Date()
+      cutoff.setDate(cutoff.getDate() - MATCH_EXPIRY_DAYS)
+
       const { data: matchRows } = await supabase
         .from('user_job_matches')
         .select('job_id, created_at')
         .eq('user_id', user.id)
+        .gte('created_at', cutoff.toISOString())
         .order('created_at', { ascending: false })
 
       if (!matchRows || matchRows.length === 0) { setJobs([]); return }
@@ -132,7 +141,7 @@ export default function ResumeJobsPage() {
           </Link>
         </div>
 
-        {/* Stats — 3 cards, no Applications */}
+        {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '14px' }}>
           {statCards.map((card) => (
             <div key={card.label} style={{ background: card.bg, borderRadius: '10px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
@@ -165,7 +174,27 @@ export default function ResumeJobsPage() {
             )}
           </div>
 
-          <div style={{ padding: '16px' }}>
+          <div style={{ padding: '12px 16px 16px' }}>
+
+            {/* Expiry notice */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 12px',
+              background: 'rgba(251,191,36,0.06)',
+              border: '1px solid rgba(251,191,36,0.18)',
+              borderRadius: '8px',
+              marginBottom: '14px',
+            }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <p style={{ color: '#fbbf24', fontSize: '11px', lineHeight: '1.5' }}>
+                Matched jobs are shown for <strong>{MATCH_EXPIRY_DAYS} days</strong> then removed. Save any jobs you want to keep — saved jobs never expire.
+              </p>
+            </div>
+
             {loading ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                 {[...Array(6)].map((_, i) => (
@@ -187,7 +216,7 @@ export default function ResumeJobsPage() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                 {jobs.map((job) => (
-                  <DarkJobCard key={job.id} job={job} />
+                  <DarkJobCard key={job.id} job={job} showSave={true} showDelete={false} />
                 ))}
               </div>
             )}
