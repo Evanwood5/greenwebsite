@@ -70,7 +70,7 @@ function CompanyCard({ letter, color, colorRgb, delay }: { letter: string; color
     <FadeIn from="left" delay={delay}>
       <div
         className="rounded-xl p-3 flex items-start gap-2.5"
-        style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', width: '160px' }}
+        style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.1)', width: '160px' }}
       >
         <div
           className="rounded-lg flex items-center justify-center font-bold text-sm"
@@ -104,7 +104,7 @@ function JobFeedMockup() {
   return (
     <div
       className="rounded-2xl flex-shrink-0"
-      style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', padding: '14px', width: 230 }}
+      style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.1)', padding: '14px', width: 230 }}
     >
       {/* Top bar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -142,7 +142,7 @@ export default function WrapperSection() {
   return (
     <section
       id="how-it-works"
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
+      style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
       className="px-6 py-24"
     >
       <style>{`
@@ -187,8 +187,8 @@ export default function WrapperSection() {
             <div
               className="rounded-2xl flex flex-col items-center justify-center gap-3 flex-shrink-0"
               style={{
-                background: 'linear-gradient(145deg, #0f1f0f, #0d0d0d)',
-                border: '1px solid rgba(41,193,21,0.2)',
+                background: 'linear-gradient(145deg, #162416, #1a1a1a)',
+                border: '1px solid rgba(41,193,21,0.3)',
                 padding: '24px 18px',
                 width: 120,
                 boxShadow: '0 0 48px rgba(41,193,21,0.08)',
@@ -211,7 +211,7 @@ export default function WrapperSection() {
             {/* Apply card */}
             <div
               className="rounded-2xl flex flex-col items-center justify-center gap-2.5 text-center flex-shrink-0"
-              style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', padding: '24px 14px', width: 95 }}
+              style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.1)', padding: '24px 14px', width: 95 }}
             >
               <div
                 className="rounded-xl flex items-center justify-center"
@@ -233,12 +233,12 @@ export default function WrapperSection() {
         <FadeIn delay={300} className="flex justify-center mt-12">
           <div
             className="inline-flex items-center gap-3 px-5 py-3 rounded-xl"
-            style={{ background: 'rgba(41,193,21,0.04)', border: '1px solid rgba(41,193,21,0.12)' }}
+            style={{ background: '#0a1f0d', border: '1px solid rgba(41,193,21,0.3)' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
-            <span className="text-[12px]" style={{ color: '#52525b' }}>
+            <span className="text-[13px] font-medium" style={{ color: '#a1a1aa' }}>
               Greenify surfaces jobs from public career pages and links directly to the source. Always.
             </span>
           </div>

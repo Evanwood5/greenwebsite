@@ -110,6 +110,10 @@ function LevelBadge({ level }: { level: string }) {
   let style: React.CSSProperties
   if (normalized.includes('entry') || normalized.includes('junior')) {
     style = { background: 'rgba(41,193,21,0.08)', color: '#29C115', border: '1px solid rgba(41,193,21,0.2)' }
+  } else if (normalized.includes('moderate')) {
+    style = { background: 'rgba(252,165,165,0.06)', color: '#FCA5A5', border: '1px solid rgba(252,165,165,0.14)' }
+  } else if (normalized.includes('advanced')) {
+    style = { background: 'rgba(239,68,68,0.08)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.18)' }
   } else if (normalized.includes('mid') || normalized.includes('associate')) {
     style = { background: 'rgba(96,165,250,0.08)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.2)' }
   } else if (normalized.includes('senior') || normalized.includes('lead') || normalized.includes('principal')) {

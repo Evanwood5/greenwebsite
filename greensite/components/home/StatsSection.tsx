@@ -53,18 +53,17 @@ const testimonials = [
     ),
   },
   {
-    name: 'Jordan M',
-    school: 'University of Michigan',
-    company: 'Ford',
-    avatar: '/stroy1.png',
-    color: '#F97316',
-    colorRgb: '249,115,22',
+    name: 'Jeff S',
+    school: 'Michigan State',
+    company: 'Jackson National Life',
+    avatar: '/story4.png',
+    color: '#EF4444',
+    colorRgb: '239,68,68',
     quote: (
       <>
-        Found my{' '}
-        <span style={{ color: '#F97316', fontWeight: 500 }}>Ford co-op</span> through Greenify a week before it hit any job board.{' '}
-        <span style={{ color: '#F97316', fontWeight: 500 }}>The real-time alerts</span>{' '}
-        meant I was one of the first applicants, and it made all the difference in getting an interview.
+        Greenify&apos;s{' '}
+        <span style={{ color: '#EF4444', fontWeight: 500 }}>custom resume matching</span> connected my experience with a role at{' '}
+        <span style={{ color: '#EF4444', fontWeight: 500 }}>Jackson National Life</span> that closely aligned with my background and career goals. The personalized match helped me discover and apply to the opportunity early.
       </>
     ),
   },
@@ -78,10 +77,10 @@ const slides = [...testimonials, ...testimonials, ...testimonials]
 function Card({ t }: { t: typeof testimonials[0] }) {
   return (
     <div
-      className="rounded-2xl p-6 flex flex-col"
+      className="rounded-xl p-6 flex flex-col transition-all duration-300 hover:shadow-xl"
       style={{
-        background: '#0d0d0d',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#1A1A1A',
+        border: '1px solid rgba(255,255,255,0.08)',
         height: '100%',
         boxSizing: 'border-box',
       }}
@@ -106,35 +105,48 @@ function Card({ t }: { t: typeof testimonials[0] }) {
           paddingTop: '16px',
           marginTop: '20px',
           display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
+          alignItems: 'flex-start',
+          gap: '12px',
         }}
       >
         <img
           src={t.avatar}
           alt={t.name}
-          width={34}
-          height={34}
+          width={36}
+          height={36}
           className="rounded-full object-cover"
-          style={{ width: '34px', height: '34px', border: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}
+          style={{ width: '36px', height: '36px', border: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, marginTop: '2px' }}
         />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="text-[13px] font-semibold text-white truncate">{t.name}</div>
-          <div className="text-[11px] truncate" style={{ color: '#52525b' }}>{t.school}</div>
-        </div>
-        <div
-          style={{
-            fontSize: '10px',
-            fontWeight: 600,
-            color: t.color,
-            background: `rgba(${t.colorRgb},0.08)`,
-            padding: '3px 8px',
-            borderRadius: '4px',
-            border: `1px solid rgba(${t.colorRgb},0.2)`,
-            flexShrink: 0,
-          }}
-        >
-          {t.company}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+              marginBottom: '4px',
+            }}
+          >
+            <div className="text-[13px] font-semibold text-white">{t.name}</div>
+            <div
+              style={{
+                fontSize: '10px',
+                fontWeight: 600,
+                color: t.color,
+                background: `rgba(${t.colorRgb},0.08)`,
+                padding: '2px 8px',
+                borderRadius: '4px',
+                border: `1px solid rgba(${t.colorRgb},0.2)`,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {t.company}
+            </div>
+          </div>
+          <div className="text-[11px]" style={{ color: '#71717a' }}>
+            {t.school}
+          </div>
         </div>
       </div>
     </div>
@@ -220,7 +232,7 @@ export default function StatsSection() {
 
   return (
     <section
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)' }}
       className="px-6 py-24"
     >
       <div className="max-w-6xl mx-auto">

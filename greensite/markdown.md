@@ -1,8 +1,8 @@
-AI Coding Rules
+#AI Coding Rules
 Use this file as the default engineering standard when writing, refactoring, or reviewing code in this repository.
 This project values long-term code health over quick hacks. Every change should improve maintainability, readability, performance, and scalability.
 ---
-Core principles
+##Core principles
 Prefer improving overall code health over shipping clever but fragile code.
 Write code that is easy for another engineer to understand in one pass.
 Do not duplicate logic, constants, validation, queries, or transformations.
@@ -12,7 +12,7 @@ Keep modules small, focused, and loosely coupled.
 Favor explicitness and predictability over magic behavior.
 Make the safe and maintainable path the default path.
 ---
-What good code looks like here
+##What good code looks like here
 Good code in this repo should be:
 Readable: clear naming, simple control flow, minimal mental overhead
 Reusable: shared logic extracted into focused helpers or services
@@ -22,7 +22,7 @@ Testable: business logic is easy to validate in isolation
 Observable: errors are actionable and important behavior can be traced
 Consistent: follows existing project patterns unless a better pattern is intentionally introduced
 ---
-Architecture rules
+##Architecture rules
 1) Single responsibility
 Each file, function, class, and module should have one clear purpose.
 If a function does multiple unrelated things, split it.

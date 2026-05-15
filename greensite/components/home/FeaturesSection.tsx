@@ -45,13 +45,14 @@ function CompanyTrackMockup() {
     { name: 'Sparrow Hospital', role: 'Product Manager', color: '#A855F7', colorRgb: '168,85,247', status: 'Watching', newJobs: 1 },
     { name: 'Amazon', role: 'Data Analyst', color: '#F97316', colorRgb: '249,115,22', status: 'Watching', newJobs: 0 },
     { name: 'Rocket Companies', role: 'Any role', color: '#29C115', colorRgb: '41,193,21', status: 'Watching', newJobs: 3 },
+    { name: 'Rivian', role: 'Hardware Engineer', color: '#60A5FA', colorRgb: '96,165,250', status: 'Watching', newJobs: 1 },
   ];
   return (
-    <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+    <div style={{ background: '#1A1B1E', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7' }}>Tracked Companies</div>
         <div style={{ fontSize: '9px', color: '#29C115', background: 'rgba(41,193,21,0.08)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(41,193,21,0.15)' }}>
-          4 active
+          5 active
         </div>
       </div>
       {companies.map((c, i) => (
@@ -60,11 +61,11 @@ function CompanyTrackMockup() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
-            padding: '9px 10px',
+            gap: '12px',
+            padding: '12px 14px',
             background: c.newJobs > 0 ? `rgba(${c.colorRgb},0.04)` : 'rgba(255,255,255,0.02)',
             borderRadius: '8px',
-            marginBottom: i < companies.length - 1 ? '6px' : 0,
+            marginBottom: i < companies.length - 1 ? '10px' : 0,
             border: c.newJobs > 0 ? `1px solid rgba(${c.colorRgb},0.12)` : '1px solid rgba(255,255,255,0.04)',
           }}
         >
@@ -96,121 +97,160 @@ function DashboardMockup() {
     { company: 'Linear', role: 'Frontend Engineer', color: '#f59e0b', isTop: false },
   ];
   return (
-    <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-        <div style={{ height: '7px', width: '80px', background: 'rgba(255,255,255,0.07)', borderRadius: '4px' }} />
-        <div style={{ display: 'flex', gap: '6px' }}>
-          <div style={{ height: '24px', width: '52px', background: 'rgba(41,193,21,0.1)', borderRadius: '6px', border: '1px solid rgba(41,193,21,0.15)' }} />
-          <div style={{ height: '24px', width: '52px', background: 'rgba(255,255,255,0.04)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.07)' }} />
+    <div style={{ background: '#1A1B1E', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ height: '6px', width: '60px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }} />
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ width: '32px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', borderRadius: '6px', border: '1px solid rgba(41,193,21,0.2)' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          </div>
+          <div style={{ width: '32px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+          </div>
         </div>
       </div>
-      {rows.map((row, i) => (
-        <div
-          key={i}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '10px 12px',
-            background: row.isTop ? 'rgba(41,193,21,0.04)' : 'rgba(255,255,255,0.02)',
-            borderRadius: '8px',
-            marginBottom: i < rows.length - 1 ? '6px' : 0,
-            border: row.isTop ? '1px solid rgba(41,193,21,0.1)' : '1px solid rgba(255,255,255,0.04)',
-          }}
-        >
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: row.color, flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7', marginBottom: '1px' }}>{row.role}</div>
-            <div style={{ fontSize: '10px', color: '#71717a' }}>{row.company}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {rows.map((row, i) => (
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '16px',
+              background: 'rgba(255,255,255,0.01)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255,255,255,0.04)',
+            }}
+          >
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: row.color, flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>{row.role}</div>
+              <div style={{ fontSize: '11px', color: '#71717a' }}>{row.company}</div>
+            </div>
+            <div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={row.isTop ? '#29C115' : '#52525b'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            </div>
           </div>
-          <div style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ height: '5px', width: '28px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }} />
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
 
 function AnalyticsMockup() {
-  const bars = [
-    { height: 45, opacity: 0.25 },
-    { height: 70, opacity: 0.35 },
-    { height: 55, opacity: 0.3 },
-    { height: 90, opacity: 1 },
-    { height: 65, opacity: 0.45 },
-    { height: 80, opacity: 0.55 },
-    { height: 50, opacity: 0.35 },
-    { height: 95, opacity: 1 },
+  const w = 500, h = 260, px = 14, py = 16;
+  const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const stepX = (w - px * 2) / (labels.length - 1);
+
+  const series = [
+    { name: 'Engineering',  color: '#3B82F6', data: [35, 50, 42, 70, 85, 60, 78] },
+    { name: 'Product',      color: '#A855F7', data: [20, 30, 55, 45, 40, 65, 50] },
+    { name: 'Marketing',    color: '#F97316', data: [15, 25, 20, 35, 30, 45, 55] },
+    { name: 'Sales',        color: '#EAB308', data: [10, 15, 30, 25, 50, 40, 65] },
   ];
-  const companies = [
-    { label: 'Microsoft', pct: '78%' },
-    { label: 'Amazon', pct: '65%' },
-    { label: 'Google', pct: '82%' },
-  ];
+
+  const maxVal = 95;
+  const toY = (v: number) => py + (h - py * 2) * (1 - v / maxVal);
+  const toX = (i: number) => px + i * stepX;
+
+  const toSmooth = (data: number[]) => {
+    const pts = data.map((v, i) => ({ x: toX(i), y: toY(v) }));
+    let d = `M${pts[0].x},${pts[0].y}`;
+    for (let i = 1; i < pts.length; i++) {
+      const cp = (pts[i].x - pts[i - 1].x) * 0.4;
+      d += ` C${pts[i - 1].x + cp},${pts[i - 1].y} ${pts[i].x - cp},${pts[i].y} ${pts[i].x},${pts[i].y}`;
+    }
+    return d;
+  };
+
+  const toArea = (data: number[]) => {
+    const line = toSmooth(data);
+    const lastX = toX(data.length - 1);
+    const firstX = toX(0);
+    return `${line} L${lastX},${h - py} L${firstX},${h - py} Z`;
+  };
+
   return (
-    <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-        <div style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7' }}>Hiring Trends</div>
-        <div style={{ fontSize: '10px', color: '#71717a', background: 'rgba(255,255,255,0.04)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.07)' }}>
-          Q1 2026
+    <div style={{ background: '#1A1B1E', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+        <div>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#e4e4e7' }}>Hiring Activity</div>
+          <div style={{ fontSize: '9px', color: '#52525b', marginTop: '2px' }}>Weekly job postings by field</div>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {series.map((s) => (
+            <div key={s.name} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: s.color }} />
+              <span style={{ fontSize: '9px', color: '#71717a' }}>{s.name}</span>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', height: '100px', marginBottom: '18px' }}>
-        {bars.map((bar, i) => (
-          <div
-            key={i}
-            style={{
-              flex: 1,
-              background: `rgba(41,193,21,${bar.opacity})`,
-              height: `${bar.height}px`,
-              borderRadius: '3px 3px 0 0',
-            }}
-          />
+
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ width: '100%', flex: 1, minHeight: 0, marginTop: '10px', marginBottom: '16px' }}>
+        <defs>
+          {series.map((s) => (
+            <linearGradient key={s.name} id={`grad-${s.name}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={s.color} stopOpacity="0.15" />
+              <stop offset="100%" stopColor={s.color} stopOpacity="0" />
+            </linearGradient>
+          ))}
+        </defs>
+
+        {[0, 25, 50, 75].map((v) => (
+          <line key={v} x1={px} y1={toY(v)} x2={w - px} y2={toY(v)} stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" strokeDasharray="3,4" />
         ))}
-      </div>
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '14px' }}>
-        {companies.map((c, i) => (
-          <div
-            key={i}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: i < companies.length - 1 ? '9px' : 0 }}
-          >
-            <div style={{ fontSize: '10px', color: '#71717a', width: '58px', flexShrink: 0 }}>{c.label}</div>
-            <div style={{ flex: 1, height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ width: c.pct, height: '100%', background: '#29C115', borderRadius: '2px', opacity: 0.65 }} />
-            </div>
-            <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: 600, width: '28px', textAlign: 'right' }}>{c.pct}</div>
-          </div>
+
+        {series.map((s) => (
+          <path key={`a-${s.name}`} d={toArea(s.data)} fill={`url(#grad-${s.name})`} />
+        ))}
+
+        {series.map((s) => (
+          <path key={s.name} d={toSmooth(s.data)} fill="none" stroke={s.color} strokeWidth="2" strokeLinecap="round" />
+        ))}
+
+        {series.map((s) => (
+          <circle key={`d-${s.name}`} cx={toX(s.data.length - 1)} cy={toY(s.data[s.data.length - 1])} r="3.5" fill={s.color} stroke="#0d0d0d" strokeWidth="2" />
+        ))}
+      </svg>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 8px 0 8px' }}>
+        {labels.map((l) => (
+          <span key={l} style={{ fontSize: '9px', color: '#3f3f3f', fontWeight: 500 }}>{l}</span>
         ))}
       </div>
     </div>
   );
 }
+
 
 function ResumeMatchMockup() {
   const matches = [
     { role: 'SWE Intern @ Google', score: 94, isTop: true },
     { role: 'Backend Eng @ Stripe', score: 87, isTop: false },
     { role: 'Data Eng @ Tesla', score: 79, isTop: false },
+    { role: 'Frontend Eng @ Linear', score: 76, isTop: false },
+    { role: 'Product @ Figma', score: 71, isTop: false },
   ];
   return (
-    <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px' }}>
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
+    <div style={{ background: '#1A1B1E', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '24px' }}>
         {/* Resume side */}
-        <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize: '8px', color: '#52525b', marginBottom: '10px', fontWeight: 700, letterSpacing: '0.08em' }}>RESUME</div>
-          <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', width: '90%', marginBottom: '6px' }} />
-          <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', width: '70%', marginBottom: '6px' }} />
-          <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', width: '80%', marginBottom: '12px' }} />
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <div style={{ height: '14px', width: '30px', background: 'rgba(41,193,21,0.12)', borderRadius: '3px', border: '1px solid rgba(41,193,21,0.18)' }} />
-            <div style={{ height: '14px', width: '26px', background: 'rgba(96,165,250,0.12)', borderRadius: '3px', border: '1px solid rgba(96,165,250,0.18)' }} />
-            <div style={{ height: '14px', width: '32px', background: 'rgba(167,139,250,0.12)', borderRadius: '3px', border: '1px solid rgba(167,139,250,0.18)' }} />
+        <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '16px', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ fontSize: '9px', color: '#ffffff', marginBottom: '16px', fontWeight: 700, letterSpacing: '0.08em' }}>RESUME</div>
+          <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', width: '90%', marginBottom: '10px' }} />
+          <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', width: '70%', marginBottom: '10px' }} />
+          <div style={{ height: '5px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px', width: '80%', marginBottom: '20px' }} />
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <div style={{ height: '16px', width: '30px', background: 'rgba(41,193,21,0.12)', borderRadius: '3px', border: '1px solid rgba(41,193,21,0.18)' }} />
+            <div style={{ height: '16px', width: '26px', background: 'rgba(96,165,250,0.12)', borderRadius: '3px', border: '1px solid rgba(96,165,250,0.18)' }} />
+            <div style={{ height: '16px', width: '32px', background: 'rgba(167,139,250,0.12)', borderRadius: '3px', border: '1px solid rgba(167,139,250,0.18)' }} />
           </div>
         </div>
         {/* Matches side */}
         <div style={{ flex: 1.3 }}>
-          <div style={{ fontSize: '8px', color: '#52525b', marginBottom: '10px', fontWeight: 700, letterSpacing: '0.08em' }}>TOP MATCHES</div>
+          <div style={{ fontSize: '9px', color: '#ffffff', marginBottom: '16px', fontWeight: 700, letterSpacing: '0.08em' }}>TOP MATCHES</div>
           {matches.map((m, i) => (
             <div
               key={i}
@@ -218,14 +258,14 @@ function ResumeMatchMockup() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: i < matches.length - 1 ? '6px' : 0,
-                padding: '7px 8px',
+                marginBottom: i < matches.length - 1 ? '10px' : 0,
+                padding: '9px 12px',
                 background: m.isTop ? 'rgba(41,193,21,0.05)' : 'rgba(255,255,255,0.02)',
                 borderRadius: '7px',
                 border: m.isTop ? '1px solid rgba(41,193,21,0.1)' : '1px solid rgba(255,255,255,0.04)',
               }}
             >
-              <div style={{ fontSize: '9px', color: '#a1a1aa', flex: 1, marginRight: '6px', lineHeight: '1.3' }}>{m.role}</div>
+              <div style={{ fontSize: '10px', color: '#ffffff', fontWeight: 500, flex: 1, marginRight: '6px', lineHeight: '1.3' }}>{m.role}</div>
               <div
                 style={{
                   fontSize: '9px',
@@ -247,7 +287,7 @@ function ResumeMatchMockup() {
         style={{
           background: 'rgba(41,193,21,0.05)',
           borderRadius: '8px',
-          padding: '8px 12px',
+          padding: '12px 16px',
           border: '1px solid rgba(41,193,21,0.1)',
           display: 'flex',
           alignItems: 'center',
@@ -304,7 +344,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
+      style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)', scrollMarginTop: '72px' }}
       className="px-6 py-24"
     >
       <div className="max-w-6xl mx-auto">
@@ -366,8 +406,17 @@ export default function FeaturesSection() {
               </div>
 
               {/* Mockup side */}
-              <div className={feature.flip ? 'md:order-1' : 'md:order-2'}>
-                {feature.mockup}
+              <div className={`relative ${feature.flip ? 'md:order-1' : 'md:order-2'}`}>
+                {/* Backlight glow - Patchy / Nebula effect */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
+                  <div className="absolute inset-0 rounded-full" style={{ background: 'rgba(255,255,255,0.08)', filter: 'blur(40px)' }} />
+                  <div className="absolute -top-10 -right-10 w-[70%] h-[70%] rounded-full" style={{ background: 'rgba(255,255,255,0.35)', filter: 'blur(30px)' }} />
+                  <div className="absolute bottom-0 -left-10 w-[60%] h-[60%] rounded-full" style={{ background: 'rgba(255,255,255,0.4)', filter: 'blur(50px)' }} />
+                  <div className="absolute top-1/4 left-1/4 w-[40%] h-[40%] rounded-full" style={{ background: 'rgba(255,255,255,0.2)', filter: 'blur(20px)' }} />
+                </div>
+                <div className="relative z-10">
+                  {feature.mockup}
+                </div>
               </div>
             </div>
             </FadeIn>
