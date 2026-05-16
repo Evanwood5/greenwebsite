@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import HeroMap from "./HeroMap";
 
 interface HeroSectionProps {
   user?: any;
@@ -111,24 +112,9 @@ export default function HeroSection({ user }: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Right Column: Hero visual — seamless blending */}
-        <div className="flex-1 lg:flex-[1.2] w-full max-w-2xl relative order-first lg:order-last">
-          {/* Soft radial glow behind image */}
-          <div 
-            className="absolute -inset-16 pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle, rgba(41,193,21,0.12) 0%, transparent 70%)',
-            }}
-          />
-          
-          <img 
-            src="/up.png" 
-            alt="Michigan Job Tracking Map" 
-            className="w-full h-auto relative z-10"
-            style={{ 
-              filter: 'drop-shadow(0 0 40px rgba(41,193,21,0.15))',
-            }}
-          />
+        {/* Right Column: Hero visual — dynamic layered map */}
+        <div className="flex-1 lg:flex-[1.4] w-full max-w-3xl relative order-first lg:order-last">
+          <HeroMap />
         </div>
       </div>
     </section>

@@ -35,9 +35,9 @@ export default function CTASection() {
               We&apos;d love to hear from you. Choose the best way to reach us and our team will get back to you soon.
             </p>
             <div className="flex justify-center items-center">
-              <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, transparent, rgba(41,193,21,0.8))' }} />
-              <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#29C115', boxShadow: '0 0 10px #29C115' }} />
-              <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, rgba(41,193,21,0.8), transparent)' }} />
+              <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4))' }} />
+              <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffffff', boxShadow: '0 0 10px rgba(255,255,255,0.8)' }} />
+              <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, rgba(255,255,255,0.4), transparent)' }} />
             </div>
           </FadeIn>
 
@@ -46,7 +46,7 @@ export default function CTASection() {
             <FadeIn className="h-full">
             <div
               className="rounded-2xl p-8 h-full flex flex-col relative overflow-hidden transition-all hover:shadow-2xl hover:shadow-[#5865F2]/10"
-              style={{ background: '#111216', border: '1px solid rgba(88,101,242,0.3)' }}
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               <div className="absolute -top-20 -left-20 w-[200px] h-[200px] rounded-full pointer-events-none" style={{ background: 'rgba(88,101,242,0.15)', filter: 'blur(60px)' }} />
               
@@ -105,7 +105,7 @@ export default function CTASection() {
             <FadeIn delay={120} className="h-full">
             <div
               className="rounded-2xl p-8 h-full flex flex-col relative overflow-hidden transition-all hover:shadow-2xl hover:shadow-[#F97316]/10"
-              style={{ background: '#111216', border: '1px solid rgba(249,115,22,0.3)' }}
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               <div className="absolute -top-20 -left-20 w-[200px] h-[200px] rounded-full pointer-events-none" style={{ background: 'rgba(249,115,22,0.15)', filter: 'blur(60px)' }} />
               

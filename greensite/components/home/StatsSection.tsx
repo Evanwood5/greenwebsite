@@ -79,8 +79,8 @@ function Card({ t }: { t: typeof testimonials[0] }) {
     <div
       className="rounded-xl p-6 flex flex-col transition-all duration-300 hover:shadow-xl"
       style={{
-        background: '#1A1A1A',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: '#0a0a0a',
+        border: '1px solid rgba(255,255,255,0.2)',
         height: '100%',
         boxSizing: 'border-box',
       }}
@@ -115,7 +115,7 @@ function Card({ t }: { t: typeof testimonials[0] }) {
           width={36}
           height={36}
           className="rounded-full object-cover"
-          style={{ width: '36px', height: '36px', border: '1px solid rgba(255,255,255,0.08)', flexShrink: 0, marginTop: '2px' }}
+          style={{ width: '36px', height: '36px', border: '1px solid rgba(255,255,255,0.2)', flexShrink: 0, marginTop: '2px' }}
         />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div

@@ -70,7 +70,7 @@ function CompanyCard({ letter, color, colorRgb, delay }: { letter: string; color
     <FadeIn from="left" delay={delay}>
       <div
         className="rounded-xl p-3 flex items-start gap-2.5"
-        style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.1)', width: '160px' }}
+        style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.2)', width: '160px' }}
       >
         <div
           className="rounded-lg flex items-center justify-center font-bold text-sm"
@@ -104,7 +104,7 @@ function JobFeedMockup() {
   return (
     <div
       className="rounded-2xl flex-shrink-0"
-      style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.1)', padding: '14px', width: 230 }}
+      style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.2)', padding: '14px', width: 230 }}
     >
       {/* Top bar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -187,8 +187,8 @@ export default function WrapperSection() {
             <div
               className="rounded-2xl flex flex-col items-center justify-center gap-3 flex-shrink-0"
               style={{
-                background: 'linear-gradient(145deg, #162416, #1a1a1a)',
-                border: '1px solid rgba(41,193,21,0.3)',
+                background: 'linear-gradient(145deg, #050a05, #0a0a0a)',
+                border: '1px solid rgba(41,193,21,0.4)',
                 padding: '24px 18px',
                 width: 120,
                 boxShadow: '0 0 48px rgba(41,193,21,0.08)',
@@ -211,7 +211,7 @@ export default function WrapperSection() {
             {/* Apply card */}
             <div
               className="rounded-2xl flex flex-col items-center justify-center gap-2.5 text-center flex-shrink-0"
-              style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.1)', padding: '24px 14px', width: 95 }}
+              style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.2)', padding: '24px 14px', width: 95 }}
             >
               <div
                 className="rounded-xl flex items-center justify-center"

@@ -48,7 +48,7 @@ function CompanyTrackMockup() {
     { name: 'Rivian', role: 'Hardware Engineer', color: '#60A5FA', colorRgb: '96,165,250', status: 'Watching', newJobs: 1 },
   ];
   return (
-    <div style={{ background: '#1A1B1E', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ fontSize: '11px', fontWeight: 600, color: '#e4e4e7' }}>Tracked Companies</div>
         <div style={{ fontSize: '9px', color: '#29C115', background: 'rgba(41,193,21,0.08)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(41,193,21,0.15)' }}>
@@ -410,9 +410,21 @@ export default function FeaturesSection() {
                 {/* Backlight glow - Patchy / Nebula effect */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
                   <div className="absolute inset-0 rounded-full" style={{ background: 'rgba(255,255,255,0.08)', filter: 'blur(40px)' }} />
-                  <div className="absolute -top-10 -right-10 w-[70%] h-[70%] rounded-full" style={{ background: 'rgba(255,255,255,0.35)', filter: 'blur(30px)' }} />
-                  <div className="absolute bottom-0 -left-10 w-[60%] h-[60%] rounded-full" style={{ background: 'rgba(255,255,255,0.4)', filter: 'blur(50px)' }} />
-                  <div className="absolute top-1/4 left-1/4 w-[40%] h-[40%] rounded-full" style={{ background: 'rgba(255,255,255,0.2)', filter: 'blur(20px)' }} />
+                  {/* Top Highlight */}
+                  <div 
+                    className={`absolute w-[70%] h-[70%] rounded-full ${feature.flip ? '-top-10 -left-10' : '-top-10 -right-10'}`} 
+                    style={{ background: 'rgba(255,255,255,0.35)', filter: 'blur(30px)' }} 
+                  />
+                  {/* Bottom Highlight */}
+                  <div 
+                    className={`absolute w-[60%] h-[60%] rounded-full ${feature.flip ? '-bottom-10 -right-10' : 'bottom-0 -left-10'}`} 
+                    style={{ background: 'rgba(255,255,255,0.4)', filter: 'blur(50px)' }} 
+                  />
+                  {/* Secondary subtle glow */}
+                  <div 
+                    className={`absolute w-[40%] h-[40%] rounded-full ${feature.flip ? 'bottom-1/4 right-1/4' : 'top-1/4 left-1/4'}`} 
+                    style={{ background: 'rgba(255,255,255,0.2)', filter: 'blur(20px)' }} 
+                  />
                 </div>
                 <div className="relative z-10">
                   {feature.mockup}
