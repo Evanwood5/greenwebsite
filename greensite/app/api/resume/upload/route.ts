@@ -10,7 +10,6 @@ export async function POST(request: Request) {
             return Response.json({ error: 'Missing file or user ID' }, { status: 400 });
         }
 
-        // Validate file
         if (file.type !== 'application/pdf') {
             return Response.json({ error: 'Only PDF files allowed' }, { status: 400 });
         }
@@ -38,15 +37,21 @@ export async function POST(request: Request) {
 
         console.log('PII stripped successfully, text length:', cleaned_text.length);
 
-        // Save to Supabase
-        const { error } = await supabaseAdmin
+        // Try update first (handles accounts created manually via Supabase dashboard)
+        // Falls back to insert if no row exists yet
+        const { error: updateError } = await supabaseAdmin
             .from('profiles')
-            .upsert({
-                user_id: userId,
-                resume: cleaned_text,
-            });
+            .update({ resume: cleaned_text })
+            .eq('user_id', userId);
 
-        if (error) throw error;
+        if (updateError) {
+            // Row doesn't exist yet — insert it
+            const { error: insertError } = await supabaseAdmin
+                .from('profiles')
+                .insert({ user_id: userId, resume: cleaned_text });
+
+            if (insertError) throw insertError;
+        }
 
         console.log('✅ Resume saved to Supabase');
         return Response.json({
