@@ -32,8 +32,6 @@ const EMPTY_FILTERS: TrackingFilters = {
   city: '',
 }
 
-const STORAGE_KEY = 'greenify_tracked_companies'
-
 const PURPLE = '#a78bfa'
 const PURPLE_BG = 'rgba(139,92,246,0.12)'
 const PURPLE_BG_LIGHT = 'rgba(139,92,246,0.07)'
@@ -150,7 +148,7 @@ function XIcon({ size = 12 }: { size?: number }) {
 function filterSummary(filters: TrackingFilters): string {
   const parts: string[] = []
   if (filters.category) parts.push(filters.category)
-  if (filters.subcategories.length) parts.push(filters.subcategories.join(', '))
+  if (filters.subcategories?.length) parts.push(filters.subcategories.join(', '))
   if (filters.level) parts.push(filters.level)
   if (filters.jobType) parts.push(filters.jobType)
   if (filters.location === 'remote') parts.push('Remote')
@@ -303,9 +301,6 @@ export default function TrackingPage() {
   const [filters, setFilters] = useState<TrackingFilters>(EMPTY_FILTERS)
   const [tracked, setTracked] = useState<TrackedCompany[]>([])
   const [error, setError] = useState('')
-<<<<<<< HEAD
-  const [loaded, setLoaded] = useState(false)
-=======
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -330,24 +325,6 @@ export default function TrackingPage() {
       setLoading(false)
     }
   }
->>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) setTracked(JSON.parse(raw))
-    } catch {
-      // ignore
-    }
-    setLoaded(true)
-  }, [])
-
-  // Persist to localStorage whenever tracked changes (after initial load)
-  useEffect(() => {
-    if (!loaded) return
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tracked))
-  }, [tracked, loaded])
 
   const activeFilterCount = [
     filters.category,
@@ -357,6 +334,7 @@ export default function TrackingPage() {
     filters.city,
     ...filters.subcategories,
   ].filter(Boolean).length
+
   const canTrack = company.trim().length > 0
 
   async function handleTrack() {
@@ -433,7 +411,6 @@ export default function TrackingPage() {
           <p style={{ color: '#ede9fe', fontSize: '15px', fontWeight: 600, marginBottom: '12px', letterSpacing: '-0.01em' }}>
             Which company do you want to track?
           </p>
-<<<<<<< HEAD
 
           <CompanyInput
             value={company}
@@ -445,34 +422,6 @@ export default function TrackingPage() {
           {error && (
             <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '10px' }}>{error}</p>
           )}
-=======
-          <div style={{ position: 'relative', marginBottom: '6px' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: PURPLE, pointerEvents: 'none' }}>
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              placeholder="e.g. Google, Ford, Stryker..."
-              value={company}
-              onChange={e => { setCompany(e.target.value); setError('') }}
-              onKeyDown={e => e.key === 'Enter' && handleTrack()}
-              style={{
-                width: '100%',
-                padding: '11px 12px 11px 36px',
-                borderRadius: '9px',
-                border: `1px solid ${error ? 'rgba(248,113,113,0.5)' : canTrack ? PURPLE_BORDER_STRONG : 'rgba(139,92,246,0.22)'}`,
-                background: 'rgba(139,92,246,0.07)',
-                color: '#f5f3ff',
-                fontSize: '13px',
-                outline: 'none',
-                boxSizing: 'border-box',
-                transition: 'border-color 150ms',
-              }}
-            />
-          </div>
-          {error && <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '10px' }}>{error}</p>}
->>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
 
           <div style={{ height: '1px', background: PURPLE_BORDER, margin: '18px 0 6px', opacity: 0.5 }} />
 
@@ -489,7 +438,6 @@ export default function TrackingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginTop: '10px' }}>
             <div>
               <p style={sectionLabel}>Category</p>
-<<<<<<< HEAD
               <DropdownSelect
                 value={filters.category}
                 onChange={v => setFilters(f => ({ ...f, category: v, subcategories: [] }))}
@@ -502,10 +450,6 @@ export default function TrackingPage() {
                   { label: 'Business', value: 'Business' },
                 ]}
               />
-=======
-              <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v }))} placeholder="All"
-                options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
->>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
             </div>
             <div>
               <p style={sectionLabel}>Level</p>
@@ -529,8 +473,7 @@ export default function TrackingPage() {
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* Subcategory multi-select */}
+          {/* Subcategory chips */}
           {filters.category && JOB_FIELDS[filters.category] && (
             <div style={{ marginTop: '14px' }}>
               <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
@@ -582,9 +525,6 @@ export default function TrackingPage() {
             </div>
           )}
 
-          {/* Track button */}
-=======
->>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
           <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
             <button onClick={handleTrack} disabled={!canTrack || saving}
               style={{
