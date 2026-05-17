@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import AppShell from '@/components/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { MICHIGAN_CITIES } from '@/lib/michiganCities'
+import { JOB_FIELDS } from '@/lib/jobsApi'
 
 interface TrackedCompany {
   id: string
@@ -15,6 +16,7 @@ interface TrackedCompany {
 
 interface TrackingFilters {
   category: string
+  subcategories: string[]
   level: string
   jobType: string
   location: string
@@ -23,11 +25,14 @@ interface TrackingFilters {
 
 const EMPTY_FILTERS: TrackingFilters = {
   category: '',
+  subcategories: [],
   level: '',
   jobType: '',
   location: '',
   city: '',
 }
+
+const STORAGE_KEY = 'greenify_tracked_companies'
 
 const PURPLE = '#a78bfa'
 const PURPLE_BG = 'rgba(139,92,246,0.12)'
@@ -145,6 +150,7 @@ function XIcon({ size = 12 }: { size?: number }) {
 function filterSummary(filters: TrackingFilters): string {
   const parts: string[] = []
   if (filters.category) parts.push(filters.category)
+  if (filters.subcategories.length) parts.push(filters.subcategories.join(', '))
   if (filters.level) parts.push(filters.level)
   if (filters.jobType) parts.push(filters.jobType)
   if (filters.location === 'remote') parts.push('Remote')
@@ -153,12 +159,153 @@ function filterSummary(filters: TrackingFilters): string {
   return parts.length ? parts.join(' · ') : 'All jobs'
 }
 
+function CompanyInput({ value, onChange, onSelect, error }: {
+  value: string
+  onChange: (v: string) => void
+  onSelect: (v: string) => void
+  error: string
+}) {
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [highlighted, setHighlighted] = useState(-1)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const fetchSuggestions = useCallback((q: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (q.trim().length < 2) { setSuggestions([]); setShowSuggestions(false); return }
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/companies/search?q=${encodeURIComponent(q)}`)
+        const data = await res.json()
+        setSuggestions(data.companies ?? [])
+        setShowSuggestions(true)
+        setHighlighted(-1)
+      } catch {
+        setSuggestions([])
+      }
+    }, 250)
+  }, [])
+
+  useEffect(() => {
+    fetchSuggestions(value)
+  }, [value, fetchSuggestions])
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!showSuggestions || suggestions.length === 0) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setHighlighted(h => Math.min(h + 1, suggestions.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setHighlighted(h => Math.max(h - 1, -1))
+    } else if (e.key === 'Enter' && highlighted >= 0) {
+      e.preventDefault()
+      onSelect(suggestions[highlighted])
+      setShowSuggestions(false)
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false)
+    }
+  }
+
+  const canTrack = value.trim().length > 0
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative', marginBottom: '6px' }}>
+      <svg
+        width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: PURPLE, pointerEvents: 'none', zIndex: 1 }}
+      >
+        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        type="text"
+        placeholder="e.g. Google, Ford, Stryker..."
+        value={value}
+        onChange={e => { onChange(e.target.value) }}
+        onKeyDown={handleKeyDown}
+        onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true) }}
+        style={{
+          width: '100%',
+          padding: '11px 12px 11px 36px',
+          borderRadius: '9px',
+          border: `1px solid ${error ? 'rgba(248,113,113,0.5)' : canTrack ? PURPLE_BORDER_STRONG : 'rgba(139,92,246,0.22)'}`,
+          background: 'rgba(139,92,246,0.07)',
+          color: '#f5f3ff',
+          fontSize: '13px',
+          outline: 'none',
+          boxSizing: 'border-box',
+          transition: 'border-color 150ms',
+        }}
+      />
+
+      {showSuggestions && suggestions.length > 0 && (
+        <div style={{
+          position: 'absolute',
+          top: 'calc(100% + 4px)',
+          left: 0,
+          right: 0,
+          background: '#1a1625',
+          border: `1px solid ${PURPLE_BORDER}`,
+          borderRadius: '8px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+          zIndex: 200,
+          overflow: 'hidden',
+        }}>
+          {suggestions.map((s, i) => (
+            <button
+              key={s}
+              onMouseDown={e => { e.preventDefault(); onSelect(s); setShowSuggestions(false) }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                textAlign: 'left',
+                padding: '9px 12px',
+                fontSize: '13px',
+                background: i === highlighted ? PURPLE_BG : 'transparent',
+                color: i === highlighted ? '#ddd6fe' : '#c4c4c7',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 80ms',
+                gap: '8px',
+              }}
+              onMouseEnter={() => setHighlighted(i)}
+              onMouseLeave={() => setHighlighted(-1)}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={PURPLE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path d="M3 9h18M9 21V9" />
+              </svg>
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function TrackingPage() {
   const { user } = useAuth()
   const [company, setCompany] = useState('')
   const [filters, setFilters] = useState<TrackingFilters>(EMPTY_FILTERS)
   const [tracked, setTracked] = useState<TrackedCompany[]>([])
   const [error, setError] = useState('')
+<<<<<<< HEAD
+  const [loaded, setLoaded] = useState(false)
+=======
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -183,8 +330,33 @@ export default function TrackingPage() {
       setLoading(false)
     }
   }
+>>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
 
-  const activeFilterCount = Object.values(filters).filter(Boolean).length
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) setTracked(JSON.parse(raw))
+    } catch {
+      // ignore
+    }
+    setLoaded(true)
+  }, [])
+
+  // Persist to localStorage whenever tracked changes (after initial load)
+  useEffect(() => {
+    if (!loaded) return
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tracked))
+  }, [tracked, loaded])
+
+  const activeFilterCount = [
+    filters.category,
+    filters.level,
+    filters.jobType,
+    filters.location,
+    filters.city,
+    ...filters.subcategories,
+  ].filter(Boolean).length
   const canTrack = company.trim().length > 0
 
   async function handleTrack() {
@@ -261,6 +433,19 @@ export default function TrackingPage() {
           <p style={{ color: '#ede9fe', fontSize: '15px', fontWeight: 600, marginBottom: '12px', letterSpacing: '-0.01em' }}>
             Which company do you want to track?
           </p>
+<<<<<<< HEAD
+
+          <CompanyInput
+            value={company}
+            onChange={v => { setCompany(v); setError('') }}
+            onSelect={v => { setCompany(v); setError('') }}
+            error={error}
+          />
+
+          {error && (
+            <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '10px' }}>{error}</p>
+          )}
+=======
           <div style={{ position: 'relative', marginBottom: '6px' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: PURPLE, pointerEvents: 'none' }}>
@@ -287,6 +472,7 @@ export default function TrackingPage() {
             />
           </div>
           {error && <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '10px' }}>{error}</p>}
+>>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
 
           <div style={{ height: '1px', background: PURPLE_BORDER, margin: '18px 0 6px', opacity: 0.5 }} />
 
@@ -303,8 +489,23 @@ export default function TrackingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginTop: '10px' }}>
             <div>
               <p style={sectionLabel}>Category</p>
+<<<<<<< HEAD
+              <DropdownSelect
+                value={filters.category}
+                onChange={v => setFilters(f => ({ ...f, category: v, subcategories: [] }))}
+                placeholder="All"
+                options={[
+                  { label: 'All Categories', value: '' },
+                  { label: 'Tech', value: 'Tech' },
+                  { label: 'Engineering', value: 'Engineering' },
+                  { label: 'Health', value: 'Health' },
+                  { label: 'Business', value: 'Business' },
+                ]}
+              />
+=======
               <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v }))} placeholder="All"
                 options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
+>>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
             </div>
             <div>
               <p style={sectionLabel}>Level</p>
@@ -328,6 +529,62 @@ export default function TrackingPage() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* Subcategory multi-select */}
+          {filters.category && JOB_FIELDS[filters.category] && (
+            <div style={{ marginTop: '14px' }}>
+              <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
+                Subcategories
+                <span style={{ color: '#6b7280', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>
+                  — pick any, or leave blank for all
+                </span>
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {JOB_FIELDS[filters.category].map(sub => {
+                  const selected = filters.subcategories.includes(sub)
+                  return (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() =>
+                        setFilters(f => ({
+                          ...f,
+                          subcategories: selected
+                            ? f.subcategories.filter(s => s !== sub)
+                            : [...f.subcategories, sub],
+                        }))
+                      }
+                      style={{
+                        padding: '5px 11px',
+                        borderRadius: '6px',
+                        border: `1px solid ${selected ? PURPLE_BORDER_STRONG : 'rgba(139,92,246,0.18)'}`,
+                        background: selected ? PURPLE_BG : 'transparent',
+                        color: selected ? '#ddd6fe' : '#71717a',
+                        fontSize: '11px',
+                        fontWeight: selected ? 600 : 400,
+                        cursor: 'pointer',
+                        transition: 'all 120ms',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}
+                    >
+                      {selected && (
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                      {sub}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Track button */}
+=======
+>>>>>>> 8dc28532f197cf39029c5bf51ad8029e265ef5b1
           <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
             <button onClick={handleTrack} disabled={!canTrack || saving}
               style={{
