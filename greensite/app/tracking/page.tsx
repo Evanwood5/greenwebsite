@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useRef } from 'react'
 import AppShell from '@/components/AppShell'
+import { useAuth } from '@/contexts/AuthContext'
+import { supabase } from '@/lib/supabase'
 import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 interface TrackedCompany {
   id: string
-  company: string
+  company_name: string
   filters: TrackingFilters
-  addedAt: string
+  created_at: string
 }
 
 interface TrackingFilters {
@@ -87,48 +89,28 @@ function DropdownSelect({ value, onChange, options, placeholder }: {
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {selected?.label ?? placeholder ?? 'Select...'}
         </span>
-        <svg
-          width="11" height="11" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={{ flexShrink: 0, color: PURPLE, transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        >
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ flexShrink: 0, color: PURPLE, transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}>
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
-
       {open && (
         <div style={{
-          position: 'absolute',
-          top: 'calc(100% + 4px)',
-          left: 0,
-          right: 0,
-          background: '#1a1625',
-          border: `1px solid ${PURPLE_BORDER}`,
-          borderRadius: '8px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-          zIndex: 100,
-          overflow: 'hidden',
-          maxHeight: '200px',
-          overflowY: 'auto',
+          position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+          background: '#1a1625', border: `1px solid ${PURPLE_BORDER}`,
+          borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          zIndex: 100, overflow: 'hidden', maxHeight: '200px', overflowY: 'auto',
         }}>
           {options.map(opt => {
             const isActive = opt.value === value
             return (
-              <button
-                key={opt.value}
-                onClick={() => { onChange(opt.value); setOpen(false) }}
+              <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false) }}
                 style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '8px 10px',
-                  fontSize: '12px',
+                  width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
+                  padding: '8px 10px', fontSize: '12px',
                   background: isActive ? PURPLE_BG : 'transparent',
                   color: isActive ? '#ddd6fe' : '#c4c4c7',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background 100ms',
+                  border: 'none', cursor: 'pointer', transition: 'background 100ms',
                 }}
                 onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = PURPLE_BG_LIGHT }}
                 onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
@@ -172,34 +154,75 @@ function filterSummary(filters: TrackingFilters): string {
 }
 
 export default function TrackingPage() {
+  const { user } = useAuth()
   const [company, setCompany] = useState('')
   const [filters, setFilters] = useState<TrackingFilters>(EMPTY_FILTERS)
   const [tracked, setTracked] = useState<TrackedCompany[]>([])
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (user?.id) loadTracking()
+  }, [user?.id])
+
+  const loadTracking = async () => {
+    if (!user?.id) return
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('user_company_tracking')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      setTracked(data || [])
+    } catch (err) {
+      console.error('Error loading tracking:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length
   const canTrack = company.trim().length > 0
 
-  function handleTrack() {
+  async function handleTrack() {
+    if (!user?.id) return
     const name = company.trim()
     if (!name) { setError('Please enter a company name.'); return }
-    if (tracked.some(t => t.company.toLowerCase() === name.toLowerCase())) {
+    if (tracked.some(t => t.company_name.toLowerCase() === name.toLowerCase())) {
       setError('You are already tracking this company.')
       return
     }
-    setTracked(prev => [{
-      id: crypto.randomUUID(),
-      company: name,
-      filters: { ...filters },
-      addedAt: new Date().toISOString(),
-    }, ...prev])
-    setCompany('')
-    setFilters(EMPTY_FILTERS)
-    setError('')
+    setSaving(true)
+    try {
+      const { data, error } = await supabase
+        .from('user_company_tracking')
+        .insert({ user_id: user.id, company_name: name, filters })
+        .select()
+        .single()
+      if (error) throw error
+      setTracked(prev => [data, ...prev])
+      setCompany('')
+      setFilters(EMPTY_FILTERS)
+      setError('')
+    } catch (err) {
+      console.error('Error saving tracking:', err)
+      setError('Failed to save. Please try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function handleRemove(id: string) {
-    setTracked(prev => prev.filter(t => t.id !== id))
+  async function handleRemove(id: string) {
+    if (!user?.id) return
+    try {
+      await supabase.from('user_company_tracking').delete().eq('id', id).eq('user_id', user.id)
+      setTracked(prev => prev.filter(t => t.id !== id))
+    } catch (err) {
+      console.error('Error removing tracking:', err)
+    }
   }
 
   return (
@@ -221,7 +244,7 @@ export default function TrackingPage() {
               Company Tracking
             </h1>
             <p style={{ color: '#9ca3af', fontSize: '12px' }}>
-              Follow specific companies and filter the roles you care about.
+              Follow specific companies and filter the roles you care about. New matching jobs are delivered daily.
             </p>
           </div>
         </div>
@@ -235,16 +258,12 @@ export default function TrackingPage() {
           marginBottom: '20px',
           boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset',
         }}>
-          {/* Company input */}
           <p style={{ color: '#ede9fe', fontSize: '15px', fontWeight: 600, marginBottom: '12px', letterSpacing: '-0.01em' }}>
             Which company do you want to track?
           </p>
           <div style={{ position: 'relative', marginBottom: '6px' }}>
-            <svg
-              width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: PURPLE, pointerEvents: 'none' }}
-            >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: PURPLE, pointerEvents: 'none' }}>
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
@@ -267,21 +286,15 @@ export default function TrackingPage() {
               }}
             />
           </div>
-          {error && (
-            <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '10px' }}>{error}</p>
-          )}
+          {error && <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '10px' }}>{error}</p>}
 
-          {/* Divider */}
           <div style={{ height: '1px', background: PURPLE_BORDER, margin: '18px 0 6px', opacity: 0.5 }} />
 
-          {/* Filters header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
             <p style={{ ...sectionLabel, marginTop: 0, marginBottom: 0 }}>Narrow by filters (optional)</p>
             {activeFilterCount > 0 && (
-              <button
-                onClick={() => setFilters(EMPTY_FILTERS)}
-                style={{ background: 'none', border: 'none', color: PURPLE, fontSize: '11px', cursor: 'pointer', padding: 0, opacity: 0.8 }}
-              >
+              <button onClick={() => setFilters(EMPTY_FILTERS)}
+                style={{ background: 'none', border: 'none', color: PURPLE, fontSize: '11px', cursor: 'pointer', padding: 0, opacity: 0.8 }}>
                 Clear filters
               </button>
             )}
@@ -290,133 +303,63 @@ export default function TrackingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginTop: '10px' }}>
             <div>
               <p style={sectionLabel}>Category</p>
-              <DropdownSelect
-                value={filters.category}
-                onChange={v => setFilters(f => ({ ...f, category: v }))}
-                placeholder="All"
-                options={[
-                  { label: 'All Categories', value: '' },
-                  { label: 'Tech', value: 'Tech' },
-                  { label: 'Engineering', value: 'Engineering' },
-                  { label: 'Health', value: 'Health' },
-                  { label: 'Business', value: 'Business' },
-                ]}
-              />
+              <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v }))} placeholder="All"
+                options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
             </div>
             <div>
               <p style={sectionLabel}>Level</p>
-              <DropdownSelect
-                value={filters.level}
-                onChange={v => setFilters(f => ({ ...f, level: v }))}
-                placeholder="All"
-                options={[
-                  { label: 'All Levels', value: '' },
-                  { label: 'Moderate', value: 'moderate' },
-                  { label: 'Advanced', value: 'advanced' },
-                ]}
-              />
+              <DropdownSelect value={filters.level} onChange={v => setFilters(f => ({ ...f, level: v }))} placeholder="All"
+                options={[{ label: 'All Levels', value: '' }, { label: 'Moderate', value: 'moderate' }, { label: 'Advanced', value: 'advanced' }]} />
             </div>
             <div>
               <p style={sectionLabel}>Job Type</p>
-              <DropdownSelect
-                value={filters.jobType}
-                onChange={v => setFilters(f => ({ ...f, jobType: v }))}
-                placeholder="All"
-                options={[
-                  { label: 'All Types', value: '' },
-                  { label: 'Full Time', value: 'Full Time' },
-                  { label: 'Part Time', value: 'Part Time' },
-                  { label: 'Internship', value: 'Internship' },
-                ]}
-              />
+              <DropdownSelect value={filters.jobType} onChange={v => setFilters(f => ({ ...f, jobType: v }))} placeholder="All"
+                options={[{ label: 'All Types', value: '' }, { label: 'Full Time', value: 'Full Time' }, { label: 'Part Time', value: 'Part Time' }, { label: 'Internship', value: 'Internship' }]} />
             </div>
             <div>
               <p style={sectionLabel}>Location</p>
-              <DropdownSelect
-                value={filters.location}
-                onChange={v => setFilters(f => ({ ...f, location: v }))}
-                placeholder="All"
-                options={[
-                  { label: 'All', value: '' },
-                  { label: 'Remote Only', value: 'remote' },
-                  { label: 'On-site Only', value: 'onsite' },
-                ]}
-              />
+              <DropdownSelect value={filters.location} onChange={v => setFilters(f => ({ ...f, location: v }))} placeholder="All"
+                options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
             </div>
             <div>
               <p style={sectionLabel}>City</p>
-              <DropdownSelect
-                value={filters.city}
-                onChange={v => setFilters(f => ({ ...f, city: v }))}
-                placeholder="All"
-                options={[
-                  { label: 'All Cities', value: '' },
-                  ...MICHIGAN_CITIES
-                    .filter(c => c.value !== 'MI:all')
-                    .map(c => ({ label: c.label, value: c.label })),
-                ]}
-              />
+              <DropdownSelect value={filters.city} onChange={v => setFilters(f => ({ ...f, city: v }))} placeholder="All"
+                options={[{ label: 'All Cities', value: '' }, ...MICHIGAN_CITIES.filter(c => c.value !== 'MI:all').map(c => ({ label: c.label, value: c.label }))]} />
             </div>
           </div>
 
-          {/* Track button */}
           <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-            <button
-              onClick={handleTrack}
+            <button onClick={handleTrack} disabled={!canTrack || saving}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '7px',
-                padding: '9px 20px',
-                borderRadius: '8px',
+                display: 'flex', alignItems: 'center', gap: '7px',
+                padding: '9px 20px', borderRadius: '8px',
                 background: canTrack ? PURPLE_BG : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${canTrack ? PURPLE_BORDER_STRONG : 'rgba(255,255,255,0.07)'}`,
                 color: canTrack ? '#ddd6fe' : '#52525b',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: canTrack ? 'pointer' : 'not-allowed',
+                fontSize: '12px', fontWeight: 600,
+                cursor: canTrack && !saving ? 'pointer' : 'not-allowed',
                 transition: 'all 150ms',
-                letterSpacing: '0.01em',
-              }}
-            >
+              }}>
               <EyeIcon size={13} />
-              Track Company
+              {saving ? 'Saving...' : 'Track Company'}
             </button>
           </div>
         </div>
 
-        {/* Expiry notice */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 12px',
-          background: 'rgba(251,191,36,0.06)',
-          border: '1px solid rgba(251,191,36,0.18)',
-          borderRadius: '8px',
-          marginBottom: '14px',
-        }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-          </svg>
-          <p style={{ color: '#fbbf24', fontSize: '11px', lineHeight: '1.5' }}>
-            Matched jobs are shown for <strong>7 days</strong> then removed. Save any jobs you want to keep — saved jobs never expire.
-          </p>
-        </div>
-
-        {/* Tracked companies list */}
+        {/* Tracked list */}
         <div>
           <p style={{ color: '#c4b5fd', fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: '10px' }}>
             Tracked — {tracked.length}
           </p>
 
-          {tracked.length === 0 ? (
+          {loading ? (
+            <div style={{ background: '#1c1c1c', border: '1px solid rgba(255,255,255,0.18)', borderRadius: '12px', padding: '40px 20px', textAlign: 'center' }}>
+              <p style={{ color: '#52525b', fontSize: '13px' }}>Loading...</p>
+            </div>
+          ) : tracked.length === 0 ? (
             <div style={{
-              background: '#1c1c1c',
-              border: '1px solid rgba(255,255,255,0.18)',
-              borderRadius: '12px',
-              padding: '52px 20px',
-              textAlign: 'center',
+              background: '#1c1c1c', border: '1px solid rgba(255,255,255,0.18)',
+              borderRadius: '12px', padding: '52px 20px', textAlign: 'center',
               boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset',
             }}>
               <div style={{ color: PURPLE, marginBottom: '12px', display: 'flex', justifyContent: 'center', opacity: 0.5 }}>
@@ -428,60 +371,38 @@ export default function TrackingPage() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {tracked.map(t => (
-                <div
-                  key={t.id}
-                  style={{
-                    background: 'rgba(139,92,246,0.06)',
-                    border: `1px solid rgba(139,92,246,0.2)`,
-                    borderRadius: '10px',
-                    padding: '14px 16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                >
+                <div key={t.id} style={{
+                  background: 'rgba(139,92,246,0.06)',
+                  border: `1px solid rgba(139,92,246,0.2)`,
+                  borderRadius: '10px', padding: '14px 16px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
+                }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                     <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: PURPLE_BG,
-                      border: `1px solid ${PURPLE_BORDER}`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      color: PURPLE,
+                      width: '32px', height: '32px', borderRadius: '8px',
+                      background: PURPLE_BG, border: `1px solid ${PURPLE_BORDER}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0, color: PURPLE,
                     }}>
                       <EyeIcon size={14} />
                     </div>
                     <div style={{ minWidth: 0 }}>
-                      <p style={{ color: '#f5f3ff', fontSize: '13px', fontWeight: 500, marginBottom: '2px' }}>{t.company}</p>
+                      <p style={{ color: '#f5f3ff', fontSize: '13px', fontWeight: 500, marginBottom: '2px' }}>{t.company_name}</p>
                       <p style={{ color: '#a78bfa', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: 0.8 }}>
-                        {filterSummary(t.filters)}
+                        {filterSummary(t.filters as TrackingFilters)}
                       </p>
                     </div>
                   </div>
-
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                     <span style={{ color: '#7c6faf', fontSize: '11px' }}>
-                      {new Date(t.addedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
-                    <button
-                      onClick={() => handleRemove(t.id)}
+                    <button onClick={() => handleRemove(t.id)}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '6px',
-                        background: 'transparent',
-                        border: '1px solid transparent',
-                        color: '#7c6faf',
-                        cursor: 'pointer',
-                        transition: 'all 150ms',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '24px', height: '24px', borderRadius: '6px',
+                        background: 'transparent', border: '1px solid transparent',
+                        color: '#7c6faf', cursor: 'pointer', transition: 'all 150ms',
                       }}
                       onMouseEnter={e => {
                         (e.currentTarget as HTMLButtonElement).style.background = 'rgba(248,113,113,0.1)'
@@ -493,8 +414,7 @@ export default function TrackingPage() {
                         ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent'
                         ;(e.currentTarget as HTMLButtonElement).style.color = '#7c6faf'
                       }}
-                      aria-label={`Remove ${t.company}`}
-                    >
+                      aria-label={`Remove ${t.company_name}`}>
                       <XIcon size={11} />
                     </button>
                   </div>
@@ -503,7 +423,6 @@ export default function TrackingPage() {
             </div>
           )}
         </div>
-
       </div>
     </AppShell>
   )
