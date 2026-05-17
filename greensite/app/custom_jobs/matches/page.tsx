@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import { DarkJobCard } from '@/components/jobs/JobList'
+import { fetchFieldSubCategoryMap } from '@/lib/jobsApi'
 
 const MATCH_EXPIRY_DAYS = 7
 
@@ -33,6 +34,7 @@ export default function ResumeJobsPage() {
   const [savedCount, setSavedCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [fieldSubCategoryMap, setFieldSubCategoryMap] = useState<Record<number, string>>({})
 
   useEffect(() => {
     if (user?.id) loadMatches()
@@ -47,7 +49,7 @@ export default function ResumeJobsPage() {
       cutoff.setDate(cutoff.getDate() - MATCH_EXPIRY_DAYS)
       const cutoffISO = cutoff.toISOString()
 
-      const [{ data: matchRows, error: matchErr }, { count: saved }] = await Promise.all([
+      const [{ data: matchRows, error: matchErr }, { count: saved }, subCatMap] = await Promise.all([
         supabase
           .from('user_job_matches')
           .select('job_id, created_at')
@@ -58,7 +60,9 @@ export default function ResumeJobsPage() {
           .from('saved_jobs')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id),
+        fetchFieldSubCategoryMap(),
       ])
+      setFieldSubCategoryMap(subCatMap)
 
       if (matchErr) throw matchErr
 
@@ -244,7 +248,7 @@ export default function ResumeJobsPage() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                 {jobs.map((job) => (
-                  <DarkJobCard key={job.id} job={job} showSave={true} showDelete={false} />
+                  <DarkJobCard key={job.id} job={job} showSave={true} showDelete={false} fieldSubCategoryMap={fieldSubCategoryMap} />
                 ))}
               </div>
             )}

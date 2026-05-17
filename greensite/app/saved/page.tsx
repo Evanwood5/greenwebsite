@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import { DarkJobCard } from '@/components/jobs/JobList'
+import { fetchFieldSubCategoryMap } from '@/lib/jobsApi'
 
 interface SavedJob {
   job_id: string
@@ -24,6 +25,7 @@ export default function SavedJobsPage() {
   const [jobs, setJobs] = useState<SavedJob[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [fieldSubCategoryMap, setFieldSubCategoryMap] = useState<Record<number, string>>({})
 
   useEffect(() => {
     if (user?.id) loadSaved()
@@ -35,11 +37,15 @@ export default function SavedJobsPage() {
     setLoading(true)
     setError(null)
     try {
-      const { data, error: fetchError } = await supabase
-        .from('saved_jobs')
-        .select('*, job_postings_ingest_test(*)')
-        .eq('user_id', user.id)
-        .order('saved_at', { ascending: false })
+      const [{ data, error: fetchError }, subCatMap] = await Promise.all([
+        supabase
+          .from('saved_jobs')
+          .select('*, job_postings_ingest_test(*)')
+          .eq('user_id', user.id)
+          .order('saved_at', { ascending: false }),
+        fetchFieldSubCategoryMap(),
+      ])
+      setFieldSubCategoryMap(subCatMap)
 
       if (fetchError) throw fetchError
 
@@ -111,6 +117,7 @@ export default function SavedJobsPage() {
                 showSave={false}
                 showDelete={true}
                 onDelete={() => removeSaved(job.job_id)}
+                fieldSubCategoryMap={fieldSubCategoryMap}
               />
             ))}
           </div>

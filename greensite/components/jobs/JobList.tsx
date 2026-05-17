@@ -1,4 +1,8 @@
+'use client'
+
 import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface Job {
   job_id: string
@@ -33,13 +37,6 @@ function ExternalLinkIcon() {
   )
 }
 
-function BookmarkOutlineIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
-    </svg>
-  )
-}
 
 function BriefcaseIcon() {
   return (
@@ -135,23 +132,58 @@ export function DarkJobCard({
   showDelete = false,
   onDelete,
   matchScore,
+  fieldSubCategoryMap,
 }: {
   job: Job
   showSave?: boolean
   showDelete?: boolean
   onDelete?: () => void
   matchScore?: number
+  fieldSubCategoryMap?: Record<number, string>
 }) {
+  const { user } = useAuth()
+  const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (!user?.id || !showSave) return
+    supabase
+      .from('saved_jobs')
+      .select('job_id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('job_id', job.job_id)
+      .then(({ count }) => setSaved((count ?? 0) > 0))
+  }, [user?.id, job.job_id, showSave])
+
+  const toggleSave = async () => {
+    if (!user?.id || saving) return
+    setSaving(true)
+    if (saved) {
+      await supabase.from('saved_jobs').delete().eq('user_id', user.id).eq('job_id', job.job_id)
+      setSaved(false)
+    } else {
+      await supabase.from('saved_jobs').insert({
+        user_id: user.id,
+        job_id: job.job_id,
+        saved_at: new Date().toISOString(),
+      })
+      setSaved(true)
+    }
+    setSaving(false)
+  }
+
   const location = [job.city, job.state].filter(Boolean).join(', ') || (job.is_remote ? 'Remote' : 'Not listed')
   const cat = inferCategory(job.job_title)
   const meta = CATEGORY_META[cat] ?? CATEGORY_META.other
+  const subCategory = job.job_field_id != null ? fieldSubCategoryMap?.[job.job_field_id] : undefined
 
   return (
     <div style={{
       background: '#1a1a1a',
       borderRadius: '10px',
       padding: '14px',
-      border: '1px solid rgba(255,255,255,0.07)',
+      border: '1px solid rgba(255,255,255,0.35)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 20px rgba(255,255,255,0.06)',
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
@@ -191,12 +223,23 @@ export function DarkJobCard({
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', alignItems: 'center' }}>
         {job.job_type && <JobTypeBadge type={job.job_type} />}
         {job.experience_level && <LevelBadge level={job.experience_level} />}
+        {subCategory && (
+          <span style={{
+            display: 'inline-block', padding: '2px 7px', borderRadius: '4px',
+            fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap',
+            background: 'rgba(255,255,255,0.05)',
+            color: '#71717a',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            {subCategory}
+          </span>
+        )}
       </div>
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} />
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
         {job.job_href ? (
@@ -224,7 +267,7 @@ export function DarkJobCard({
           </svg>
         </a>
 
-        {/* Unsave bookmark */}
+        {/* Unsave / delete */}
         {showDelete && onDelete && (
           <button
             onClick={onDelete}
@@ -239,9 +282,26 @@ export function DarkJobCard({
           </button>
         )}
 
+        {/* Save toggle — red bookmark */}
         {showSave && (
-          <button style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', color: '#52525b', cursor: 'pointer' }} aria-label="Save job">
-            <BookmarkOutlineIcon />
+          <button
+            onClick={toggleSave}
+            disabled={saving}
+            aria-label={saved ? 'Unsave job' : 'Save job'}
+            style={{
+              width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: saved ? 'rgba(239,68,68,0.18)' : 'rgba(239,68,68,0.08)',
+              color: '#ef4444', borderRadius: '6px',
+              border: `1px solid ${saved ? 'rgba(239,68,68,0.4)' : 'rgba(239,68,68,0.22)'}`,
+              cursor: saving ? 'wait' : 'pointer', flexShrink: 0,
+              transition: 'background 150ms, border-color 150ms',
+            }}
+            onMouseEnter={(e) => { if (!saving) e.currentTarget.style.background = 'rgba(239,68,68,0.25)' }}
+            onMouseLeave={(e) => { if (!saving) e.currentTarget.style.background = saved ? 'rgba(239,68,68,0.18)' : 'rgba(239,68,68,0.08)' }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill={saved ? '#ef4444' : 'none'} stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+            </svg>
           </button>
         )}
       </div>

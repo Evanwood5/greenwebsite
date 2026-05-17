@@ -41,6 +41,12 @@ export const JOB_FIELDS: Record<string, string[]> = {
   ],
 }
 
+export async function fetchFieldSubCategoryMap(): Promise<Record<number, string>> {
+  const { data } = await supabase.from('job_field_counts').select('id, subcategory')
+  if (!data) return {}
+  return Object.fromEntries(data.map((r: { id: number; subcategory: string }) => [r.id, r.subcategory]))
+}
+
 export async function fetchSubCategoryFieldIds(
   category: string,
   subCategory: string
