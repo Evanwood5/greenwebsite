@@ -94,7 +94,7 @@ export default function HeroMap() {
 
       {/* Ambient background glow */}
       <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 60% 55% at 50% 50%, rgba(41,193,21,0.09) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse 65% 60% at 50% 50%, rgba(41,193,21,0.22) 0%, transparent 70%)',
         filter: 'blur(40px)',
       }} />
 
@@ -201,7 +201,7 @@ export default function HeroMap() {
         src="/upda.png"
         alt="Michigan Map"
         className="w-[200%] h-auto relative z-20 transition-transform duration-1000 hover:scale-[1.01]"
-        style={{ filter: 'drop-shadow(0 0 60px rgba(41,193,21,0.28))' }}
+        style={{ filter: 'drop-shadow(0 0 80px rgba(41,193,21,0.55)) drop-shadow(0 0 30px rgba(41,193,21,0.35))' }}
       />
 
       {/* ── Card 1: Job Intelligence Hub ── */}
