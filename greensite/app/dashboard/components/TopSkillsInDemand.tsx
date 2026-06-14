@@ -27,8 +27,8 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
   return (
     <div
       style={{
-        background: "#1c1c1c",
-        borderRadius: 12, border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset",
+        background: "#1e1e1e",
+        borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)",
         padding: 16,
         color: "white",
       }}

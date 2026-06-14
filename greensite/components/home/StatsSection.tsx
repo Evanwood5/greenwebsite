@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
 import FadeIn from '@/components/ui/FadeIn'
 
 const testimonials = [
@@ -69,20 +68,13 @@ const testimonials = [
   },
 ]
 
-const n = testimonials.length
-const GAP = 20
-// Triple the array so there's always a full copy buffering each side
-const slides = [...testimonials, ...testimonials, ...testimonials]
-
-function Card({ t }: { t: typeof testimonials[0] }) {
+function Card({ t, className = '' }: { t: typeof testimonials[0]; className?: string }) {
   return (
     <div
-      className="rounded-xl p-6 flex flex-col transition-all duration-300 hover:shadow-xl"
+      className={`rounded-2xl p-6 flex flex-col ${className}`}
       style={{
         background: '#0a0a0a',
-        border: '1px solid rgba(255,255,255,0.2)',
-        height: '100%',
-        boxSizing: 'border-box',
+        border: '1px solid rgba(255,255,255,0.08)',
       }}
     >
       <div
@@ -105,29 +97,18 @@ function Card({ t }: { t: typeof testimonials[0] }) {
           paddingTop: '16px',
           marginTop: '20px',
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           gap: '12px',
         }}
       >
         <img
           src={t.avatar}
           alt={t.name}
-          width={36}
-          height={36}
-          className="rounded-full object-cover"
-          style={{ width: '36px', height: '36px', border: '1px solid rgba(255,255,255,0.2)', flexShrink: 0, marginTop: '2px' }}
+          className="rounded-full object-cover flex-shrink-0"
+          style={{ width: '36px', height: '36px', border: '1px solid rgba(255,255,255,0.15)' }}
         />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '8px',
-              marginBottom: '4px',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '3px' }}>
             <div className="text-[13px] font-semibold text-white">{t.name}</div>
             <div
               style={{
@@ -144,92 +125,14 @@ function Card({ t }: { t: typeof testimonials[0] }) {
               {t.company}
             </div>
           </div>
-          <div className="text-[11px]" style={{ color: '#71717a' }}>
-            {t.school}
-          </div>
+          <div className="text-[11px]" style={{ color: '#71717a' }}>{t.school}</div>
         </div>
       </div>
     </div>
   )
 }
 
-const btnStyle: React.CSSProperties = {
-  flexShrink: 0,
-  width: '40px',
-  height: '40px',
-  borderRadius: '50%',
-  border: '1px solid rgba(255,255,255,0.12)',
-  background: 'rgba(255,255,255,0.04)',
-  color: '#fff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  transition: 'background 0.2s, border-color 0.2s',
-}
-
 export default function StatsSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [slideWidth, setSlideWidth] = useState(0)
-  const [pv, setPv] = useState(3) // slides per view
-  // Start in the middle copy so both sides have a full buffer
-  const [trackIndex, setTrackIndex] = useState(n)
-  const [animated, setAnimated] = useState(true)
-  const busy = useRef(false)
-
-  useEffect(() => {
-    const measure = () => {
-      if (!containerRef.current) return
-      const w = containerRef.current.offsetWidth
-      const perView = w < 640 ? 1 : w < 900 ? 2 : 3
-      setPv(perView)
-      setSlideWidth((w - GAP * (perView - 1)) / perView)
-    }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [])
-
-  const next = () => {
-    if (busy.current) return
-    busy.current = true
-    setTrackIndex((i) => i + 1)
-  }
-
-  const prev = () => {
-    if (busy.current) return
-    busy.current = true
-    setTrackIndex((i) => i - 1)
-  }
-
-  const handleTransitionEnd = useCallback(() => {
-    busy.current = false
-    setTrackIndex((i) => {
-      // Right boundary: once we've slid far enough into the 3rd copy, snap back n steps
-      if (i >= 2 * n - pv + 1) {
-        setAnimated(false)
-        return i - n
-      }
-      // Left boundary: once we've slid far enough into the 1st copy, snap forward n steps
-      if (i <= n - pv) {
-        setAnimated(false)
-        return i + n
-      }
-      return i
-    })
-  }, [pv])
-
-  useEffect(() => {
-    if (!animated) {
-      const id = requestAnimationFrame(() =>
-        requestAnimationFrame(() => setAnimated(true))
-      )
-      return () => cancelAnimationFrame(id)
-    }
-  }, [animated])
-
-  const offset = -(trackIndex * (slideWidth + GAP))
-
   return (
     <section
       style={{ background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.06)' }}
@@ -254,47 +157,31 @@ export default function StatsSection() {
         </FadeIn>
 
         <FadeIn>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button
-              style={btnStyle}
-              onClick={prev}
-              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
-              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-            </button>
+          {/* Bento grid */}
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gridTemplateRows: 'auto auto',
+            }}
+          >
+            {/* Card 1 — top left */}
+            <Card t={testimonials[0]} />
 
-            <div
-              ref={containerRef}
-              style={{ flex: 1, overflow: 'hidden', minWidth: 0, opacity: slideWidth ? 1 : 0, transition: 'opacity 0.2s' }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  gap: GAP,
-                  alignItems: 'stretch',
-                  transform: slideWidth ? `translateX(${offset}px)` : undefined,
-                  transition: animated ? 'transform 0.45s cubic-bezier(0.4,0,0.2,1)' : 'none',
-                  willChange: 'transform',
-                }}
-                onTransitionEnd={handleTransitionEnd}
-              >
-                {slides.map((t, i) => (
-                  <div key={i} style={{ flex: `0 0 ${slideWidth}px`, minWidth: 0 }}>
-                    <Card t={t} />
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Card 2 — top center */}
+            <Card t={testimonials[1]} />
 
-            <button
-              style={btnStyle}
-              onClick={next}
-              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
-              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)' }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-            </button>
+            {/* Card 3 — right, spans 2 rows */}
+            <Card
+              t={testimonials[2]}
+              className="row-span-2"
+            />
+
+            {/* Card 4 — bottom, spans 2 columns */}
+            <Card
+              t={testimonials[3]}
+              className="col-span-2"
+            />
           </div>
         </FadeIn>
       </div>

@@ -23,13 +23,13 @@ interface FilterOptions {
 }
 
 const sectionLabelStyle: React.CSSProperties = {
-  color: '#71717a',
-  fontSize: '10px',
-  fontWeight: 600,
-  letterSpacing: '0.06em',
+  color: '#52525b',
+  fontSize: '9px',
+  fontWeight: 700,
+  letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  marginBottom: '6px',
-  marginTop: '14px',
+  marginBottom: '4px',
+  marginTop: '12px',
 }
 
 function FilterIcon() {
@@ -48,6 +48,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const selected = options.find(o => o.value === value) ?? options[0]
+  const hasValue = Boolean(value)
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -68,19 +69,23 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
           justifyContent: 'space-between',
           padding: '7px 10px',
           borderRadius: '7px',
-          border: `1px solid ${open ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.1)'}`,
-          background: open ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.04)',
-          color: value ? '#e4e4e7' : '#52525b',
+          border: hasValue
+            ? '1px solid rgba(255,255,255,0.18)'
+            : `1px solid ${open ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
+          background: hasValue
+            ? 'rgba(255,255,255,0.07)'
+            : open ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+          color: hasValue ? '#e4e4e7' : open ? '#e4e4e7' : '#52525b',
           fontSize: '12px',
           cursor: disabled ? 'not-allowed' : 'pointer',
           textAlign: 'left',
-          transition: 'border-color 150ms, background 150ms',
+          transition: 'border-color 150ms, background 150ms, color 150ms',
           gap: '6px',
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
           {selected.icon && (
-            <span style={{ flexShrink: 0, color: selected.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
+            <span style={{ flexShrink: 0, color: hasValue ? '#e4e4e7' : selected.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
               {selected.icon}
             </span>
           )}
@@ -89,7 +94,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
         <svg
           width="11" height="11" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={{ flexShrink: 0, color: '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          style={{ flexShrink: 0, color: hasValue ? '#a1a1aa' : '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
@@ -125,7 +130,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
                   padding: '8px 10px',
                   fontSize: '12px',
                   background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  color: isActive ? '#ffffff' : '#c4c4c7',
+                  color: isActive ? '#ffffff' : '#a1a1aa',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'background 100ms',
@@ -380,7 +385,7 @@ export default function JobsPage() {
 
         {/* Right filter panel */}
         <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
-          <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '14px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+          <div style={{ background: '#1e1e1e', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', padding: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>
                 <FilterIcon />
@@ -414,7 +419,7 @@ export default function JobsPage() {
                   padding: '8px 28px 8px 28px',
                   borderRadius: '7px',
                   border: '1px solid rgba(255,255,255,0.14)',
-                  background: '#111111',
+                  background: '#141414',
                   color: '#e4e4e7',
                   fontSize: '12px',
                   outline: 'none',

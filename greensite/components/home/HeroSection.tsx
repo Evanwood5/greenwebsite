@@ -1,7 +1,6 @@
 'use client'
 
 import Link from "next/link";
-import HeroMap from "./HeroMap";
 
 interface HeroSectionProps {
   user?: any;
@@ -9,95 +8,79 @@ interface HeroSectionProps {
 
 export default function HeroSection({ user }: HeroSectionProps) {
   return (
-    <section className="relative px-6 pt-10 pb-20 lg:pt-12 lg:pb-28 overflow-hidden" style={{ background: '#000000' }}>
-      {/* Background radial glows for depth */}
-      <div 
-        className="absolute top-0 right-0 w-[900px] h-[900px] pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 70% 30%, rgba(41,193,21,0.07) 0%, transparent 60%)',
-        }}
-      />
-      <div 
-        className="absolute bottom-0 left-0 w-[600px] h-[600px] pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 30% 70%, rgba(41,193,21,0.04) 0%, transparent 50%)',
-        }}
-      />
+    <section className="relative overflow-hidden" style={{ background: '#f0ece4', minHeight: '580px' }}>
 
-      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-14 relative z-10">
-        
-        {/* Left Column: Content */}
-        <div className="flex-1 lg:flex-[0.8] text-center lg:text-left">
+      {/* Left vertical dots */}
+      <div className="absolute left-14 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-10 hidden lg:flex">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: '#1e3a1e', opacity: i === 2 ? 0.8 : 0.25 }}
+          />
+        ))}
+      </div>
 
+      {/* Right dark green decorative panel */}
+      <div className="absolute right-0 top-0 bottom-0 w-[320px] xl:w-[400px] hidden lg:block" style={{ background: '#1e3a1e' }}>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+          }}
+        />
+      </div>
 
+      <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28 flex items-center relative z-10">
 
-          {/* Headline with gradient */}
+        {/* Content column */}
+        <div className="w-full lg:w-[58%] text-center lg:text-left">
+
           <h1
             className="text-5xl md:text-6xl lg:text-[66px] font-extrabold leading-[1.03] mb-7"
             style={{ letterSpacing: '-0.045em' }}
           >
-            <span className="text-white">Michigan&apos;s Best</span>
+            <span style={{ color: '#1a2e1a' }}>Michigan&apos;s Best</span>
             <br />
-            <span 
-              style={{ 
-                background: 'linear-gradient(135deg, #29C115 0%, #5eea4a 50%, #29C115 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Job Platform
-            </span>
+            <span style={{ color: '#2d6e28' }}>Job Platform</span>
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-[17px] lg:text-[18px] text-zinc-400 leading-[1.7] max-w-lg lg:mx-0 mx-auto mb-10">
-            Real-time job tracking directly from company career pages. 
+          <p
+            className="text-[17px] lg:text-[18px] leading-[1.7] max-w-lg lg:mx-0 mx-auto mb-10"
+            style={{ color: '#4a5e4a' }}
+          >
+            Real-time job tracking directly from company career pages.{' '}
             Discover opportunities before they hit major job boards.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap lg:justify-start justify-center gap-4 mb-14">
-            {user ? (
-              <>
-                <Link
-                  href="/jobs"
-                  className="flex items-center gap-2.5 px-7 py-3 text-[15px] font-bold text-[#29C115] rounded-xl transition-all duration-200 cursor-pointer hover:bg-[#0f2e14] active:scale-[0.97]"
-                  style={{ background: '#0a1f0d', border: '1px solid #29C115' }}
-                >
-                  View Jobs
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/auth"
-                  className="flex items-center gap-2.5 px-7 py-3 text-[15px] font-bold text-[#29C115] rounded-xl transition-all duration-200 cursor-pointer hover:bg-[#0f2e14] active:scale-[0.97]"
-                  style={{ background: '#0a1f0d', border: '1px solid #29C115' }}
-                >
-                  Start for Free
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </Link>
-                <Link
-                  href="#contact"
-                  className="px-7 py-3 text-[15px] font-semibold text-zinc-300 rounded-xl transition-all duration-200 cursor-pointer hover:text-white hover:border-white/20 active:scale-[0.97]"
-                  style={{ border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}
-                >
-                  Contact Us
-                </Link>
-              </>
-            )}
+          <div className="flex flex-wrap lg:justify-start justify-center items-center gap-5 mb-14">
+            <Link
+              href={user ? "/jobs" : "/auth"}
+              className="flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-bold text-white rounded-xl transition-all duration-200 active:scale-[0.97]"
+              style={{ background: '#1e3a1e' }}
+            >
+              {user ? 'View Jobs' : 'Start for Free'}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </Link>
+
+            <button
+              className="flex items-center gap-2 text-[15px] font-medium transition-all duration-200 hover:opacity-70"
+              style={{ color: '#1a2e1a' }}
+            >
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/>
+              </svg>
+              Watch demo
+            </button>
           </div>
 
-          {/* Stats row */}
           <div
             className="flex flex-wrap lg:justify-start justify-center gap-10 pt-8"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            style={{ borderTop: '1px solid rgba(30,58,30,0.12)' }}
           >
             {[
               { value: '1,000+', label: 'Companies tracked' },
@@ -105,16 +88,11 @@ export default function HeroSection({ user }: HeroSectionProps) {
               { value: 'AI-powered', label: 'Resume matching' },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-[16px] font-bold text-white tracking-tight">{stat.value}</div>
-                <div className="text-[11px] text-zinc-500 font-medium mt-1">{stat.label}</div>
+                <div className="text-[16px] font-bold tracking-tight" style={{ color: '#1a2e1a' }}>{stat.value}</div>
+                <div className="text-[11px] font-medium mt-1" style={{ color: '#7a9a7a' }}>{stat.label}</div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Right Column: Hero visual — dynamic layered map */}
-        <div className="flex-1 lg:flex-[1.4] w-full max-w-3xl relative order-first lg:order-last">
-          <HeroMap />
         </div>
       </div>
     </section>

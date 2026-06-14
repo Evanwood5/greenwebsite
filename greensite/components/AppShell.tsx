@@ -174,12 +174,12 @@ export default function AppShell({ children }: AppShellProps) {
   const sidebarWidth = collapsed ? 60 : 200
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#111111' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#080808' }}>
 
       {/* Full-width top navbar */}
       <header style={{
         height: HEADER_HEIGHT,
-        background: 'rgba(22, 22, 22, 0.75)',
+        background: 'rgba(14, 14, 14, 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
@@ -228,9 +228,10 @@ export default function AppShell({ children }: AppShellProps) {
               <span style={{
                 color: 'rgba(255,255,255,0.45)',
                 fontWeight: 500,
-                fontSize: '13px',
-                letterSpacing: '0.02em',
-                textTransform: 'uppercase'
+                fontSize: '14px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                fontFamily: "'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', monospace",
               }}>
                 Dashboard
               </span>
@@ -245,11 +246,11 @@ export default function AppShell({ children }: AppShellProps) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
-              padding: '5px 5px 5px 12px',
-              background: profileMenuOpen ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '24px',
+              gap: '8px',
+              padding: '4px 8px 4px 12px',
+              background: profileMenuOpen ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '8px',
               cursor: 'pointer',
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
@@ -267,25 +268,30 @@ export default function AppShell({ children }: AppShellProps) {
             }}
           >
             {user?.email && (
-              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: 500 }}>
+              <span style={{
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: '12px',
+                fontWeight: 500,
+                letterSpacing: '0.01em',
+              }}>
                 {user.email.split('@')[0]}
               </span>
             )}
             <div style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #29C115 0%, #1a8a0d 100%)',
+              width: '26px',
+              height: '26px',
+              borderRadius: '6px',
+              background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'white',
-              boxShadow: '0 2px 8px rgba(41, 193, 21, 0.2)',
+              color: 'rgba(255,255,255,0.75)',
             }}>
-              <UserIcon size={14} />
+              <UserIcon size={13} />
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.3)', marginRight: '4px' }}>
-              <ChevronDownIcon size={12} />
+            <div style={{ color: 'rgba(255,255,255,0.2)', marginRight: '2px' }}>
+              <ChevronDownIcon size={11} />
             </div>
           </button>
 
@@ -364,8 +370,8 @@ export default function AppShell({ children }: AppShellProps) {
           width: sidebarWidth,
           minWidth: sidebarWidth,
           height: '100%',
-          background: '#161616',
-          borderRight: '1px solid rgba(255,255,255,0.07)',
+          background: '#141414',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
           display: 'flex',
           flexDirection: 'column',
           transition: 'width 200ms ease, min-width 200ms ease',
@@ -483,71 +489,40 @@ export default function AppShell({ children }: AppShellProps) {
           </nav>
 
           {/* Collapse button */}
-          <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+          <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
             <button
               onClick={() => setCollapsed(!collapsed)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
+                justifyContent: collapsed ? 'center' : 'space-between',
                 width: '100%',
-                padding: '10px 12px',
-                borderRadius: '8px',
+                padding: '8px 10px',
+                borderRadius: '7px',
                 background: 'transparent',
                 border: 'none',
-                color: 'rgba(255,255,255,0.65)',
+                color: 'rgba(255,255,255,0.35)',
                 fontSize: '13px',
                 fontWeight: 500,
                 cursor: 'pointer',
-                transition: 'background 150ms, color 150ms',
-                whiteSpace: 'nowrap',
+                transition: 'color 150ms',
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
-                e.currentTarget.style.color = '#ffffff'
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
-              }}
+              onMouseOver={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
+              onMouseOut={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)' }}
             >
-              <div style={{ flexShrink: 0 }}>
-                {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}
-              </div>
-              {!collapsed && 'Collapse Sidebar'}
+              {!collapsed && <span>Collapse</span>}
+              {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}
             </button>
           </div>
         </aside>
 
         {/* Main content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '20px 28px', background: '#111111' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: '20px 28px', background: '#141414' }}>
           {children}
         </main>
 
       </div>
 
-      {/* Help button */}
-      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 40 }}>
-        <button
-          style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: '#1e1e1e',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#a1a1aa',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          aria-label="Help"
-        >
-          ?
-        </button>
-      </div>
 
     </div>
   )

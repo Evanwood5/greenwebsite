@@ -179,7 +179,7 @@ export function DarkJobCard({
 
   return (
     <div style={{
-      background: '#1a1a1a',
+      background: '#0d0d0d',
       borderRadius: '10px',
       padding: '14px',
       border: '1px solid rgba(255,255,255,0.35)',
@@ -369,9 +369,10 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
   },
 }
 
-function JobTableRow({ job, isLast, fieldCategoryMap, fieldSubCategoryMap, isSaved: initialSaved, onSaveToggle }: {
+function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap, isSaved: initialSaved, onSaveToggle }: {
   job: Job
   isLast?: boolean
+  index?: number
   fieldCategoryMap?: Record<number, string>
   fieldSubCategoryMap?: Record<number, string>
   isSaved?: boolean
@@ -403,7 +404,7 @@ function JobTableRow({ job, isLast, fieldCategoryMap, fieldSubCategoryMap, isSav
     <tr
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ background: hovered ? 'rgba(255,255,255,0.03)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.04)' }}
+      style={{ background: hovered ? 'rgba(255,255,255,0.06)' : (index ?? 0) % 2 === 1 ? 'rgba(255,255,255,0.025)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Category icon — from DB fieldCategoryMap, fall back to title inference */}
       <td style={{ ...cellStyle, width: '36px', paddingRight: '4px' }}>
@@ -535,7 +536,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
   const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
-      <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', overflow: 'hidden', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+      <div style={{ background: '#1e1e1e', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
         {[...Array(8)].map((_, i) => (
           <div key={i} style={{ height: '44px', borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }} />
         ))}
@@ -555,17 +556,17 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
   const thStyle: React.CSSProperties = {
     padding: '8px 10px',
     fontSize: '10px',
-    fontWeight: 600,
-    color: '#52525b',
-    letterSpacing: '0.06em',
+    fontWeight: 700,
+    color: '#71717a',
+    letterSpacing: '0.08em',
     textTransform: 'uppercase',
     textAlign: 'left',
-    borderBottom: '1px solid rgba(255,255,255,0.07)',
+    borderBottom: '1px solid rgba(255,255,255,0.1)',
     whiteSpace: 'nowrap',
   }
 
   return (
-    <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', overflow: 'hidden', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+    <div style={{ background: '#1e1e1e', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: '44px' }} />
@@ -578,7 +579,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
           <col style={{ width: '100px' }} />
         </colgroup>
         <thead>
-          <tr style={{ background: '#141414' }}>
+          <tr style={{ background: '#111111' }}>
             <th style={{ ...thStyle, width: '36px' }}></th>
             <th style={thStyle}>Position</th>
             <th style={thStyle}>Level</th>
@@ -594,6 +595,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
             <JobTableRow
               key={job.job_id}
               job={job}
+              index={i}
               isLast={i === jobs.length - 1}
               fieldCategoryMap={fieldCategoryMap}
               fieldSubCategoryMap={fieldSubCategoryMap}

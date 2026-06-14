@@ -3,10 +3,10 @@
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/home/HeroSection";
-import FeaturesSection from "@/components/home/FeaturesSection";
-import StatsSection from "@/components/home/StatsSection";
-import WrapperSection from "@/components/home/WrapperSection";
 import CTASection from "@/components/home/CTASection";
+import AISection from "@/components/home/AISection";
+import AIMatchingSection from "@/components/home/AIMatchingSection";
+import DetroitSection from "@/components/home/DetroitSection";
 
 
 export default function Home() {
@@ -28,9 +28,9 @@ export default function Home() {
 
       <Navbar />
       <HeroSection user={user} />
-      <StatsSection />
-      <WrapperSection />
-      <FeaturesSection />
+      <AISection />
+      <AIMatchingSection />
+      <DetroitSection />
       <CTASection />
     </div>
   );

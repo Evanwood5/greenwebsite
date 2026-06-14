@@ -11,30 +11,29 @@ export default function Navbar() {
     <nav
       className="sticky top-0 z-50 w-full px-6 py-4"
       style={{
-        background: 'rgba(0,0,0,0.7)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: '#f0ece4',
+        borderBottom: '1px solid rgba(30,58,30,0.1)',
       }}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 cursor-pointer group">
           <Image src="/finally.png" alt="Greenify logo" width={26} height={26} />
-          <span className="text-[19px] font-bold text-white tracking-tight">Greenify</span>
+          <span className="text-[19px] font-bold tracking-tight" style={{ color: '#1a2e1a' }}>Greenify</span>
         </Link>
 
         {/* Center nav links */}
         <div className="hidden md:flex items-center gap-1">
           {[
-            { label: 'How It Works', href: '#how-it-works' },
-            { label: 'Features', href: '#features' },
+            { label: 'AI Matching', href: '#ai-matching' },
+            { label: 'Success Stories', href: '#success-stories' },
             { label: 'Contact', href: '#contact' },
           ].map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="px-4 py-2 text-[13px] font-medium text-zinc-400 hover:text-white rounded-lg hover:bg-white/[0.05] transition-all duration-200 cursor-pointer"
+              className="px-4 py-2 text-[13px] font-medium rounded-lg transition-all duration-200 cursor-pointer"
+              style={{ color: '#1a2e1a' }}
             >
               {link.label}
             </Link>
@@ -51,7 +50,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 hover:bg-white/[0.08]"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(88, 101, 242, 0.4)' }}
+                style={{ background: 'rgba(30,58,30,0.06)', border: '1px solid rgba(30,58,30,0.2)' }}
               >
                 <Image src="/disc.png" alt="Discord" width={18} height={18} />
               </Link>
@@ -60,9 +59,9 @@ export default function Navbar() {
               <Link
                 href="/settings"
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 hover:bg-white/[0.08] cursor-pointer"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.15)' }}
+                style={{ background: 'rgba(30,58,30,0.06)', border: '1px solid rgba(30,58,30,0.2)' }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
                   <circle cx="12" cy="7" r="4"/>
                 </svg>
@@ -71,8 +70,8 @@ export default function Navbar() {
               {/* Dashboard CTA */}
               <Link
                 href="/jobs"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-zinc-300 rounded-lg transition-all duration-200 cursor-pointer hover:text-white active:scale-[0.97]"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(41, 193, 21, 0.4)' }}
+                className="flex items-center gap-1.5 px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
+                style={{ background: '#0f5c0f', border: '1px solid rgba(255,255,255,0.15)' }}
               >
                 Dashboard
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -87,7 +86,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 hover:bg-white/[0.08]"
-                style={{ background: 'rgba(255,255,255,0.04)' }}
+                style={{ background: 'rgba(30,58,30,0.06)', border: '1px solid rgba(30,58,30,0.2)' }}
               >
                 <Image src="/disc.png" alt="Discord" width={18} height={18} />
               </Link>
