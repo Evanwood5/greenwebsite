@@ -144,7 +144,7 @@ useEffect(() => {
       style={{
       height: "100%",
       minHeight: 400,
-      background: "#1c1c1c",
+      background: "#1e1e1e",
       borderRadius: 16,
       padding: 16,
       color: "white",
