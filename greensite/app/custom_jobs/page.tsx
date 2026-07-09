@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import CustomJobsClient from './CustomJobsClient';
 
 export default function CustomJobsPage() {
     const { user, loading } = useAuth();
 
-    // Show loading state while checking auth
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50">
@@ -20,7 +18,6 @@ export default function CustomJobsPage() {
         );
     }
 
-    // If not authenticated, show sign-in prompt
     if (!user) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50">
@@ -56,6 +53,5 @@ export default function CustomJobsPage() {
         );
     }
 
-    // If authenticated, show the actual custom jobs page
     return <CustomJobsClient />;
 }
