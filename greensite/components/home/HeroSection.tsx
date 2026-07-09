@@ -66,16 +66,15 @@ export default function HeroSection({ user }: HeroSectionProps) {
               </svg>
             </Link>
 
-            <button
-              className="flex items-center gap-2 text-[15px] font-medium transition-all duration-200 hover:opacity-70"
-              style={{ color: '#1a2e1a' }}
+            <span
+              className="flex items-center gap-2 text-[22px] font-bold tracking-wide"
+              style={{ color: '#c8391e' }}
             >
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="12" cy="12" r="10"/>
-                <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
               </svg>
-              Watch demo
-            </button>
+              It&apos;s free
+            </span>
           </div>
 
           <div
