@@ -12,7 +12,8 @@ export default function AISection() {
       </div>
 
       <div className="max-w-6xl mx-auto">
-        <div className="max-w-2xl">
+        <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="flex-1">
 
           {/* Label */}
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-6" style={{ color: '#29C115' }}>
@@ -57,6 +58,19 @@ export default function AISection() {
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
+
+        </div>
+
+          {/* Right: dashboard image */}
+          <div className="flex-shrink-0 hidden lg:block">
+            <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ background: '#ffffff', padding: '24px', width: '700px' }}>
+              <img
+                src="/better.png"
+                alt="Dashboard"
+                style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '12px' }}
+              />
+            </div>
+          </div>
 
         </div>
       </div>
