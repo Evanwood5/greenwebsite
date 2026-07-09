@@ -1,7 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!
-
-// Client for frontend (anon key)
-export const supabase = createClient(supabaseUrl, supabaseKey)
+// MOVED: Supabase client lives at lib/db/supabase.ts
+// This file is a compatibility shim — update imports to '@/lib/db/supabase'
+export { supabase } from '@/lib/db/supabase'

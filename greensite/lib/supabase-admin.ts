@@ -1,13 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-// Admin client for server-side updates (service role key)
-// This should NEVER be imported or used in client-side code
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-    auth: {
-        autoRefreshToken: false,
-        persistSession: false
-    }
-})
+// MOVED: Supabase admin client lives at lib/db/supabase-admin.ts
+// This file is a compatibility shim — update imports to '@/lib/db/supabase-admin'
+export { supabaseAdmin } from '@/lib/db/supabase-admin'
