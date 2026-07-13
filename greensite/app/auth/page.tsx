@@ -186,6 +186,30 @@ export default function AuthPage() {
     setOrgMenuOpen(false)
   }
 
+  const parseMetadataOrgId = (value: unknown): number | null => {
+    if (typeof value === 'number' && Number.isFinite(value)) return value
+    if (typeof value === 'string' && value.trim()) {
+      const parsed = Number(value)
+      if (Number.isFinite(parsed)) return parsed
+    }
+    return null
+  }
+
+  const syncProfileOrgId = async (userId: string, accessToken: string, orgId: number | null) => {
+    try {
+      await fetch('/api/profile/sync-org', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ userId, orgId }),
+      })
+    } catch {
+      // Do not block auth flow if profile sync has a transient failure.
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -197,6 +221,21 @@ export default function AuthPage() {
         if (error) {
           setMessageType('error')
           setMessage(error.message)
+        } else if (data.user && data.session) {
+          const metadataPath = data.user.user_metadata?.sign_up_path
+          let orgIdForSync: number | null | undefined
+          if (metadataPath === 'none') {
+            orgIdForSync = null
+          } else if (metadataPath === 'school') {
+            const parsed = parseMetadataOrgId(data.user.user_metadata?.org_id)
+            if (parsed !== null) orgIdForSync = parsed
+          }
+
+          if (orgIdForSync !== undefined) {
+            await syncProfileOrgId(data.user.id, data.session.access_token, orgIdForSync)
+          }
+
+          router.push('/jobs')
         } else if (data.user) {
           router.push('/jobs')
         }
@@ -259,6 +298,10 @@ export default function AuthPage() {
       } else if (data.user && !data.session) {
         setMessageType('success')
         setMessage('Account created! Check your email to confirm your address before signing in.')
+      } else if (data.user && data.session) {
+        const orgIdForSync = signUpPath === 'school' && selectedOrg ? selectedOrg.id : null
+        await syncProfileOrgId(data.user.id, data.session.access_token, orgIdForSync)
+        router.push('/jobs')
       } else if (data.session) {
         router.push('/jobs')
       }
