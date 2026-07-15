@@ -39,29 +39,6 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-/** Get the current access token for API calls. */
-async function getToken(): Promise<string | null> {
-  const { data: { session } } = await supabase.auth.getSession()
-  return session?.access_token ?? null
-}
-
-async function apiPatch(savedJobId: number, body: Record<string, string>) {
-  const token = await getToken()
-  return fetch(`/api/saved-jobs/${savedJobId}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(body),
-  })
-}
-
-async function apiDelete(savedJobId: number) {
-  const token = await getToken()
-  return fetch(`/api/saved-jobs/${savedJobId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  })
-}
-
 // ── Stat Card ─────────────────────────────────────────────────────────────────
 
 function StatCard({ label, count, color }: { label: string; count: number; color: string }) {
@@ -99,8 +76,11 @@ function StatusDropdown({
     const next = e.target.value as JobStatus
     setLoading(true)
     try {
-      const res = await apiPatch(savedJobId, { status: next })
-      if (res.ok) onChange(savedJobId, next)
+      const { error } = await supabase
+        .from('saved_jobs')
+        .update({ status: next })
+        .eq('id', savedJobId)
+      if (!error) onChange(savedJobId, next)
     } finally {
       setLoading(false)
     }
@@ -142,25 +122,43 @@ function NotesCell({
 }) {
   const [value, setValue] = useState(initial ?? '')
   const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
 
-  const save = async () => {
+  const save = useCallback(async (text: string) => {
     setSaving(true)
-    await apiPatch(savedJobId, { notes: value })
+    setSaved(false)
+    await supabase
+      .from('saved_jobs')
+      .update({ notes: text })
+      .eq('id', savedJobId)
     setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 1500)
+  }, [savedJobId])
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      save(value)
+      ;(e.target as HTMLTextAreaElement).blur()
+    }
   }
+
+  const borderColor = saved ? '#15803d' : saving ? '#374151' : '#2a2a2a'
 
   return (
     <textarea
       value={value}
       onChange={e => setValue(e.target.value)}
-      onBlur={save}
-      placeholder="Add a note..."
+      onBlur={() => save(value)}
+      onKeyDown={handleKeyDown}
+      placeholder="Add a note... (Enter to save)"
       rows={2}
       style={{
         background: '#111',
-        border: '1px solid #2a2a2a',
+        border: `1px solid ${borderColor}`,
         borderRadius: '6px',
-        color: saving ? '#52525b' : '#a1a1aa',
+        color: '#a1a1aa',
         fontSize: '12px',
         padding: '6px 8px',
         width: '100%',
@@ -169,6 +167,7 @@ function NotesCell({
         lineHeight: '1.4',
         fontFamily: 'inherit',
         boxSizing: 'border-box',
+        transition: 'border-color 0.2s',
       }}
     />
   )
@@ -234,7 +233,7 @@ export default function SavedJobsPage() {
   }
 
   const handleDelete = async (savedJobId: number) => {
-    await apiDelete(savedJobId)
+    await supabase.from('saved_jobs').delete().eq('id', savedJobId)
     setJobs(prev => prev.filter(j => j.saved_job_id !== savedJobId))
   }
 
