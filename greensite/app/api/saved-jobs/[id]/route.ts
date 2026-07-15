@@ -4,29 +4,40 @@
  * PATCH  — update status and/or notes on a saved job
  * DELETE — remove a saved job
  *
- * Auth: user must own the saved_jobs row (enforced by RLS + explicit check)
+ * Auth: caller must send `Authorization: Bearer <access_token>` header.
+ * We verify the token via supabase.auth.getUser() and double-check ownership.
  */
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/db/supabase-admin'
 import { NextRequest } from 'next/server'
+
+const VALID_STATUSES = ['Saved', 'Applied', 'Interview', 'Offer'] as const
+
+/** Extract and verify the Bearer token from the request. */
+async function getUser(request: NextRequest) {
+  const token = request.headers.get('authorization')?.replace('Bearer ', '')
+  if (!token) return null
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  const { data: { user } } = await supabase.auth.getUser(token)
+  return user ?? null
+}
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const supabase = createRouteHandlerClient({ cookies })
-
-  // Verify session
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await getUser(request)
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
   const { status, notes } = body
 
-  // Validate status if provided
-  const validStatuses = ['Saved', 'Applied', 'Interview', 'Offer']
-  if (status !== undefined && !validStatuses.includes(status)) {
+  if (status !== undefined && !VALID_STATUSES.includes(status)) {
     return Response.json({ error: 'Invalid status' }, { status: 400 })
   }
 
@@ -34,30 +45,28 @@ export async function PATCH(
   if (status !== undefined) updates.status = status
   if (notes !== undefined) updates.notes = notes
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('saved_jobs')
     .update(updates)
     .eq('id', params.id)
-    .eq('user_id', session.user.id) // extra safety on top of RLS
+    .eq('user_id', user.id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json({ success: true })
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const user = await getUser(request)
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return Response.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('saved_jobs')
     .delete()
     .eq('id', params.id)
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json({ success: true })

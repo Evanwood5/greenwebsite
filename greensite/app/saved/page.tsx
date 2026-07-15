@@ -10,7 +10,7 @@ import AppShell from '@/components/AppShell'
 type JobStatus = 'Saved' | 'Applied' | 'Interview' | 'Offer'
 
 interface SavedJob {
-  saved_job_id: number     // saved_jobs.id — used for API calls
+  saved_job_id: number
   job_id: string
   saved_at: string
   status: JobStatus
@@ -37,6 +37,29 @@ const STATUS_STYLE: Record<JobStatus, { color: string; background: string; borde
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+/** Get the current access token for API calls. */
+async function getToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.access_token ?? null
+}
+
+async function apiPatch(savedJobId: number, body: Record<string, string>) {
+  const token = await getToken()
+  return fetch(`/api/saved-jobs/${savedJobId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  })
+}
+
+async function apiDelete(savedJobId: number) {
+  const token = await getToken()
+  return fetch(`/api/saved-jobs/${savedJobId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  })
 }
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
@@ -76,11 +99,7 @@ function StatusDropdown({
     const next = e.target.value as JobStatus
     setLoading(true)
     try {
-      const res = await fetch(`/api/saved-jobs/${savedJobId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: next }),
-      })
+      const res = await apiPatch(savedJobId, { status: next })
       if (res.ok) onChange(savedJobId, next)
     } finally {
       setLoading(false)
@@ -126,30 +145,30 @@ function NotesCell({
 
   const save = async () => {
     setSaving(true)
-    await fetch(`/api/saved-jobs/${savedJobId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ notes: value }),
-    })
+    await apiPatch(savedJobId, { notes: value })
     setSaving(false)
   }
 
   return (
-    <input
-      type="text"
+    <textarea
       value={value}
       onChange={e => setValue(e.target.value)}
       onBlur={save}
       placeholder="Add a note..."
+      rows={2}
       style={{
-        background: 'transparent',
-        border: 'none',
-        borderBottom: '1px solid #2a2a2a',
+        background: '#111',
+        border: '1px solid #2a2a2a',
+        borderRadius: '6px',
         color: saving ? '#52525b' : '#a1a1aa',
         fontSize: '12px',
-        padding: '2px 0',
+        padding: '6px 8px',
         width: '100%',
+        resize: 'vertical',
         outline: 'none',
+        lineHeight: '1.4',
+        fontFamily: 'inherit',
+        boxSizing: 'border-box',
       }}
     />
   )
@@ -215,11 +234,10 @@ export default function SavedJobsPage() {
   }
 
   const handleDelete = async (savedJobId: number) => {
-    await fetch(`/api/saved-jobs/${savedJobId}`, { method: 'DELETE' })
+    await apiDelete(savedJobId)
     setJobs(prev => prev.filter(j => j.saved_job_id !== savedJobId))
   }
 
-  // Stat counts
   const counts = {
     total:     jobs.length,
     applied:   jobs.filter(j => j.status === 'Applied').length,
@@ -267,15 +285,16 @@ export default function SavedJobsPage() {
           </div>
         ) : (
           <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', overflow: 'hidden' }}>
-            {/* Table header */}
+
+            {/* Column headers */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '2fr 110px 120px 1fr 90px',
+              gridTemplateColumns: '2fr 110px 130px 1.2fr 80px',
               gap: '12px',
               padding: '10px 16px',
               borderBottom: '1px solid rgba(255,255,255,0.07)',
             }}>
-              {['Job Title', 'Date Saved', 'Status', 'Notes', ''].map(h => (
+              {['Job', 'Saved', 'Status', 'Notes', ''].map(h => (
                 <span key={h} style={{ color: '#52525b', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{h}</span>
               ))}
             </div>
@@ -286,15 +305,15 @@ export default function SavedJobsPage() {
                 key={job.saved_job_id}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '2fr 110px 120px 1fr 90px',
+                  gridTemplateColumns: '2fr 110px 130px 1.2fr 80px',
                   gap: '12px',
                   padding: '12px 16px',
-                  alignItems: 'center',
+                  alignItems: 'start',
                   borderBottom: i < jobs.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
                 }}
               >
                 {/* Job title + company */}
-                <div style={{ minWidth: 0 }}>
+                <div style={{ minWidth: 0, paddingTop: '2px' }}>
                   <a
                     href={job.job_href ?? '#'}
                     target="_blank"
@@ -304,37 +323,36 @@ export default function SavedJobsPage() {
                     {job.job_title ?? 'Untitled'}
                   </a>
                   <span style={{ color: '#52525b', fontSize: '11px' }}>
-                    {job.company_name ?? ''}{job.city ? ` · ${job.city}, ${job.state ?? ''}` : ''}
-                    {job.is_remote ? ' · Remote' : ''}
+                    {[job.company_name, job.city ? `${job.city}, ${job.state ?? ''}` : null, job.is_remote ? 'Remote' : null].filter(Boolean).join(' · ')}
                   </span>
                 </div>
 
                 {/* Date saved */}
-                <span style={{ color: '#71717a', fontSize: '12px' }}>{formatDate(job.saved_at)}</span>
+                <span style={{ color: '#71717a', fontSize: '12px', paddingTop: '4px' }}>{formatDate(job.saved_at)}</span>
 
                 {/* Status dropdown */}
-                <StatusDropdown
-                  savedJobId={job.saved_job_id}
-                  current={job.status}
-                  onChange={handleStatusChange}
-                />
+                <div style={{ paddingTop: '2px' }}>
+                  <StatusDropdown
+                    savedJobId={job.saved_job_id}
+                    current={job.status}
+                    onChange={handleStatusChange}
+                  />
+                </div>
 
-                {/* Notes */}
+                {/* Notes textarea */}
                 <NotesCell savedJobId={job.saved_job_id} initial={job.notes} />
 
                 {/* Actions */}
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                  {job.job_href && (
-                    <a
-                      href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(job.job_title ?? '')}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Search on LinkedIn"
-                      style={{ color: '#60a5fa', fontSize: '11px', fontWeight: 600, textDecoration: 'none', padding: '3px 7px', border: '1px solid #1d4ed8', borderRadius: '4px' }}
-                    >
-                      in
-                    </a>
-                  )}
+                <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', paddingTop: '2px' }}>
+                  <a
+                    href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent((job.job_title ?? '') + ' ' + (job.company_name ?? ''))}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Search on LinkedIn"
+                    style={{ color: '#60a5fa', fontSize: '11px', fontWeight: 600, textDecoration: 'none', padding: '4px 7px', border: '1px solid #1d4ed8', borderRadius: '4px' }}
+                  >
+                    in
+                  </a>
                   <button
                     onClick={() => handleDelete(job.saved_job_id)}
                     title="Remove"
