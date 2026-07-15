@@ -1,9 +1,41 @@
-// DEPRECATED: Route moved to app/api/companies/search/route.ts (lowercase)
-// Redirecting to canonical lowercase path. This file can be deleted.
-export async function GET(request: Request) {
-  const url = new URL(request.url)
-  const newUrl = new URL('/api/companies/search', request.url)
-  const q = url.searchParams.get('q')
-  if (q) newUrl.searchParams.set('q', q)
-  return Response.redirect(newUrl.toString(), 308)
+import { supabaseAdmin } from '@/lib/db/supabase-admin'
+import { NextRequest } from 'next/server'
+
+/**
+ * GET /api/companies/search?q=ford
+ * Returns top companies matching the query, with job counts.
+ * Response: { companies: { company: string, jobCount: number }[] }
+ */
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const q = searchParams.get('q') ?? ''
+
+  let query = supabaseAdmin
+    .from('job_postings_ingest_test')
+    .select('company_name')
+    .not('company_name', 'is', null)
+    .limit(1000)
+
+  if (q) {
+    query = query.ilike('company_name', `%${q}%`)
+  }
+
+  const { data, error } = await query
+
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+
+  // Aggregate counts in JS
+  const countMap: Record<string, number> = {}
+  for (const row of data ?? []) {
+    if (row.company_name) {
+      countMap[row.company_name] = (countMap[row.company_name] || 0) + 1
+    }
+  }
+
+  const companies = Object.entries(countMap)
+    .map(([company, jobCount]) => ({ company, jobCount }))
+    .sort((a, b) => b.jobCount - a.jobCount)
+    .slice(0, 20)
+
+  return Response.json({ companies })
 }
