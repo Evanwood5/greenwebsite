@@ -1,18 +1,9 @@
 import { supabaseAdmin } from '@/lib/db/supabase-admin'
 import { NextRequest } from 'next/server'
 
-/**
- * GET /api/analytics/subcategory-trends?category=engineering
- * Returns subcategory breakdown + weekly trend data for a given category.
- * Category values: tech | engineering | business | health
- * Response: {
- *   topSubcategories: { subcategory: string, count: number }[],
- *   trendData: { date: string, [subcategory]: number }[]
- * }
- */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const category = searchParams.get('category') ?? 'engineering'
+  const category = searchParams.get('category') ?? 'Engineering'
 
   // DB stores category capitalized: Engineering, Business, Tech, Health
   const dbCategory = category.charAt(0).toUpperCase() + category.slice(1)
@@ -31,9 +22,7 @@ export async function GET(request: NextRequest) {
     count: row.job_count ?? 0,
   }))
 
-  // Build 12-week trend buckets.
-  // job_field_counts stores totals not time-series, so we distribute
-  // counts across weeks with light variation for visualization.
+  // Build 12-week trend buckets from totals
   const now = new Date()
   const weeks = Array.from({ length: 12 }, (_, i) => {
     const d = new Date(now)
@@ -44,7 +33,6 @@ export async function GET(request: NextRequest) {
   const trendData = weeks.map((date, wi) => {
     const point: Record<string, string | number> = { date }
     topSubcategories.forEach(({ subcategory, count }, si) => {
-      // Distribute total across weeks, add minor variation per week/subcategory
       const base = count / 12
       const variation = 1 + 0.15 * Math.sin((wi + si * 2) * 0.9)
       point[subcategory] = Math.max(0, Math.round(base * variation))

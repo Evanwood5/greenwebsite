@@ -1,11 +1,6 @@
 import { supabaseAdmin } from '@/lib/db/supabase-admin'
 import { NextRequest } from 'next/server'
 
-/**
- * GET /api/analytics/counties
- * Returns Michigan county job counts from the mi_counties table.
- * Response: { counties: { county: string, jobCount: number }[], maxJobs: number }
- */
 export async function GET(_request: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from('mi_counties')
@@ -19,7 +14,5 @@ export async function GET(_request: NextRequest) {
     jobCount: row.count_value ?? 0,
   }))
 
-  const maxJobs = counties[0]?.jobCount || 1
-
-  return Response.json({ counties, maxJobs })
+  return Response.json({ counties, maxJobs: counties[0]?.jobCount || 1 })
 }
