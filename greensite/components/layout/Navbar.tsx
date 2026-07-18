@@ -67,7 +67,7 @@ export default function Navbar() {
 
               <Link
                 href="/jobs"
-                className="flex items-center gap-1.5 px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
+                className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white rounded transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
                 style={{ background: '#0f5c0f', border: '1px solid rgba(255,255,255,0.15)' }}
               >
                 Dashboard
@@ -89,7 +89,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/auth"
-                className="px-3.5 py-1.5 text-[13px] font-semibold text-white rounded-md transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
+                className="px-4 py-2 text-[13px] font-semibold text-white rounded transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
                 style={{ background: '#1a8a0d' }}
               >
                 Sign In
