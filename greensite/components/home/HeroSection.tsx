@@ -21,6 +21,8 @@ export default function HeroSection({ user }: HeroSectionProps) {
         ))}
       </div>
 
+
+
       {/* Right dark green decorative panel */}
       <div className="absolute right-0 top-0 bottom-0 w-[320px] xl:w-[400px] hidden lg:block" style={{ background: '#1e3a1e' }}>
         <div
@@ -57,7 +59,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
           <div className="flex flex-wrap lg:justify-start justify-center items-center gap-5 mb-14">
             <Link
               href={user ? "/jobs" : "/auth"}
-              className="flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-bold text-white rounded-xl transition-all duration-200 active:scale-[0.97]"
+              className="flex items-center gap-2 px-4 py-2 text-[15px] font-bold text-white rounded transition-all duration-200 active:scale-[0.97]"
               style={{ background: '#1e3a1e' }}
             >
               {user ? 'View Jobs' : 'Start for Free'}

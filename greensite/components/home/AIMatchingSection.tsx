@@ -52,7 +52,7 @@ export default function AIMatchingSection() {
           {/* CTA */}
           <Link
             href="/jobs"
-            className="inline-flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-bold rounded-xl transition-all duration-200 hover:bg-white/90 active:scale-[0.97]"
+            className="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold rounded transition-all duration-200 hover:bg-white/90 active:scale-[0.97]"
             style={{ background: '#ffffff', color: '#c8391e' }}
           >
             Explore Jobs
@@ -67,7 +67,7 @@ export default function AIMatchingSection() {
           <div className="flex-shrink-0 hidden lg:block">
             <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ background: '#ffffff', padding: '24px', width: '680px' }}>
               <img
-                src="/AI_powered.png"
+                src="/updatee.png"
                 alt="AI Powered"
                 style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '12px' }}
               />
