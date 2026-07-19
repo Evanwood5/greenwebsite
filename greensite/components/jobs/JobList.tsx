@@ -536,7 +536,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
   const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
-      <div style={{ background: '#1e1e1e', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+      <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
         {[...Array(8)].map((_, i) => (
           <div key={i} style={{ height: '44px', borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }} />
         ))}
@@ -566,7 +566,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
   }
 
   return (
-    <div style={{ background: '#1e1e1e', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+    <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: '44px' }} />

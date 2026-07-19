@@ -31,7 +31,7 @@ export default function Home() {
       <HeroSection user={user} />
       <DetroitHeroSection />
       <SuccessSection />
-      <AIMatchingSection />
+      <AIMatchingSection user={user} />
       <GrandSection />
       <CTASection />
     </div>
