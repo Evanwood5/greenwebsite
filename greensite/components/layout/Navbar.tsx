@@ -25,9 +25,9 @@ export default function Navbar() {
         {/* Center nav links */}
         <div className="hidden md:flex items-center gap-1">
           {[
-            { label: 'AI Matching', href: '/#ai-matching' },
-            { label: 'Success Stories', href: '/#success-stories' },
-            { label: 'Contact', href: '/#contact' },
+            { label: 'How It Works', href: '/how-it-works' },
+            { label: 'AI Powered', href: '/#ai-matching' },
+            { label: 'Get in Touch', href: '/contact' },
           ].map((link) => (
             <Link
               key={link.label}

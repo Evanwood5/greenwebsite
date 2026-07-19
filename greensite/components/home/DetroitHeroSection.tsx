@@ -1,8 +1,9 @@
 import Link from "next/link";
+import FadeIn from "@/components/ui/FadeIn";
 
 export default function DetroitHeroSection() {
   return (
-    <section className="relative overflow-hidden px-8 md:px-16 lg:px-24 flex items-center justify-center" style={{ minHeight: '820px' }}>
+    <section className="relative overflow-hidden px-8 md:px-16 lg:px-24 flex items-center justify-center" style={{ minHeight: '980px' }}>
       {/* Detroit.jpg background */}
       <div
         className="absolute inset-0"
@@ -16,7 +17,7 @@ export default function DetroitHeroSection() {
       <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.58)' }} />
 
       {/* Centered content */}
-      <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto">
+      <FadeIn className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto">
 
         <h2
           className="text-5xl md:text-6xl lg:text-[68px] font-extrabold text-white leading-[1.05] mb-5"
@@ -41,7 +42,7 @@ export default function DetroitHeroSection() {
           </svg>
         </Link>
 
-      </div>
+      </FadeIn>
     </section>
   );
 }

@@ -395,7 +395,7 @@ export default function AppShell({ children }: AppShellProps) {
                     alignItems: 'center',
                     gap: '12px',
                     padding: '10px 12px',
-                    borderRadius: '8px',
+                    borderRadius: '4px',
                     marginBottom: '2px',
                     background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
                     color: isActive ? '#ffffff' : '#71717a',

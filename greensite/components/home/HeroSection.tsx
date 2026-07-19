@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import FadeIn from "@/components/ui/FadeIn";
 
 interface HeroSectionProps {
   user?: any;
@@ -8,7 +9,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ user }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden" style={{ background: '#f0ece4', minHeight: '580px' }}>
+    <section className="relative overflow-hidden" style={{ background: '#f0ece4', minHeight: '780px' }}>
 
       {/* Left vertical dots */}
       <div className="absolute left-14 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-10 hidden lg:flex">
@@ -34,11 +35,12 @@ export default function HeroSection({ user }: HeroSectionProps) {
         />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28 flex items-center relative z-10">
+      <div className="max-w-6xl mx-auto px-6 py-32 lg:py-40 flex items-center relative z-10">
 
         {/* Content column */}
         <div className="w-full lg:w-[58%] text-center lg:text-left">
 
+          <FadeIn delay={0}>
           <h1
             className="text-5xl md:text-6xl lg:text-[66px] font-extrabold leading-[1.03] mb-7"
             style={{ letterSpacing: '-0.045em' }}
@@ -94,6 +96,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
               </div>
             ))}
           </div>
+          </FadeIn>
         </div>
       </div>
     </section>

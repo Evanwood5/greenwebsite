@@ -1,3 +1,7 @@
+'use client'
+
+import FadeIn from "@/components/ui/FadeIn"
+
 const fields = [
   {
     label: 'Technology',
@@ -46,11 +50,11 @@ export default function CTASection() {
     <>
       <section
         style={{ background: '#f0ece4', borderTop: '1px solid rgba(30,58,30,0.08)' }}
-        className="px-6 py-24"
+        className="px-6 py-40"
       >
         <div className="max-w-6xl mx-auto">
 
-          <div className="text-center mb-16">
+          <FadeIn><div className="text-center mb-16">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: '#29C115' }}>
               What We Track
             </p>
@@ -63,9 +67,9 @@ export default function CTASection() {
             <p className="text-[16px] max-w-lg mx-auto leading-relaxed" style={{ color: '#5a7a5a' }}>
               Greenify monitors company career pages in real-time across the fields that matter most to Michigan students.
             </p>
-          </div>
+          </div></FadeIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <FadeIn delay={150}><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {fields.map((f) => (
               <div
                 key={f.label}
@@ -84,7 +88,7 @@ export default function CTASection() {
                 </div>
               </div>
             ))}
-          </div>
+          </div></FadeIn>
 
         </div>
       </section>
