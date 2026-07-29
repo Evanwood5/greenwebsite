@@ -163,6 +163,8 @@ export default function JobsPage() {
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
+  const [newThisMonthCount, setNewThisMonthCount] = useState(0)
+  const [newThisWeekCount, setNewThisWeekCount] = useState(0)
   const [filters, setFilters] = useState<FilterOptions>(() => {
     const empty: FilterOptions = { category: '', subCategory: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
     if (typeof window === 'undefined') return empty
@@ -299,7 +301,45 @@ export default function JobsPage() {
     }
   }, [buildQuery])
 
+  const buildCountQuery = useCallback((dateFrom: Date) => {
+  let query = supabase
+    .from('job_postings_ingest_test')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_relevant', true)
+    .neq('job_field_id', IRRELEVANT_FIELD_ID)
+    .gte('created_at', dateFrom.toISOString())
+
+  if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
+  if (filters.category) {
+    const activeIds = filters.subCategory ? subCategoryFieldIds : categoryFieldIds
+    if (activeIds.length > 0) query = query.in('job_field_id', activeIds)
+    else query = query.eq('job_field_id', -1)
+  }
+  if (filters.level) query = query.eq('experience_level', filters.level)
+  if (filters.jobType) query = query.eq('job_type', filters.jobType)
+  if (filters.city) query = query.eq('city', filters.city)
+  if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
+  else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
+
+  return query
+}, [filters, categoryFieldIds, subCategoryFieldIds])
+
+const fetchNewThisMonthCount = useCallback(async () => {
+  const start = new Date(Date.now() - 30 * 86400000)
+  const { count } = await buildCountQuery(start)
+  setNewThisMonthCount(count || 0)
+}, [buildCountQuery])
+
+const fetchNewThisWeekCount = useCallback(async () => {
+  const start = new Date(Date.now() - 7 * 86400000)
+  const { count } = await buildCountQuery(start)
+  setNewThisWeekCount(count || 0)
+}, [buildCountQuery])
+
+
   useEffect(() => { fetchJobs(0) }, [fetchJobs])
+  useEffect(() => { fetchNewThisMonthCount() }, [fetchNewThisMonthCount])
+  useEffect(() => { fetchNewThisWeekCount() }, [fetchNewThisWeekCount])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -320,8 +360,8 @@ export default function JobsPage() {
   }
 
   const statCards = [
-    { label: 'New This Month', value: totalCount > 0 ? totalCount.toLocaleString() : '...', color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
-    { label: 'New This Week', value: '89', color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)', border: 'rgba(96,165,250,0.28)' },
+    { label: 'Past 30 Days', value: newThisMonthCount > 0 ? newThisMonthCount.toLocaleString() : '...', color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
+    { label: 'Past 7 Days', value: newThisWeekCount > 0 ? newThisWeekCount.toLocaleString() : '...', color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)', border: 'rgba(96,165,250,0.28)' },
     { label: 'Saved Jobs', value: savedJobIds.size.toString(), color: '#fb923c', labelColor: '#fdba74', bg: 'rgba(249,115,22,0.13)', border: 'rgba(249,115,22,0.28)' },
     { label: 'Tracking', value: '0', color: '#c4b5fd', labelColor: '#ddd6fe', bg: 'rgba(139,92,246,0.18)', border: 'rgba(139,92,246,0.38)' },
   ]
