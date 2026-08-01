@@ -28,9 +28,9 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
     <div
       style={{
         background: "#1e1e1e",
-        borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 4, border: "1px solid rgba(255,255,255,0.06)",
         padding: 16,
-        color: "white",
+        color: "#e4e4e7",
       }}
     >
       <div style={{ 
@@ -39,11 +39,11 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
         alignItems: "center",
         marginBottom: 12,
       }}>
-        <h3 style={{ fontSize: 13, fontWeight: 600 }}>
+        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
           {title}
-        </h3>
-        <div style={{ fontSize: 12, color: "#888" }}>
-          •• Last 30 Days
+        </p>
+        <div style={{ fontSize: 11, color: "#3f3f46" }}>
+          Last 30 Days
         </div>
       </div>
 
@@ -90,16 +90,8 @@ export default function TopSkillsInDemand({ data, title }: TopSkillsInDemandProp
                 {skill.totalCount}
               </div>
 
-              <div style={{ 
-                fontSize: 12,
-                color: "#29C115",
-                fontWeight: 600,
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-                minWidth: 50,
-              }}>
-                ▲ {percentage}%
+              <div style={{ fontSize: 11, color: "#52525b", minWidth: 40, textAlign: "right" }}>
+                {percentage}%
               </div>
             </div>
           );

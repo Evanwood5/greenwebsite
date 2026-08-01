@@ -46,9 +46,9 @@ export default function DashboardPage() {
         <FieldSelector value={field} onChange={setField} />
 
         {loading ? (
-          <div style={{ color: "#888", paddingTop: 80, textAlign: "center" }}>Loading...</div>
+          <div style={{ color: "#52525b", paddingTop: 80, textAlign: "center", fontSize: 13 }}>Loading...</div>
         ) : !data ? (
-          <div style={{ color: "#ef4444", paddingTop: 80, textAlign: "center" }}>Failed to load data</div>
+          <div style={{ color: "#f87171", paddingTop: 80, textAlign: "center", fontSize: 13 }}>Failed to load data</div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
@@ -93,10 +93,10 @@ export default function DashboardPage() {
                   data={data.subcategoryCounts || {}}
                   title="Top Skills in Demand"
                 />
-                <div style={{ background: "#1e1e1e", borderRadius: 12, padding: 14, flex: 1, display: "flex", flexDirection: "column", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: "white", flexShrink: 0 }}>
+                <div style={{ background: "#1e1e1e", borderRadius: 4, padding: 14, flex: 1, display: "flex", flexDirection: "column", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b", marginBottom: 12, flexShrink: 0 }}>
                     Job Posting Trends by Category
-                  </h3>
+                  </p>
                   <div style={{ flex: 1, minHeight: 240 }}>
                     <SubcategoryTrendChart
                       title=""

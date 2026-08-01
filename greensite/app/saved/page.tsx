@@ -44,16 +44,16 @@ function formatDate(iso: string) {
 function StatCard({ label, count, color }: { label: string; count: number; color: string }) {
   return (
     <div style={{
-      background: '#0d0d0d',
-      border: `1px solid ${color}33`,
-      borderRadius: '10px',
-      padding: '16px 20px',
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderRadius: '4px',
+      padding: '12px 14px',
       minWidth: 0,
     }}>
-      <p style={{ color, fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
+      <p style={{ color: '#52525b', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
         {label}
       </p>
-      <p style={{ color, fontSize: '28px', fontWeight: 700, lineHeight: 1 }}>{count}</p>
+      <p style={{ color, fontSize: '24px', fontWeight: 700, lineHeight: 1 }}>{count}</p>
     </div>
   )
 }
@@ -95,7 +95,7 @@ function StatusDropdown({
         background: style.background,
         color: style.color,
         border: `1px solid ${style.border}`,
-        borderRadius: '6px',
+        borderRadius: '4px',
         padding: '4px 8px',
         fontSize: '12px',
         fontWeight: 600,
@@ -144,7 +144,7 @@ function NotesCell({
     }
   }
 
-  const borderColor = saved ? '#15803d' : saving ? '#374151' : '#2a2a2a'
+  const borderColor = saved ? 'rgba(74,222,128,0.3)' : saving ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.08)'
 
   return (
     <textarea
@@ -155,9 +155,9 @@ function NotesCell({
       placeholder="Add a note... (Enter to save)"
       rows={2}
       style={{
-        background: '#111',
+        background: '#141414',
         border: `1px solid ${borderColor}`,
-        borderRadius: '6px',
+        borderRadius: '4px',
         color: '#a1a1aa',
         fontSize: '12px',
         padding: '6px 8px',
@@ -257,7 +257,7 @@ export default function SavedJobsPage() {
         </div>
 
         {/* Stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
           <StatCard label="Total Saved" count={counts.total}     color="#a1a1aa" />
           <StatCard label="Applied"     count={counts.applied}   color="#60a5fa" />
           <StatCard label="Interview"   count={counts.interview} color="#fb923c" />
@@ -265,25 +265,25 @@ export default function SavedJobsPage() {
         </div>
 
         {error && (
-          <div style={{ background: '#2a1a1a', border: '1px solid #7f1d1d', borderRadius: '10px', padding: '14px', marginBottom: '16px', color: '#fca5a5', fontSize: '13px' }}>
+          <div style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '4px', padding: '14px', marginBottom: '16px', color: '#fca5a5', fontSize: '13px' }}>
             {error}
           </div>
         )}
 
         {/* Table */}
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {[...Array(5)].map((_, i) => (
-              <div key={i} style={{ background: '#0d0d0d', borderRadius: '8px', height: '52px', border: '1px solid rgba(255,255,255,0.07)' }} />
+              <div key={i} style={{ background: '#1e1e1e', borderRadius: '4px', height: '52px', border: '1px solid rgba(255,255,255,0.06)' }} />
             ))}
           </div>
         ) : jobs.length === 0 ? (
-          <div style={{ background: '#0d0d0d', borderRadius: '10px', padding: '60px 20px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <p style={{ color: 'white', fontSize: '15px', fontWeight: 600, marginBottom: '6px' }}>No saved jobs yet</p>
+          <div style={{ background: '#1e1e1e', borderRadius: '4px', padding: '60px 20px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <p style={{ color: '#e4e4e7', fontSize: '14px', fontWeight: 500, marginBottom: '6px' }}>No saved jobs yet</p>
             <p style={{ color: '#52525b', fontSize: '12px' }}>Hit the bookmark on any job to save it here.</p>
           </div>
         ) : (
-          <div style={{ background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', overflow: 'hidden' }}>
+          <div style={{ background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
 
             {/* Column headers */}
             <div style={{
@@ -291,10 +291,10 @@ export default function SavedJobsPage() {
               gridTemplateColumns: '2fr 110px 130px 1.2fr 80px',
               gap: '12px',
               padding: '10px 16px',
-              borderBottom: '1px solid rgba(255,255,255,0.07)',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
             }}>
               {['Job', 'Saved', 'Status', 'Notes', ''].map(h => (
-                <span key={h} style={{ color: '#52525b', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{h}</span>
+                <span key={h} style={{ color: '#52525b', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{h}</span>
               ))}
             </div>
 
@@ -308,7 +308,7 @@ export default function SavedJobsPage() {
                   gap: '12px',
                   padding: '12px 16px',
                   alignItems: 'start',
-                  borderBottom: i < jobs.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                  borderBottom: i < jobs.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                 }}
               >
                 {/* Job title + company */}
@@ -317,7 +317,7 @@ export default function SavedJobsPage() {
                     href={job.job_href ?? '#'}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ color: 'white', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                   >
                     {job.job_title ?? 'Untitled'}
                   </a>
@@ -327,7 +327,7 @@ export default function SavedJobsPage() {
                 </div>
 
                 {/* Date saved */}
-                <span style={{ color: '#71717a', fontSize: '12px', paddingTop: '4px' }}>{formatDate(job.saved_at)}</span>
+                <span style={{ color: '#52525b', fontSize: '12px', paddingTop: '4px' }}>{formatDate(job.saved_at)}</span>
 
                 {/* Status dropdown */}
                 <div style={{ paddingTop: '2px' }}>
@@ -348,14 +348,14 @@ export default function SavedJobsPage() {
                     target="_blank"
                     rel="noreferrer"
                     title="Search on LinkedIn"
-                    style={{ color: '#60a5fa', fontSize: '11px', fontWeight: 600, textDecoration: 'none', padding: '4px 7px', border: '1px solid #1d4ed8', borderRadius: '4px' }}
+                    style={{ color: '#60a5fa', fontSize: '11px', fontWeight: 600, textDecoration: 'none', padding: '4px 7px', border: '1px solid rgba(96,165,250,0.25)', borderRadius: '4px', background: 'rgba(96,165,250,0.06)' }}
                   >
                     in
                   </a>
                   <button
                     onClick={() => handleDelete(job.saved_job_id)}
                     title="Remove"
-                    style={{ background: 'none', border: '1px solid #3f3f46', borderRadius: '4px', color: '#52525b', fontSize: '14px', cursor: 'pointer', padding: '2px 7px', lineHeight: 1 }}
+                    style={{ background: 'none', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', color: '#52525b', fontSize: '14px', cursor: 'pointer', padding: '2px 7px', lineHeight: 1 }}
                   >
                     ×
                   </button>

@@ -22,49 +22,31 @@ export default function LargeStatCard({
   return (
     <div
       style={{
-        background: "#1e1e1e",
-        borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)",
-        padding: "14px 16px",
-        color: "white",
+        background: "rgba(255,255,255,0.03)",
+        borderRadius: 4, border: "1px solid rgba(255,255,255,0.08)",
+        padding: "12px 14px",
         display: "flex",
         flexDirection: "column",
         gap: 5,
       }}
     >
-      {/* Title */}
-      <div style={{
-        fontSize: 12,
-        color: "#888",
-        fontWeight: 500,
-      }}>
+      <div style={{ fontSize: 9, color: "#52525b", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
         {title}
       </div>
 
-      {/* Main Value */}
-      <div style={{
-        fontSize: 26,
-        fontWeight: 700,
-        lineHeight: 1,
-      }}>
+      <div style={{ fontSize: 22, fontWeight: 700, lineHeight: 1, color: "#e4e4e7" }}>
         {value.toLocaleString()}
       </div>
 
-      {/* Subtitle and Change Indicator */}
-      <div style={{ 
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        fontSize: 13,
-      }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
         {subtitle && (
-          <span style={{ color: "#888" }}>
+          <span style={{ color: "#52525b" }}>
             {subtitle}
           </span>
         )}
-        
         {changePercent !== undefined && (
-          <span style={{ 
-            color: isPositive ? "#29C115" : isNegative ? "#ef4444" : "#888",
+          <span style={{
+            color: isPositive ? "#4ade80" : isNegative ? "#f87171" : "#52525b",
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
@@ -74,7 +56,7 @@ export default function LargeStatCard({
             {isNegative && "▼"}
             {Math.abs(changePercent)}%
             {changeLabel && (
-              <span style={{ color: "#666", fontWeight: 400 }}>
+              <span style={{ color: "#52525b", fontWeight: 400 }}>
                 {changeLabel}
               </span>
             )}

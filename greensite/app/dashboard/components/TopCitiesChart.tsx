@@ -26,17 +26,17 @@ export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
     <div
       style={{
         background: "#1e1e1e",
-        borderRadius: 16, border: "1px solid rgba(255,255,255,0.06)",
-        padding: 24,
-        color: "white",
+        borderRadius: 4, border: "1px solid rgba(255,255,255,0.06)",
+        padding: 16,
+        color: "#e4e4e7",
         height: "100%",
       }}
     >
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
+      <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b", marginBottom: 14 }}>
         {title}
-      </h3>
+      </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {data.slice(0, 4).map((city, index) => {
           const barWidth = (city.jobCount / maxJobs) * 100;
           const displayName = formatCityName(city.name);
@@ -51,10 +51,10 @@ export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
               }}
             >
               {/* City Name */}
-              <div style={{ 
+              <div style={{
                 width: 100,
-                fontSize: 13,
-                color: "#888",
+                fontSize: 12,
+                color: "#52525b",
                 textAlign: "right",
               }}>
                 {displayName}
@@ -73,8 +73,8 @@ export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
                   style={{
                     width: `${barWidth}%`,
                     height: "100%",
-                    background: "#3b82f6",
-                    borderRadius: 4,
+                    background: "rgba(255,255,255,0.14)",
+                    borderRadius: 2,
                     transition: "width 0.3s ease",
                   }}
                 />

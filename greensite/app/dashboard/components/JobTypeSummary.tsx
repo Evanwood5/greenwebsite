@@ -23,15 +23,15 @@ export default function JobTypeSummary({ jobTypes, totalJobs }: JobTypeSummaryPr
     <div
       style={{
         background: "#1e1e1e",
-        borderRadius: 16, border: "1px solid rgba(255,255,255,0.06)",
-        padding: 24,
-        color: "white",
+        borderRadius: 4, border: "1px solid rgba(255,255,255,0.06)",
+        padding: 16,
+        color: "#e4e4e7",
         height: "100%",
       }}
     >
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
+      <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b", marginBottom: 14 }}>
         Employment Type
-      </h3>
+      </p>
 
       <div style={{ 
         display: "flex", 
@@ -59,12 +59,13 @@ export default function JobTypeSummary({ jobTypes, totalJobs }: JobTypeSummaryPr
                   />
                 ))}
               </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  background: '#d6ba04', 
-                  border: '1px solid #333',
-                  borderRadius: 8,
-                  color: 'white',
+              <Tooltip
+                contentStyle={{
+                  background: '#1e1e1e',
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  borderRadius: 4,
+                  color: '#e4e4e7',
+                  fontSize: 12,
                 }}
               />
             </PieChart>
@@ -79,10 +80,10 @@ export default function JobTypeSummary({ jobTypes, totalJobs }: JobTypeSummaryPr
             textAlign: "center",
             pointerEvents: "none",
           }}>
-            <div style={{ fontSize: 24, fontWeight: 700 }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#e4e4e7" }}>
               {chartData[0]?.percentage || 0}%
             </div>
-            <div style={{ fontSize: 12, color: "#888" }}>
+            <div style={{ fontSize: 11, color: "#52525b" }}>
               {chartData[0]?.name || "N/A"}
             </div>
           </div>
@@ -103,7 +104,7 @@ export default function JobTypeSummary({ jobTypes, totalJobs }: JobTypeSummaryPr
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "8px 0",
-                borderBottom: "1px solid #2a2a2a",
+                borderBottom: "1px solid rgba(255,255,255,0.05)",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -115,15 +116,12 @@ export default function JobTypeSummary({ jobTypes, totalJobs }: JobTypeSummaryPr
                     background: COLORS[chartData.indexOf(item) % COLORS.length],
                   }}
                 />
-                <span style={{ fontSize: 14 }}>
+                <span style={{ fontSize: 12, color: "#a1a1aa" }}>
                   {item.name}
                 </span>
               </div>
 
-              <div style={{ 
-                fontSize: 14,
-                fontWeight: 600,
-              }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "#e4e4e7" }}>
                 {item.percentage}%
               </div>
             </div>

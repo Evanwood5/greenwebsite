@@ -66,7 +66,7 @@ export default function FieldSelector({ value, onChange }: FieldSelectorProps) {
           alignItems: "center",
           background: "rgba(255,255,255,0.03)",
           border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: 10,
+          borderRadius: 4,
           padding: 3,
           gap: 2,
         }}
@@ -82,7 +82,7 @@ export default function FieldSelector({ value, onChange }: FieldSelectorProps) {
                 alignItems: "center",
                 gap: 6,
                 padding: "6px 14px",
-                borderRadius: 7,
+                borderRadius: 4,
                 border: isActive ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
                 background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
                 color: isActive ? "#ffffff" : "#71717a",
