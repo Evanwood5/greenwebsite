@@ -10,11 +10,8 @@ interface PreferencesFormProps {
     updateFormData: (field: string, value: any) => void;
 }
 
-// Michigan cities from city_coordinates.py
 const MICHIGAN_CITIES = [
-    { value: 'MI:all', label: '🌟 All Michigan (statewide)' },
-
-    // Southeast / Metro Detroit
+    { value: 'MI:all', label: 'All Michigan (statewide)' },
     { value: 'MI:Ann Arbor', label: 'Ann Arbor' },
     { value: 'MI:Battle Creek', label: 'Battle Creek' },
     { value: 'MI:Bay City', label: 'Bay City' },
@@ -37,8 +34,6 @@ const MICHIGAN_CITIES = [
     { value: 'MI:Troy', label: 'Troy' },
     { value: 'MI:Warren', label: 'Warren' },
     { value: 'MI:Westland', label: 'Westland' },
-
-    // West Michigan
     { value: 'MI:Grand Rapids', label: 'Grand Rapids' },
     { value: 'MI:Holland', label: 'Holland' },
     { value: 'MI:Muskegon', label: 'Muskegon' },
@@ -46,31 +41,32 @@ const MICHIGAN_CITIES = [
     { value: 'MI:Wyoming', label: 'Wyoming' },
     { value: 'MI:Benton Harbor', label: 'Benton Harbor' },
     { value: 'MI:St. Joseph', label: 'St. Joseph' },
-
-    // Southwest / South Central
     { value: 'MI:Kalamazoo', label: 'Kalamazoo' },
     { value: 'MI:Three Rivers', label: 'Three Rivers' },
-
-    // Mid-Michigan / Central
     { value: 'MI:Midland', label: 'Midland' },
     { value: 'MI:Saginaw', label: 'Saginaw' },
     { value: 'MI:Mount Pleasant', label: 'Mount Pleasant' },
-
-    // Northern Lower Peninsula
     { value: 'MI:Traverse City', label: 'Traverse City' },
     { value: 'MI:Petoskey', label: 'Petoskey' },
     { value: 'MI:Gaylord', label: 'Gaylord' },
     { value: 'MI:Cadillac', label: 'Cadillac' },
     { value: 'MI:Alpena', label: 'Alpena' },
     { value: 'MI:Bad Axe', label: 'Bad Axe' },
-
-    // Upper Peninsula
     { value: 'MI:Marquette', label: 'Marquette' },
     { value: 'MI:Escanaba', label: 'Escanaba' },
     { value: 'MI:Houghton', label: 'Houghton' },
     { value: 'MI:Sault Ste. Marie', label: 'Sault Ste. Marie' },
-    { value: 'MI:Menominee', label: 'Menominee' }
+    { value: 'MI:Menominee', label: 'Menominee' },
 ];
+
+const sectionLabel: React.CSSProperties = {
+    color: '#52525b',
+    fontSize: '9px',
+    fontWeight: 700,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    marginBottom: '8px',
+};
 
 export default function PreferencesForm({ formData, updateFormData }: PreferencesFormProps) {
     const jobTypeOptions = [
@@ -79,18 +75,13 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
         { value: 'part-time', label: 'Part-time' },
     ];
 
-    // Parse location from string to array for multi-select
-    // formData.location could be "MI:Detroit" or "MI:Detroit,MI:Lansing"
     const selectedCities = formData.location ? formData.location.split(',').filter(Boolean) : [];
 
     const handleJobTypeToggle = (type: string) => {
         const current = formData.jobTypes;
-
         if (current.includes(type)) {
-            // Remove if already selected
             updateFormData('jobTypes', current.filter(t => t !== type));
         } else {
-            // Add if not at limit (max 2)
             if (current.length < 2) {
                 updateFormData('jobTypes', [...current, type]);
             } else {
@@ -101,141 +92,182 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
 
     const handleCityToggle = (cityValue: string) => {
         let newSelected: string[];
-
-        // If "All Michigan" is clicked
         if (cityValue === 'MI:all') {
-            if (selectedCities.includes('MI:all')) {
-                // Unselect all
-                newSelected = [];
-            } else {
-                // Select only "All Michigan" (clear individual cities)
-                newSelected = ['MI:all'];
-            }
+            newSelected = selectedCities.includes('MI:all') ? [] : ['MI:all'];
         } else {
-            // Individual city clicked
             if (selectedCities.includes('MI:all')) {
-                // If "All Michigan" was selected, replace it with this city
                 newSelected = [cityValue];
             } else if (selectedCities.includes(cityValue)) {
-                // Unselect this city
                 newSelected = selectedCities.filter(c => c !== cityValue);
             } else {
-                // Add this city
                 newSelected = [...selectedCities, cityValue];
             }
         }
-
-        // Convert array back to comma-separated string
         updateFormData('location', newSelected.join(','));
     };
 
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
             {/* Job Types */}
-            <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Job Type (select up to 2)
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                    {jobTypeOptions.map((option) => (
-                        <button
-                            key={option.value}
-                            type="button"
-                            onClick={() => handleJobTypeToggle(option.value)}
-                            className={`p-4 rounded-lg border-2 font-semibold transition-all ${formData.jobTypes.includes(option.value)
-                                ? 'border-green-600 bg-green-50 text-green-700'
-                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                                }`}
-                        >
-                            {formData.jobTypes.includes(option.value) && '✓ '}
-                            {option.label}
-                        </button>
-                    ))}
+            <div>
+                <p style={sectionLabel}>Job Type <span style={{ color: '#3f3f46', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— select up to 2</span></p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                    {jobTypeOptions.map((option) => {
+                        const selected = formData.jobTypes.includes(option.value);
+                        return (
+                            <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => handleJobTypeToggle(option.value)}
+                                style={{
+                                    padding: '9px 12px',
+                                    borderRadius: '4px',
+                                    border: `1px solid ${selected ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)'}`,
+                                    background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
+                                    color: selected ? '#e4e4e7' : '#52525b',
+                                    fontSize: '12px',
+                                    fontWeight: selected ? 600 : 400,
+                                    cursor: 'pointer',
+                                    textAlign: 'center',
+                                    transition: 'all 120ms',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '5px',
+                                }}
+                            >
+                                {selected && (
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                )}
+                                {option.label}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 
-            {/* Experience Level (only for full-time) */}
+            {/* Experience Level */}
             {formData.jobTypes.includes('full-time') && (
-                <div className="mb-6">
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Experience Level (for full-time jobs)
-                    </label>
-                    <div className="space-y-2">
+                <div>
+                    <p style={sectionLabel}>Experience Level <span style={{ color: '#3f3f46', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— full-time only</span></p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         {[
-                            { value: 'moderate', label: 'Moderate (0-2 years)' },
+                            { value: 'moderate', label: 'Moderate (0–2 years)' },
                             { value: 'advanced', label: 'Advanced (2+ years)' },
                             { value: 'any', label: 'Any level' },
-                        ].map((option) => (
-                            <label
-                                key={option.value}
-                                className="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer hover:bg-gray-50 transition-colors"
-                            >
-                                <input
-                                    type="radio"
-                                    name="experienceLevel"
-                                    value={option.value}
-                                    checked={formData.experienceLevel === option.value}
-                                    onChange={(e) => updateFormData('experienceLevel', e.target.value)}
-                                    className="w-4 h-4 text-green-600"
-                                />
-                                <span className="font-medium text-gray-700">{option.label}</span>
-                            </label>
-                        ))}
+                        ].map((option) => {
+                            const selected = formData.experienceLevel === option.value;
+                            return (
+                                <label
+                                    key={option.value}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        padding: '8px 10px',
+                                        borderRadius: '4px',
+                                        border: `1px solid ${selected ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.06)'}`,
+                                        background: selected ? 'rgba(255,255,255,0.06)' : 'transparent',
+                                        cursor: 'pointer',
+                                        transition: 'all 120ms',
+                                    }}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="experienceLevel"
+                                        value={option.value}
+                                        checked={selected}
+                                        onChange={(e) => updateFormData('experienceLevel', e.target.value)}
+                                        style={{ accentColor: '#e4e4e7', width: '14px', height: '14px' }}
+                                    />
+                                    <span style={{ color: selected ? '#e4e4e7' : '#71717a', fontSize: '12px', fontWeight: selected ? 500 : 400 }}>
+                                        {option.label}
+                                    </span>
+                                </label>
+                            );
+                        })}
                     </div>
                 </div>
             )}
 
-            {/* Location - MULTI-SELECT WITH CHECKBOXES */}
-            <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    📍 Location (select one or more cities)
-                </label>
-                <p className="text-sm text-blue-600 mb-3 bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    ℹ️ Each location will have a 30-mile radius for job matching
-                </p>
-                <div className="border-2 border-gray-200 rounded-lg p-4 max-h-64 overflow-y-auto bg-white">
-                    <div className="space-y-2">
-                        {MICHIGAN_CITIES.map((city) => (
+            {/* Location */}
+            <div>
+                <p style={sectionLabel}>Location <span style={{ color: '#3f3f46', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— 30-mile radius per city</span></p>
+                <div style={{
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '4px',
+                    maxHeight: '220px',
+                    overflowY: 'auto',
+                    background: '#141414',
+                }}>
+                    {MICHIGAN_CITIES.map((city, i) => {
+                        const checked = selectedCities.includes(city.value);
+                        const isAll = city.value === 'MI:all';
+                        return (
                             <label
                                 key={city.value}
-                                className={`flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-gray-50 transition-colors ${city.value === 'MI:all' ? 'bg-green-50 border-b-2 border-green-200 mb-2 pb-3' : ''
-                                    }`}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    padding: '7px 10px',
+                                    cursor: 'pointer',
+                                    background: checked ? 'rgba(255,255,255,0.05)' : 'transparent',
+                                    borderBottom: isAll ? '1px solid rgba(255,255,255,0.06)' : i < MICHIGAN_CITIES.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                                    transition: 'background 80ms',
+                                }}
                             >
                                 <input
                                     type="checkbox"
-                                    checked={selectedCities.includes(city.value)}
+                                    checked={checked}
                                     onChange={() => handleCityToggle(city.value)}
-                                    className="w-4 h-4 text-green-600 rounded"
+                                    style={{ accentColor: '#e4e4e7', width: '13px', height: '13px', flexShrink: 0 }}
                                 />
-                                <span className={`text-sm ${city.value === 'MI:all' ? 'font-bold text-green-700' : 'text-gray-700'}`}>
+                                <span style={{
+                                    color: checked ? '#e4e4e7' : '#71717a',
+                                    fontSize: '12px',
+                                    fontWeight: isAll ? 600 : 400,
+                                }}>
                                     {city.label}
                                 </span>
                             </label>
-                        ))}
-                    </div>
+                        );
+                    })}
                 </div>
                 {selectedCities.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p style={{ color: '#52525b', fontSize: '10px', marginTop: '6px' }}>
                         {selectedCities.includes('MI:all')
                             ? 'Matching jobs across all of Michigan'
-                            : `Selected ${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'}`
-                        }
+                            : `${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
                     </p>
                 )}
             </div>
 
             {/* Include Remote */}
-            <div className="mb-6">
-                <label className="flex items-center gap-3 p-4 rounded-lg border-2 border-gray-200 cursor-pointer hover:bg-gray-50">
+            <div>
+                <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    borderRadius: '4px',
+                    border: `1px solid ${formData.includeRemote ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.06)'}`,
+                    background: formData.includeRemote ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    cursor: 'pointer',
+                    transition: 'all 120ms',
+                }}>
                     <input
                         type="checkbox"
                         checked={formData.includeRemote}
                         onChange={(e) => updateFormData('includeRemote', e.target.checked)}
-                        className="w-5 h-5 text-green-600 rounded"
+                        style={{ accentColor: '#e4e4e7', width: '14px', height: '14px', flexShrink: 0 }}
                     />
                     <div>
-                        <p className="font-semibold text-gray-700">Include remote jobs</p>
-                        <p className="text-sm text-gray-500">Get matched with remote opportunities</p>
+                        <p style={{ color: formData.includeRemote ? '#e4e4e7' : '#71717a', fontSize: '12px', fontWeight: 500 }}>Include remote jobs</p>
+                        <p style={{ color: '#52525b', fontSize: '11px' }}>Get matched with remote opportunities</p>
                     </div>
                 </label>
             </div>

@@ -360,10 +360,10 @@ const fetchNewThisWeekCount = useCallback(async () => {
   }
 
   const statCards = [
-    { label: 'Past 30 Days', value: newThisMonthCount > 0 ? newThisMonthCount.toLocaleString() : '...', color: '#4ade80', labelColor: '#6ee7a0', bg: 'rgba(41,193,21,0.13)', border: 'rgba(41,193,21,0.28)' },
-    { label: 'Past 7 Days', value: newThisWeekCount > 0 ? newThisWeekCount.toLocaleString() : '...', color: '#93c5fd', labelColor: '#7dd3fc', bg: 'rgba(96,165,250,0.13)', border: 'rgba(96,165,250,0.28)' },
-    { label: 'Saved Jobs', value: savedJobIds.size.toString(), color: '#fb923c', labelColor: '#fdba74', bg: 'rgba(249,115,22,0.13)', border: 'rgba(249,115,22,0.28)' },
-    { label: 'Tracking', value: '0', color: '#c4b5fd', labelColor: '#ddd6fe', bg: 'rgba(139,92,246,0.18)', border: 'rgba(139,92,246,0.38)' },
+    { label: 'Past 30 Days', value: newThisMonthCount > 0 ? newThisMonthCount.toLocaleString() : '...', color: '#4ade80' },
+    { label: 'Past 7 Days',  value: newThisWeekCount > 0 ? newThisWeekCount.toLocaleString() : '...',  color: '#93c5fd' },
+    { label: 'Saved Jobs',   value: savedJobIds.size.toString(),                                         color: '#fb923c' },
+    { label: 'Tracking',     value: '0',                                                                 color: '#c4b5fd' },
   ]
 
   if (authLoading) {
@@ -385,17 +385,17 @@ const fetchNewThisWeekCount = useCallback(async () => {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
             {statCards.map((card) => (
-              <div key={card.label} style={{ background: card.bg, borderRadius: '4px', padding: '12px 14px', border: `1px solid ${card.border}` }}>
-                <p style={{ color: (card as any).labelColor ?? '#71717a', fontSize: '11px', marginBottom: '6px', fontWeight: 500 }}>{card.label}</p>
-                <p style={{ color: card.color, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
+              <div key={card.label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <p style={{ color: '#52525b', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{card.label}</p>
+                <p style={{ color: card.color, fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
               </div>
             ))}
           </div>
 
           {error && (
-            <div style={{ background: '#2a1a1a', border: '1px solid #7f1d1d', borderRadius: '10px', padding: '16px', marginBottom: '20px', color: '#fca5a5', fontSize: '14px' }}>
+            <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: '#fca5a5', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               {error}
-              <button onClick={() => fetchJobs(0)} style={{ marginLeft: '12px', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '13px' }}>
+              <button onClick={() => fetchJobs(0)} style={{ marginLeft: 'auto', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
                 Try again
               </button>
             </div>
@@ -415,7 +415,7 @@ const fetchNewThisWeekCount = useCallback(async () => {
               <button
                 onClick={() => fetchJobs(currentPage + 1, true)}
                 disabled={loadingMore}
-                style={{ padding: '8px 20px', background: 'rgba(41,193,21,0.1)', color: '#29C115', border: '1px solid rgba(41,193,21,0.2)', borderRadius: '7px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
+                style={{ padding: '8px 20px', background: 'rgba(255,255,255,0.05)', color: '#a1a1aa', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
               >
                 {loadingMore ? 'Loading...' : `Load More (${totalCount - jobs.length} remaining)`}
               </button>

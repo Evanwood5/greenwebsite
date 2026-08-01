@@ -191,29 +191,29 @@ export default function CustomJobsClient() {
                         <button onClick={() => setCurrentView('main')} style={{ background: 'none', border: 'none', color: '#71717a', fontSize: '13px', cursor: 'pointer', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             ← Back
                         </button>
-                        <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px' }}>Job Preference #{prefId}</h1>
+                        <h1 style={{ color: '#e4e4e7', fontSize: '18px', fontWeight: 600, marginBottom: '2px' }}>Job Preference #{prefId}</h1>
                         <p style={{ color: '#52525b', fontSize: '12px' }}>Set up your job search criteria</p>
                     </div>
 
-                    <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '20px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+                    <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
                         {saveStatus && (
-                            <div style={{ marginBottom: '14px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', background: saveStatus.type === 'success' ? 'rgba(41,193,21,0.08)' : 'rgba(239,68,68,0.08)', color: saveStatus.type === 'success' ? '#29C115' : '#ef4444', border: `1px solid ${saveStatus.type === 'success' ? 'rgba(41,193,21,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
+                            <div style={{ marginBottom: '14px', padding: '10px 14px', borderRadius: '4px', fontSize: '13px', background: saveStatus.type === 'success' ? 'rgba(41,193,21,0.08)' : 'rgba(239,68,68,0.08)', color: saveStatus.type === 'success' ? '#29C115' : '#ef4444', border: `1px solid ${saveStatus.type === 'success' ? 'rgba(41,193,21,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
                                 {saveStatus.message}
                             </div>
                         )}
                         <PreferencesForm formData={prefData} updateFormData={updateFn} />
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', gap: '10px' }}>
                             <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => setCurrentView('main')} disabled={loading} style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.04)', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
+                                <button onClick={() => setCurrentView('main')} disabled={loading} style={{ padding: '7px 14px', background: 'rgba(255,255,255,0.04)', color: '#71717a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
                                     Cancel
                                 </button>
                                 {prefData.jobTypes.length > 0 && (
-                                    <button onClick={() => { if (confirm('Delete this preference?')) removePreference(prefId); }} disabled={loading} style={{ padding: '8px 16px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>
+                                    <button onClick={() => { if (confirm('Delete this preference?')) removePreference(prefId); }} disabled={loading} style={{ padding: '7px 14px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
                                         Delete
                                     </button>
                                 )}
                             </div>
-                            <button onClick={() => savePreference(prefId)} disabled={loading} style={{ padding: '8px 20px', background: loading ? '#1a1a1a' : '#29C115', color: loading ? '#52525b' : 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}>
+                            <button onClick={() => savePreference(prefId)} disabled={loading} style={{ padding: '7px 18px', background: loading ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.08)', color: loading ? '#52525b' : '#e4e4e7', border: `1px solid ${loading ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.14)'}`, borderRadius: '4px', fontSize: '12px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}>
                                 {loading ? 'Saving...' : 'Save'}
                             </button>
                         </div>
@@ -230,12 +230,12 @@ export default function CustomJobsClient() {
 
                 {/* Header */}
                 <div style={{ marginBottom: '16px' }}>
-                    <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Custom Job Matching</h1>
+                    <h1 style={{ color: '#e4e4e7', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Custom Job Matching</h1>
                     <p style={{ color: '#52525b', fontSize: '12px' }}>Upload your resume and set preferences to get personalized job matches</p>
                 </div>
 
                 {saveStatus && (
-                    <div style={{ marginBottom: '14px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', background: saveStatus.type === 'success' ? 'rgba(41,193,21,0.08)' : 'rgba(239,68,68,0.08)', color: saveStatus.type === 'success' ? '#29C115' : '#ef4444', border: `1px solid ${saveStatus.type === 'success' ? 'rgba(41,193,21,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
+                    <div style={{ marginBottom: '14px', padding: '10px 14px', borderRadius: '4px', fontSize: '13px', background: saveStatus.type === 'success' ? 'rgba(41,193,21,0.08)' : 'rgba(239,68,68,0.08)', color: saveStatus.type === 'success' ? '#29C115' : '#ef4444', border: `1px solid ${saveStatus.type === 'success' ? 'rgba(41,193,21,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
                         {saveStatus.message}
                     </div>
                 )}
@@ -244,14 +244,14 @@ export default function CustomJobsClient() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
 
                     {/* Resume */}
-                    <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '16px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+                    <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', padding: '16px' }}>
                         <ResumeUpload onResumeUploaded={(uploaded) => { setResumeUploaded(uploaded); loadResumeStatus(); }} userId={user?.id} existingResumeUrl={resumeUrl} />
                         {resumeUploaded && (
                             <div style={{ display: 'flex', gap: '8px', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                                <button onClick={() => document.getElementById('resume-upload-update')?.click()} disabled={loading} style={{ flex: 1, padding: '7px 12px', background: 'rgba(29,78,216,0.15)', color: '#60a5fa', border: '1px solid rgba(29,78,216,0.25)', borderRadius: '7px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
+                                <button onClick={() => document.getElementById('resume-upload-update')?.click()} disabled={loading} style={{ flex: 1, padding: '7px 12px', background: 'rgba(255,255,255,0.05)', color: '#a1a1aa', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '4px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
                                     Update Resume
                                 </button>
-                                <button onClick={removeResume} disabled={loading} style={{ flex: 1, padding: '7px 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '7px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
+                                <button onClick={removeResume} disabled={loading} style={{ flex: 1, padding: '7px 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', fontSize: '12px', fontWeight: 500, cursor: 'pointer' }}>
                                     Remove
                                 </button>
                             </div>
@@ -264,24 +264,24 @@ export default function CustomJobsClient() {
                             const pref = prefId === 1 ? preference1 : preference2;
                             const configured = pref.jobTypes.length > 0;
                             return (
-                                <div key={prefId} style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '14px', flex: 1, cursor: 'pointer', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset', position: 'relative' }} onClick={() => setCurrentView(`preference${prefId}`)}>
+                                <div key={prefId} style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', padding: '14px', flex: 1, cursor: 'pointer', position: 'relative' }} onClick={() => setCurrentView(`preference${prefId}`)}>
                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px' }}>
                                         <div>
-                                            <p style={{ color: 'white', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Job Preference #{prefId}</p>
+                                            <p style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Job Preference #{prefId}</p>
                                             {configured ? (
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                                                    <span style={{ color: '#29C115', fontSize: '11px' }}>✓ {pref.jobTypes.join(', ')}</span>
+                                                    <span style={{ color: '#4ade80', fontSize: '11px' }}>✓ {pref.jobTypes.join(', ')}</span>
                                                     <span style={{ color: '#52525b', fontSize: '11px' }}>📍 {displayLocation(pref.location)}</span>
                                                     {pref.includeRemote && <span style={{ color: '#52525b', fontSize: '11px' }}>🌐 Remote included</span>}
                                                 </div>
                                             ) : (
-                                                <span style={{ color: '#f97316', fontSize: '11px' }}>⚠ Not configured yet</span>
+                                                <span style={{ color: '#71717a', fontSize: '11px' }}>Not configured yet</span>
                                             )}
                                         </div>
-                                        <span style={{ color: '#52525b', fontSize: '16px', flexShrink: 0 }}>→</span>
+                                        <span style={{ color: '#3f3f46', fontSize: '14px', flexShrink: 0 }}>→</span>
                                     </div>
                                     {configured && (
-                                        <button onClick={(e) => { e.stopPropagation(); if (confirm(`Delete Preference #${prefId}?`)) removePreference(prefId); }} disabled={loading} style={{ position: 'absolute', bottom: '10px', right: '10px', padding: '3px 8px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '5px', fontSize: '10px', fontWeight: 600, cursor: 'pointer' }}>
+                                        <button onClick={(e) => { e.stopPropagation(); if (confirm(`Delete Preference #${prefId}?`)) removePreference(prefId); }} disabled={loading} style={{ position: 'absolute', bottom: '10px', right: '10px', padding: '3px 8px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', fontSize: '10px', fontWeight: 600, cursor: 'pointer' }}>
                                             Delete
                                         </button>
                                     )}
@@ -292,10 +292,10 @@ export default function CustomJobsClient() {
                 </div>
 
                 {/* Matched Jobs */}
-                <div style={{ background: '#1c1c1c', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.18)', padding: '16px', boxShadow: '0 0 0 1px rgba(255,255,255,0.04) inset' }}>
+                <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', padding: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px', gap: '12px' }}>
                         <div>
-                            <h2 style={{ color: 'white', fontSize: '14px', fontWeight: 600, marginBottom: '3px' }}>Your Job Matches</h2>
+                            <h2 style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>Your Job Matches</h2>
                             <p style={{ color: '#52525b', fontSize: '11px' }}>
                                 {matchedJobs.length > 0
                                     ? `${matchedJobs.length} match${matchedJobs.length !== 1 ? 'es' : ''} from the last ${MATCH_EXPIRY_DAYS} days`
@@ -303,19 +303,17 @@ export default function CustomJobsClient() {
                                 }
                             </p>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                            <button onClick={loadMatchedJobs} disabled={loadingJobs} style={{ padding: '6px 12px', background: 'rgba(255,255,255,0.04)', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '7px', fontSize: '11px', fontWeight: 500, cursor: loadingJobs ? 'not-allowed' : 'pointer' }}>
-                                {loadingJobs ? 'Refreshing...' : 'Refresh'}
-                            </button>
-                        </div>
+                        <button onClick={loadMatchedJobs} disabled={loadingJobs} style={{ padding: '6px 12px', background: 'rgba(255,255,255,0.04)', color: '#71717a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', fontSize: '11px', fontWeight: 500, cursor: loadingJobs ? 'not-allowed' : 'pointer' }}>
+                            {loadingJobs ? 'Refreshing...' : 'Refresh'}
+                        </button>
                     </div>
 
                     {/* Expiry notice */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 12px', background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)', borderRadius: '7px', marginBottom: '14px' }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '7px 11px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '4px', marginBottom: '14px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        <p style={{ color: '#fbbf24', fontSize: '11px' }}>
+                        <p style={{ color: '#71717a', fontSize: '11px' }}>
                             Matched jobs are shown for <strong>{MATCH_EXPIRY_DAYS} days</strong>. Save any jobs you want to keep using the bookmark icon — saved jobs don't expire.
                         </p>
                     </div>
@@ -323,7 +321,7 @@ export default function CustomJobsClient() {
                     {loadingJobs ? (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
                             {[...Array(6)].map((_, i) => (
-                                <div key={i} style={{ background: '#0d0d0d', borderRadius: '10px', height: '180px', border: '1px solid rgba(255,255,255,0.07)' }} />
+                                <div key={i} style={{ background: '#141414', borderRadius: '4px', height: '180px', border: '1px solid rgba(255,255,255,0.06)' }} />
                             ))}
                         </div>
                     ) : matchedJobs.length > 0 ? (
@@ -333,9 +331,9 @@ export default function CustomJobsClient() {
                             ))}
                         </div>
                     ) : (
-                        <div style={{ textAlign: 'center', padding: '40px 20px', background: '#0d0d0d', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                            <p style={{ color: '#71717a', fontSize: '14px', fontWeight: 600, marginBottom: '6px' }}>No matches yet</p>
-                            <p style={{ color: '#3f3f46', fontSize: '12px' }}>
+                        <div style={{ textAlign: 'center', padding: '40px 20px', background: '#141414', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <p style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>No matches yet</p>
+                            <p style={{ color: '#52525b', fontSize: '12px' }}>
                                 {!resumeUploaded ? 'Upload your resume and ' : ''}
                                 {(!preference1.jobTypes.length && !preference2.jobTypes.length) ? 'Set up a job preference to get started.' : 'Matches arrive once per day during the nightly run.'}
                             </p>
