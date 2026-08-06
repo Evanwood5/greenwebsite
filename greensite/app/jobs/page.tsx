@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import JobList from '@/components/jobs/JobList'
-import { Job, JOB_FIELDS, fetchSubCategoryFieldIds } from '@/lib/jobsApi'
+import { Job, JOB_FIELDS } from '@/lib/jobsApi'
 import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 // Stable IDs that never change — avoids async race condition on first load
@@ -180,10 +180,10 @@ export default function JobsPage() {
       return saved ? JSON.parse(saved).searchTerm ?? '' : ''
     } catch { return '' }
   })
-  const [categoryFieldIds, setCategoryFieldIds] = useState<number[]>([])
-  const [subCategoryFieldIds, setSubCategoryFieldIds] = useState<number[]>([])
   const [fieldCategoryMap, setFieldCategoryMap] = useState<Record<number, string>>({})
   const [fieldSubCategoryMap, setFieldSubCategoryMap] = useState<Record<number, string>>({})
+  const requestRef = useRef(0)
+  const fieldIdCacheRef = useRef(new Map<string, number[]>())
 
   useEffect(() => {
     localStorage.setItem('jobFilters', JSON.stringify(filters))
@@ -231,34 +231,33 @@ export default function JobsPage() {
       })
   }, [])
 
-  useEffect(() => {
-    if (!filters.category) { setCategoryFieldIds([]); return }
-    supabase
+  const resolveFieldIds = useCallback(async (category: string, subCategory: string): Promise<number[]> => {
+    if (!category) return []
+    const key = `${category}|${subCategory}`
+    const cached = fieldIdCacheRef.current.get(key)
+    if (cached) return cached
+    let query = supabase
       .from('job_field_counts')
       .select('id')
-      .ilike('category', filters.category)
-      .then(({ data }) => setCategoryFieldIds(data?.map(r => r.id) ?? []))
-  }, [filters.category])
+      .ilike('category', category)
+    if (subCategory) query = query.eq('subcategory', subCategory)
+    const { data } = await query
+    const ids = data?.map(r => r.id) ?? []
+    fieldIdCacheRef.current.set(key, ids)
+    return ids
+  }, [])
 
-  useEffect(() => {
-    if (!filters.category || !filters.subCategory) { setSubCategoryFieldIds([]); return }
-    fetchSubCategoryFieldIds(filters.category, filters.subCategory)
-      .then(setSubCategoryFieldIds)
-  }, [filters.category, filters.subCategory])
-
-  const buildQuery = useCallback(() => {
+  const buildQuery = useCallback((fieldIds: number[]) => {
     let query = supabase
       .from('job_postings_ingest_test')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
       .eq('is_relevant', true)
-      // Always exclude irrelevant jobs — hardcoded to avoid async race condition
       .neq('job_field_id', IRRELEVANT_FIELD_ID)
 
     if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
     if (filters.category) {
-      const activeIds = filters.subCategory ? subCategoryFieldIds : categoryFieldIds
-      if (activeIds.length > 0) query = query.in('job_field_id', activeIds)
+      if (fieldIds.length > 0) query = query.in('job_field_id', fieldIds)
       else query = query.eq('job_field_id', -1)
     }
     if (filters.level) query = query.eq('experience_level', filters.level)
@@ -268,78 +267,93 @@ export default function JobsPage() {
     else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
     return query
-  }, [filters, categoryFieldIds, subCategoryFieldIds])
+  }, [filters])
 
-  const fetchJobs = useCallback(async (page: number = 0, append: boolean = false) => {
+  const buildCountQuery = useCallback((dateFrom: Date, fieldIds: number[]) => {
+    let query = supabase
+      .from('job_postings_ingest_test')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_relevant', true)
+      .neq('job_field_id', IRRELEVANT_FIELD_ID)
+      .gte('created_at', dateFrom.toISOString())
+
+    if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
+    if (filters.category) {
+      if (fieldIds.length > 0) query = query.in('job_field_id', fieldIds)
+      else query = query.eq('job_field_id', -1)
+    }
+    if (filters.level) query = query.eq('experience_level', filters.level)
+    if (filters.jobType) query = query.eq('job_type', filters.jobType)
+    if (filters.city) query = query.eq('city', filters.city)
+    if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
+    else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
+
+    return query
+  }, [filters])
+
+  const refreshAll = useCallback(async () => {
+    const requestId = ++requestRef.current
+    setLoading(true)
+    setError(null)
     try {
-      page === 0 ? setLoading(true) : setLoadingMore(true)
-      setError(null)
+      const fieldIds = await resolveFieldIds(filters.category, filters.subCategory)
+      const monthStart = new Date(Date.now() - 30 * 86400000)
+      const weekStart = new Date(Date.now() - 7 * 86400000)
 
-      const { data, error: fetchError, count } = await buildQuery()
-        .range(page * JOBS_PER_PAGE, (page + 1) * JOBS_PER_PAGE - 1)
+      const [jobsResult, monthResult, weekResult] = await Promise.all([
+        buildQuery(fieldIds).range(0, JOBS_PER_PAGE - 1),
+        buildCountQuery(monthStart, fieldIds),
+        buildCountQuery(weekStart, fieldIds),
+      ])
 
+      if (requestId !== requestRef.current) return
+
+      if (jobsResult.error) throw jobsResult.error
+
+      setJobs(jobsResult.data ?? [])
+      setTotalCount(jobsResult.count || 0)
+      setHasMore(jobsResult.count ? JOBS_PER_PAGE < jobsResult.count : false)
+      setCurrentPage(0)
+      setNewThisMonthCount(monthResult.count || 0)
+      setNewThisWeekCount(weekResult.count || 0)
+    } catch (err: unknown) {
+      if (requestId !== requestRef.current) return
+      setError(err instanceof Error ? err.message : 'Failed to fetch jobs')
+    } finally {
+      if (requestId === requestRef.current) setLoading(false)
+    }
+  }, [buildQuery, buildCountQuery, resolveFieldIds, filters])
+
+  const loadMore = useCallback(async () => {
+    if (!hasMore) return
+    const requestId = ++requestRef.current
+    setLoadingMore(true)
+    try {
+      const fieldIds = await resolveFieldIds(filters.category, filters.subCategory)
+      const { data, error: fetchError, count } = await buildQuery(fieldIds)
+        .range((currentPage + 1) * JOBS_PER_PAGE, (currentPage + 2) * JOBS_PER_PAGE - 1)
+
+      if (requestId !== requestRef.current) return
       if (fetchError) throw fetchError
 
       if (data) {
-        if (append) {
-          setJobs(prev => {
-            const existing = new Set(prev.map(j => j.job_id))
-            return [...prev, ...data.filter(j => !existing.has(j.job_id))]
-          })
-        } else {
-          setJobs(data)
-        }
+        setJobs(prev => {
+          const existing = new Set(prev.map(j => j.job_id))
+          return [...prev, ...data.filter(j => !existing.has(j.job_id))]
+        })
         setTotalCount(count || 0)
-        setHasMore(count ? (page + 1) * JOBS_PER_PAGE < count : false)
-        setCurrentPage(page)
+        setHasMore(count ? (currentPage + 2) * JOBS_PER_PAGE < count : false)
+        setCurrentPage(currentPage + 1)
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch jobs')
+    } catch (err: unknown) {
+      if (requestId !== requestRef.current) return
+      setError(err instanceof Error ? err.message : 'Failed to fetch jobs')
     } finally {
-      setLoading(false)
-      setLoadingMore(false)
+      if (requestId === requestRef.current) setLoadingMore(false)
     }
-  }, [buildQuery])
+  }, [buildQuery, resolveFieldIds, filters, hasMore, currentPage])
 
-  const buildCountQuery = useCallback((dateFrom: Date) => {
-  let query = supabase
-    .from('job_postings_ingest_test')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_relevant', true)
-    .neq('job_field_id', IRRELEVANT_FIELD_ID)
-    .gte('created_at', dateFrom.toISOString())
-
-  if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
-  if (filters.category) {
-    const activeIds = filters.subCategory ? subCategoryFieldIds : categoryFieldIds
-    if (activeIds.length > 0) query = query.in('job_field_id', activeIds)
-    else query = query.eq('job_field_id', -1)
-  }
-  if (filters.level) query = query.eq('experience_level', filters.level)
-  if (filters.jobType) query = query.eq('job_type', filters.jobType)
-  if (filters.city) query = query.eq('city', filters.city)
-  if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
-  else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
-
-  return query
-}, [filters, categoryFieldIds, subCategoryFieldIds])
-
-const fetchNewThisMonthCount = useCallback(async () => {
-  const start = new Date(Date.now() - 30 * 86400000)
-  const { count } = await buildCountQuery(start)
-  setNewThisMonthCount(count || 0)
-}, [buildCountQuery])
-
-const fetchNewThisWeekCount = useCallback(async () => {
-  const start = new Date(Date.now() - 7 * 86400000)
-  const { count } = await buildCountQuery(start)
-  setNewThisWeekCount(count || 0)
-}, [buildCountQuery])
-
-
-  useEffect(() => { fetchJobs(0) }, [fetchJobs])
-  useEffect(() => { fetchNewThisMonthCount() }, [fetchNewThisMonthCount])
-  useEffect(() => { fetchNewThisWeekCount() }, [fetchNewThisWeekCount])
+  useEffect(() => { refreshAll() }, [refreshAll])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -360,10 +374,10 @@ const fetchNewThisWeekCount = useCallback(async () => {
   }
 
   const statCards = [
-    { label: 'Past 30 Days', value: newThisMonthCount > 0 ? newThisMonthCount.toLocaleString() : '...', color: '#4ade80' },
-    { label: 'Past 7 Days',  value: newThisWeekCount > 0 ? newThisWeekCount.toLocaleString() : '...',  color: '#93c5fd' },
-    { label: 'Saved Jobs',   value: savedJobIds.size.toString(),                                         color: '#fb923c' },
-    { label: 'Tracking',     value: '0',                                                                 color: '#c4b5fd' },
+    { label: 'Past 30 Days', value: loading ? '...' : newThisMonthCount.toLocaleString(), color: '#4ade80' },
+    { label: 'Past 7 Days',  value: loading ? '...' : newThisWeekCount.toLocaleString(),  color: '#93c5fd' },
+    { label: 'Saved Jobs',   value: savedJobIds.size.toString(),                          color: '#fb923c' },
+    { label: 'Tracking',     value: '0',                                                  color: '#c4b5fd' },
   ]
 
   if (authLoading) {
@@ -395,7 +409,7 @@ const fetchNewThisWeekCount = useCallback(async () => {
           {error && (
             <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: '#fca5a5', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               {error}
-              <button onClick={() => fetchJobs(0)} style={{ marginLeft: 'auto', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
+              <button onClick={() => refreshAll()} style={{ marginLeft: 'auto', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
                 Try again
               </button>
             </div>
@@ -413,7 +427,7 @@ const fetchNewThisWeekCount = useCallback(async () => {
           {hasMore && jobs.length > 0 && !loading && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
               <button
-                onClick={() => fetchJobs(currentPage + 1, true)}
+                onClick={() => loadMore()}
                 disabled={loadingMore}
                 style={{ padding: '8px 20px', background: 'rgba(255,255,255,0.05)', color: '#a1a1aa', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
               >
