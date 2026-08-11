@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -52,6 +53,13 @@ const sectionLabel: React.CSSProperties = {
 }
 
 interface DropdownOption { label: string; value: string }
+
+const CITY_OPTIONS: DropdownOption[] = [
+  { label: 'All Cities', value: '' },
+  ...MICHIGAN_CITIES
+    .filter(c => c.value !== 'MI:all')
+    .map(c => ({ label: c.label, value: c.label })),
+]
 
 function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
   value: string
@@ -165,17 +173,23 @@ function filterSummary(filters: TrackingFilters): string {
   return parts.length ? parts.join(' \u00b7 ') : 'All jobs'
 }
 
+interface CompanySuggestion {
+  company: string
+  jobCount: number
+}
+
 function CompanyInput({ value, onChange, onSelect, error }: {
   value: string
   onChange: (v: string) => void
   onSelect: (v: string) => void
   error: string
 }) {
-  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<CompanySuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [highlighted, setHighlighted] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const justSelectedRef = useRef(false)
 
   const fetchSuggestions = useCallback((q: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -184,7 +198,12 @@ function CompanyInput({ value, onChange, onSelect, error }: {
       try {
         const res = await fetch(`/api/companies/search?q=${encodeURIComponent(q)}`)
         const data = await res.json()
-        setSuggestions(data.companies ?? [])
+        const companies: CompanySuggestion[] = Array.isArray(data?.companies)
+          ? data.companies
+            .filter((c: any) => typeof c?.company === 'string')
+            .map((c: any) => ({ company: c.company, jobCount: c.jobCount ?? 0 }))
+          : []
+        setSuggestions(companies)
         setShowSuggestions(true)
         setHighlighted(-1)
       } catch {
@@ -193,7 +212,15 @@ function CompanyInput({ value, onChange, onSelect, error }: {
     }, 250)
   }, [])
 
-  useEffect(() => { fetchSuggestions(value) }, [value, fetchSuggestions])
+  useEffect(() => {
+    if (justSelectedRef.current) {
+      justSelectedRef.current = false
+      setSuggestions([])
+      setHighlighted(-1)
+      return
+    }
+    fetchSuggestions(value)
+  }, [value, fetchSuggestions])
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -203,11 +230,17 @@ function CompanyInput({ value, onChange, onSelect, error }: {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  function handleSelect(name: string) {
+    justSelectedRef.current = true
+    onSelect(name)
+    setShowSuggestions(false)
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!showSuggestions || suggestions.length === 0) return
     if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted(h => Math.min(h + 1, suggestions.length - 1)) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setHighlighted(h => Math.max(h - 1, -1)) }
-    else if (e.key === 'Enter' && highlighted >= 0) { e.preventDefault(); onSelect(suggestions[highlighted]); setShowSuggestions(false) }
+    else if (e.key === 'Enter' && highlighted >= 0) { e.preventDefault(); handleSelect(suggestions[highlighted].company) }
     else if (e.key === 'Escape') setShowSuggestions(false)
   }
 
@@ -241,8 +274,8 @@ function CompanyInput({ value, onChange, onSelect, error }: {
           zIndex: 200, overflow: 'hidden',
         }}>
           {suggestions.map((s, i) => (
-            <button key={s}
-              onMouseDown={e => { e.preventDefault(); onSelect(s); setShowSuggestions(false) }}
+            <button key={s.company}
+              onMouseDown={e => { e.preventDefault(); handleSelect(s.company) }}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
                 padding: '9px 12px', fontSize: '13px',
@@ -257,7 +290,7 @@ function CompanyInput({ value, onChange, onSelect, error }: {
                 <rect x="3" y="3" width="18" height="18" rx="3" />
                 <path d="M3 9h18M9 21V9" />
               </svg>
-              {s}
+              {s.company}
             </button>
           ))}
         </div>
@@ -274,7 +307,6 @@ export default function TrackingPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [companyCities, setCompanyCities] = useState<string[]>([])
   const [matchedJobs, setMatchedJobs] = useState<any[]>([])
   const [loadingJobs, setLoadingJobs] = useState(false)
   const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set())
@@ -329,21 +361,6 @@ export default function TrackingPage() {
     finally { setLoadingJobs(false) }
   }
 
-  // Fetch cities for selected company
-  useEffect(() => {
-    if (company.trim().length < 2) { setCompanyCities([]); setFilters(f => ({ ...f, city: '' })); return }
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/companies/locations?company=${encodeURIComponent(company)}`)
-        const data = await res.json()
-        setCompanyCities(data.cities || [])
-        // Reset city if it's no longer valid for this company
-        setFilters(f => ({ ...f, city: data.cities?.includes(f.city) ? f.city : '' }))
-      } catch { setCompanyCities([]) }
-    }, 400)
-    return () => clearTimeout(timer)
-  }, [company])
-
   const atLimit = tracked.length >= MAX_TRACKED
   const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.location, filters.city, ...filters.subcategories].filter(Boolean).length
   const canTrack = company.trim().length > 0 && !atLimit
@@ -364,7 +381,6 @@ export default function TrackingPage() {
       setTracked(prev => [data, ...prev])
       setCompany('')
       setFilters(EMPTY_FILTERS)
-      setCompanyCities([])
       setError('')
     } catch (err) { console.error('Error saving tracking:', err); setError('Failed to save. Please try again.') }
     finally { setSaving(false) }
@@ -386,11 +402,6 @@ export default function TrackingPage() {
     if (willBeSaved) await supabase.from('saved_jobs').insert({ user_id: user.id, job_id: jobId })
     else await supabase.from('saved_jobs').delete().eq('user_id', user.id).eq('job_id', jobId)
   }
-
-  const cityOptions = [
-    { label: company.trim().length >= 2 && companyCities.length === 0 ? 'No cities found' : 'All Cities', value: '' },
-    ...companyCities.map(c => ({ label: c, value: c }))
-  ]
 
   return (
     <AppShell>
@@ -424,7 +435,25 @@ export default function TrackingPage() {
             {/* Setup card */}
             {!atLimit && (
               <div style={{ background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '4px', padding: '14px', marginBottom: '12px' }}>
-                <p style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, marginBottom: '10px', letterSpacing: '-0.01em' }}>Track a company</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
+                  <p style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, letterSpacing: '-0.01em', margin: 0 }}>Track a company</p>
+                  <Link
+                    href="/dashboard"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '4px',
+                      color: '#a78bfa', fontSize: '11px', fontWeight: 600,
+                      textDecoration: 'none', whiteSpace: 'nowrap',
+                      transition: 'opacity 150ms',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1' }}
+                  >
+                    Company options
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </Link>
+                </div>
 
                 <CompanyInput value={company} onChange={v => { setCompany(v); setError('') }} onSelect={v => { setCompany(v); setError('') }} error={error} />
                 {error && <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '8px' }}>{error}</p>}
@@ -460,19 +489,13 @@ export default function TrackingPage() {
                       options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <p style={{ ...sectionLabel, color: company.trim().length >= 2 ? '#71717a' : '#3f3f46' }}>City</p>
+                    <p style={sectionLabel}>City</p>
                     <DropdownSelect
                       value={filters.city}
                       onChange={v => setFilters(f => ({ ...f, city: v }))}
-                      placeholder={company.trim().length < 2 ? 'Enter company first' : 'All cities'}
-                      disabled={company.trim().length < 2}
-                      options={cityOptions}
+                      placeholder="All cities"
+                      options={CITY_OPTIONS}
                     />
-                    {company.trim().length >= 2 && companyCities.length > 0 && (
-                      <p style={{ color: '#52525b', fontSize: '10px', marginTop: '4px' }}>
-                        Showing {companyCities.length} cities where {company} is hiring
-                      </p>
-                    )}
                   </div>
                 </div>
 
