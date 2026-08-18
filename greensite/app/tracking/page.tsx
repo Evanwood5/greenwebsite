@@ -397,7 +397,7 @@ export default function TrackingPage() {
     setLoading(true)
     try {
       const { data, error } = await supabase
-        .from('user_company_tracking').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+        .from('user_company_preferences').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
       if (error) throw error
       setTracked(data || [])
       if (data && data.length > 0) loadMatchedJobs(data)
@@ -414,7 +414,7 @@ export default function TrackingPage() {
       const cutoff = new Date()
       cutoff.setDate(cutoff.getDate() - 7)
       const { data: matchRows } = await supabase
-        .from('user_job_matches').select('job_id, created_at')
+        .from('user_company_matches').select('job_id, created_at')
         .eq('user_id', user.id).gte('created_at', cutoff.toISOString()).order('created_at', { ascending: false })
       if (!matchRows || matchRows.length === 0) { setMatchedJobs([]); return }
       const jobIds = matchRows.map((m: any) => m.job_id)
@@ -449,7 +449,7 @@ export default function TrackingPage() {
     setSaving(true)
     try {
       const { data, error } = await supabase
-        .from('user_company_tracking').insert({ user_id: user.id, company_name: name, filters }).select().single()
+        .from('user_company_preferences').insert({ user_id: user.id, company_name: name, filters }).select().single()
       if (error) throw error
       setTracked(prev => [data, ...prev])
       setCompany('')
@@ -463,7 +463,7 @@ export default function TrackingPage() {
   async function handleRemove(id: string) {
     if (!user?.id) return
     try {
-      await supabase.from('user_company_tracking').delete().eq('id', id).eq('user_id', user.id)
+      await supabase.from('user_company_preferences').delete().eq('id', id).eq('user_id', user.id)
       const next = tracked.filter(t => t.id !== id)
       setTracked(next)
       loadMatchedJobs(next)
