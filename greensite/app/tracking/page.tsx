@@ -9,7 +9,7 @@ import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 import { JOB_FIELDS } from '@/lib/jobsApi'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
-const MAX_TRACKED = 2
+const MAX_TRACKED = 5
 
 interface TrackedCompany {
   id: string
@@ -24,7 +24,7 @@ interface TrackingFilters {
   level: string
   jobType: string
   location: string
-  city: string
+  city: string[]
 }
 
 const EMPTY_FILTERS: TrackingFilters = {
@@ -33,7 +33,7 @@ const EMPTY_FILTERS: TrackingFilters = {
   level: '',
   jobType: '',
   location: '',
-  city: '',
+  city: [],
 }
 
 const ACCENT = '#a78bfa'
@@ -179,6 +179,153 @@ function DropdownSelect({ value, onChange, options, placeholder, disabled, searc
   )
 }
 
+function CityMultiSelect({ value, onChange, options }: {
+  value: string[]
+  onChange: (v: string[]) => void
+  options: DropdownOption[]
+}) {
+  const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const ref = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const filteredOptions = searchQuery
+    ? options.filter(o => o.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    : options
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    if (open) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  useEffect(() => {
+    if (open && searchInputRef.current) searchInputRef.current.focus()
+    if (!open) setSearchQuery('')
+  }, [open])
+
+  function toggle(cityValue: string) {
+    if (cityValue === '') {
+      onChange([])
+    } else if (value.includes(cityValue)) {
+      onChange(value.filter(c => c !== cityValue))
+    } else {
+      onChange([...value, cityValue])
+    }
+  }
+
+  const buttonLabel = value.length === 0
+    ? 'All Cities'
+    : value.length === 1
+      ? value[0]
+      : `${value.length} cities`
+
+  return (
+    <div>
+      <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+        <button
+          onClick={() => setOpen(o => !o)}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '7px 10px', borderRadius: '4px',
+            border: value.length
+              ? '1px solid rgba(255,255,255,0.18)'
+              : `1px solid ${open ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
+            background: value.length
+              ? 'rgba(255,255,255,0.07)'
+              : open ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+            color: value.length ? '#e4e4e7' : open ? '#e4e4e7' : '#52525b',
+            fontSize: '12px', cursor: 'pointer', textAlign: 'left',
+            transition: 'border-color 150ms, background 150ms, color 150ms', gap: '6px',
+          }}
+        >
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{buttonLabel}</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ flexShrink: 0, color: value.length ? '#a1a1aa' : '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        {open && (
+          <div style={{
+            position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+            background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: '4px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)', zIndex: 100, overflow: 'hidden',
+          }}>
+            <div style={{ padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <input
+                ref={searchInputRef} type="text" placeholder="Search..."
+                value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                onClick={e => e.stopPropagation()}
+                style={{
+                  width: '100%', padding: '5px 8px', borderRadius: '3px',
+                  border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)',
+                  color: '#e4e4e7', fontSize: '11px', outline: 'none',
+                }}
+              />
+            </div>
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {filteredOptions.length === 0 ? (
+                <p style={{ padding: '8px 10px', fontSize: '11px', color: '#52525b', fontStyle: 'italic' }}>No matches</p>
+              ) : filteredOptions.map(opt => {
+                const isAll = opt.value === ''
+                const isActive = !isAll && value.includes(opt.value)
+                return (
+                  <button key={opt.value} onClick={() => toggle(opt.value)}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: '8px',
+                      padding: '8px 10px', fontSize: '12px',
+                      background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                      color: isAll ? '#52525b' : isActive ? '#ffffff' : '#a1a1aa',
+                      border: 'none', cursor: 'pointer', transition: 'background 100ms',
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                  >
+                    {!isAll && (
+                      <span style={{
+                        width: '14px', height: '14px', borderRadius: '3px', flexShrink: 0,
+                        border: `1px solid ${isActive ? '#a78bfa' : 'rgba(255,255,255,0.2)'}`,
+                        background: isActive ? '#a78bfa' : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {isActive && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
+                      </span>
+                    )}
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+      {value.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '6px' }}>
+          {value.map(city => (
+            <span key={city} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              padding: '3px 8px', borderRadius: '4px',
+              background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.3)',
+              color: '#c4b5fd', fontSize: '11px',
+            }}>
+              {city}
+              <button onClick={() => toggle(city)}
+                style={{
+                  background: 'none', border: 'none', color: '#c4b5fd', cursor: 'pointer',
+                  padding: 0, lineHeight: 1, fontSize: '12px',
+                }}>
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function EyeIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -204,7 +351,7 @@ function filterSummary(filters: TrackingFilters): string {
   if (filters.jobType) parts.push(filters.jobType)
   if (filters.location === 'remote') parts.push('Remote')
   else if (filters.location === 'onsite') parts.push('On-site')
-  if (filters.city) parts.push(filters.city)
+  if (filters.city?.length) parts.push(filters.city.join(', '))
   return parts.length ? parts.join(' \u00b7 ') : 'All jobs'
 }
 
@@ -418,8 +565,23 @@ export default function TrackingPage() {
   const [matchedJobs, setMatchedJobs] = useState<any[]>([])
   const [loadingJobs, setLoadingJobs] = useState(false)
   const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set())
+  const [companyCities, setCompanyCities] = useState<string[]>([])
 
   useEffect(() => { if (user?.id) { loadTracking(); loadSavedJobs() } }, [user?.id])
+
+  useEffect(() => {
+    setFilters(f => ({ ...f, city: [] }))
+    if (!companyValid || !company) {
+      setCompanyCities([])
+      return
+    }
+    let cancelled = false
+    fetch(`/api/companies/locations?company=${encodeURIComponent(company)}`)
+      .then(r => r.json())
+      .then(data => { if (!cancelled) setCompanyCities(data.cities ?? []) })
+      .catch(() => { if (!cancelled) setCompanyCities([]) })
+    return () => { cancelled = true }
+  }, [company, companyValid])
 
   const loadSavedJobs = async () => {
     if (!user?.id) return
@@ -470,8 +632,11 @@ export default function TrackingPage() {
   }
 
   const atLimit = tracked.length >= MAX_TRACKED
-  const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.location, filters.city, ...filters.subcategories].filter(Boolean).length
+  const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.location, ...filters.city, ...filters.subcategories].filter(Boolean).length
   const canTrack = companyValid && !atLimit
+  const cityOptions: DropdownOption[] = companyCities.length > 0
+    ? [{ label: 'All Cities', value: '' }, ...companyCities.map(c => ({ label: c, value: c }))]
+    : CITY_OPTIONS
 
   async function handleTrack() {
     if (!user?.id) return
@@ -599,12 +764,10 @@ export default function TrackingPage() {
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>
                     <p style={sectionLabel}>City</p>
-                    <DropdownSelect
+                    <CityMultiSelect
                       value={filters.city}
                       onChange={v => setFilters(f => ({ ...f, city: v }))}
-                      placeholder="All cities"
-                      options={CITY_OPTIONS}
-                      searchable
+                      options={cityOptions}
                     />
                   </div>
                 </div>
@@ -682,7 +845,7 @@ export default function TrackingPage() {
                         </div>
                         <div style={{ minWidth: 0 }}>
                           <p style={{ color: '#e4e4e7', fontSize: '12px', fontWeight: 500, marginBottom: '2px' }}>{t.company_name}</p>
-                          <p style={{ color: '#52525b', fontSize: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{filterSummary(t.filters as TrackingFilters)}</p>
+                          <p style={{ color: '#52525b', fontSize: '10px', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>{filterSummary(t.filters as TrackingFilters)}</p>
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
