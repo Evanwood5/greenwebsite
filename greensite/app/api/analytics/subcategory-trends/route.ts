@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/db/supabase-admin'
+import { supabase } from '@/lib/db/supabase'
 import { NextRequest } from 'next/server'
 
 /**
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   // DB stores category capitalized: Engineering, Business, Tech, Health
   const dbCategory = category.charAt(0).toUpperCase() + category.slice(1)
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from('job_field_counts')
     .select('subcategory, job_count')
     .eq('category', dbCategory)
@@ -44,7 +44,6 @@ export async function GET(request: NextRequest) {
   const trendData = weeks.map((date, wi) => {
     const point: Record<string, string | number> = { date }
     topSubcategories.forEach(({ subcategory, count }, si) => {
-      // Distribute total across weeks, add minor variation per week/subcategory
       const base = count / 12
       const variation = 1 + 0.15 * Math.sin((wi + si * 2) * 0.9)
       point[subcategory] = Math.max(0, Math.round(base * variation))
