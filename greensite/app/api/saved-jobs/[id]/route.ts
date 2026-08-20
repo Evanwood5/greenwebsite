@@ -5,34 +5,37 @@
  * DELETE — remove a saved job
  *
  * Auth: caller must send `Authorization: Bearer <access_token>` header.
- * We verify the token via supabase.auth.getUser() and double-check ownership.
+ * We verify the token and pass it to the anon client so RLS enforces ownership.
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { supabaseAdmin } from '@/lib/db/supabase-admin'
 import { NextRequest } from 'next/server'
 
 const VALID_STATUSES = ['Saved', 'Applied', 'Interview', 'Offer'] as const
 
-/** Extract and verify the Bearer token from the request. */
+/** Build an anon client scoped to the user's JWT — RLS will enforce user_id ownership. */
+function getAuthenticatedClient(token: string) {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  )
+}
+
 async function getUser(request: NextRequest) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) return null
-
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  if (!token) return { user: null, client: null }
+  const supabase = getAuthenticatedClient(token)
   const { data: { user } } = await supabase.auth.getUser(token)
-  return user ?? null
+  return { user: user ?? null, client: supabase }
 }
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const user = await getUser(request)
-  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  const { user, client } = await getUser(request)
+  if (!user || !client) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
   const { status, notes } = body
@@ -45,7 +48,7 @@ export async function PATCH(
   if (status !== undefined) updates.status = status
   if (notes !== undefined) updates.notes = notes
 
-  const { error } = await supabaseAdmin
+  const { error } = await client
     .from('saved_jobs')
     .update(updates)
     .eq('id', params.id)
@@ -59,10 +62,10 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const user = await getUser(request)
-  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  const { user, client } = await getUser(request)
+  if (!user || !client) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { error } = await supabaseAdmin
+  const { error } = await client
     .from('saved_jobs')
     .delete()
     .eq('id', params.id)
