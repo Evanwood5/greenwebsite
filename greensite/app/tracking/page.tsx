@@ -61,16 +61,23 @@ const CITY_OPTIONS: DropdownOption[] = [
     .map(c => ({ label: c.label, value: c.label })),
 ]
 
-function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
+function DropdownSelect({ value, onChange, options, placeholder, disabled, searchable }: {
   value: string
   onChange: (v: string) => void
   options: DropdownOption[]
   placeholder?: string
   disabled?: boolean
+  searchable?: boolean
 }) {
   const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const selected = options.find(o => o.value === value)
+
+  const filteredOptions = searchable && searchQuery
+    ? options.filter(o => o.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    : options
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -79,6 +86,13 @@ function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
     if (open) document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
+
+  useEffect(() => {
+    if (open && searchable && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+    if (!open) setSearchQuery('')
+  }, [open, searchable])
 
   return (
     <div ref={ref} style={{ position: 'relative', width: '100%', opacity: disabled ? 0.45 : 1 }}>
@@ -118,26 +132,47 @@ function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
           position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
           background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: '4px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-          zIndex: 100, overflow: 'hidden', maxHeight: '200px', overflowY: 'auto',
+          zIndex: 100, overflow: 'hidden',
         }}>
-          {options.map(opt => {
-            const isActive = opt.value === value
-            return (
-              <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false) }}
+          {searchable && (
+            <div style={{ padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onClick={e => e.stopPropagation()}
                 style={{
-                  width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
-                  padding: '8px 10px', fontSize: '12px',
-                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  color: isActive ? '#ffffff' : '#a1a1aa',
-                  border: 'none', cursor: 'pointer', transition: 'background 100ms',
+                  width: '100%', padding: '5px 8px', borderRadius: '3px',
+                  border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)',
+                  color: '#e4e4e7', fontSize: '11px', outline: 'none',
                 }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
-              >
-                {opt.label}
-              </button>
-            )
-          })}
+              />
+            </div>
+          )}
+          <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {filteredOptions.length === 0 ? (
+              <p style={{ padding: '8px 10px', fontSize: '11px', color: '#52525b', fontStyle: 'italic' }}>No matches</p>
+            ) : filteredOptions.map(opt => {
+              const isActive = opt.value === value
+              return (
+                <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false) }}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
+                    padding: '8px 10px', fontSize: '12px',
+                    background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                    color: isActive ? '#ffffff' : '#a1a1aa',
+                    border: 'none', cursor: 'pointer', transition: 'background 100ms',
+                  }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                >
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>
@@ -558,7 +593,7 @@ export default function TrackingPage() {
                       options={[{ label: 'All Types', value: '' }, { label: 'Full Time', value: 'Full Time' }, { label: 'Part Time', value: 'Part Time' }, { label: 'Internship', value: 'Internship' }]} />
                   </div>
                   <div>
-                    <p style={sectionLabel}>Location</p>
+                    <p style={sectionLabel}>Remote</p>
                     <DropdownSelect value={filters.location} onChange={v => setFilters(f => ({ ...f, location: v }))} placeholder="All"
                       options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
                   </div>
@@ -569,6 +604,7 @@ export default function TrackingPage() {
                       onChange={v => setFilters(f => ({ ...f, city: v }))}
                       placeholder="All cities"
                       options={CITY_OPTIONS}
+                      searchable
                     />
                   </div>
                 </div>
@@ -639,7 +675,7 @@ export default function TrackingPage() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {tracked.map(t => (
-                    <div key={t.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                    <div key={t.id} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.55)', borderRadius: '4px', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                         <div style={{ width: '28px', height: '28px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#71717a' }}>
                           <EyeIcon size={12} />

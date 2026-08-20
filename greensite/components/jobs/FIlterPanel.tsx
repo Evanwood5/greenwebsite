@@ -313,7 +313,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
 
             {/* Work Location */}
             <div>
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-3">Work Location</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-3">Remote</p>
               <div className="space-y-2">
                 {[
                   { label: 'All Locations', value: '' },
