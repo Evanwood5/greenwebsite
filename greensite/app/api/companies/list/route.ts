@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/db/supabase-admin'
+import { supabase } from '@/lib/db/supabase'
 
 const PAGE_SIZE = 1000
 
@@ -12,7 +12,7 @@ export async function GET() {
   let offset = 0
 
   while (true) {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from('job_postings_ingest_test')
       .select('company_name')
       .not('company_name', 'is', null)
