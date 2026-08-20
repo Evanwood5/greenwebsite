@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { createClient } from '@supabase/supabase-js'
 
 type SyncOrgRequestBody = {
   userId?: string
@@ -16,7 +16,14 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Missing auth token' }, { status: 401 })
     }
 
-    const { data: authData, error: authError } = await supabaseAdmin.auth.getUser(token)
+    // Anon client scoped to user's JWT — auth.uid() will resolve in RLS policies
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    )
+
+    const { data: authData, error: authError } = await supabase.auth.getUser(token)
     if (authError || !authData.user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -30,7 +37,7 @@ export async function POST(request: Request) {
       return Response.json({ error: 'orgId must be a number or null' }, { status: 400 })
     }
 
-    const { error: upsertError } = await supabaseAdmin
+    const { error: upsertError } = await supabase
       .from('profiles')
       .upsert(
         {
