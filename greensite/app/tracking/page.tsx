@@ -570,9 +570,9 @@ export default function TrackingPage() {
   useEffect(() => { if (user?.id) { loadTracking(); loadSavedJobs() } }, [user?.id])
 
   useEffect(() => {
-    setFilters(f => ({ ...f, city: [] }))
     if (!companyValid || !company) {
       setCompanyCities([])
+      setFilters(EMPTY_FILTERS)
       return
     }
     let cancelled = false
@@ -732,75 +732,79 @@ export default function TrackingPage() {
                 <CompanyInput value={company} onChange={v => { setCompany(v); setCompanyValid(false); setError('') }} onSelect={v => { setCompany(v); setCompanyValid(true); setError('') }} valid={companyValid} error={error} />
                 {error && <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '8px' }}>{error}</p>}
 
-                <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '14px 0 4px' }} />
+                {(companyValid && company) && (
+                  <>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '14px 0 4px' }} />
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
-                  <p style={{ ...sectionLabel, marginTop: 0, marginBottom: 0 }}>Filters (optional)</p>
-                  {activeFilterCount > 0 && (
-                    <button onClick={() => setFilters(EMPTY_FILTERS)} style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: 0 }}>Clear</button>
-                  )}
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
-                  <div>
-                    <p style={sectionLabel}>Category</p>
-                    <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v, subcategories: [] }))} placeholder="All"
-                      options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
-                  </div>
-                  <div>
-                    <p style={sectionLabel}>Level</p>
-                    <DropdownSelect value={filters.level} onChange={v => setFilters(f => ({ ...f, level: v }))} placeholder="All"
-                      options={[{ label: 'All Levels', value: '' }, { label: 'Moderate', value: 'moderate' }, { label: 'Advanced', value: 'advanced' }]} />
-                  </div>
-                  <div>
-                    <p style={sectionLabel}>Job Type</p>
-                    <DropdownSelect value={filters.jobType} onChange={v => setFilters(f => ({ ...f, jobType: v }))} placeholder="All"
-                      options={[{ label: 'All Types', value: '' }, { label: 'Full Time', value: 'Full Time' }, { label: 'Part Time', value: 'Part Time' }, { label: 'Internship', value: 'Internship' }]} />
-                  </div>
-                  <div>
-                    <p style={sectionLabel}>Remote</p>
-                    <DropdownSelect value={filters.location} onChange={v => setFilters(f => ({ ...f, location: v }))} placeholder="All"
-                      options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
-                  </div>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <p style={sectionLabel}>City</p>
-                    <CityMultiSelect
-                      value={filters.city}
-                      onChange={v => setFilters(f => ({ ...f, city: v }))}
-                      options={cityOptions}
-                    />
-                  </div>
-                </div>
-
-                {/* Subcategory chips */}
-                {filters.category && JOB_FIELDS[filters.category] && (
-                  <div style={{ marginTop: '12px' }}>
-                    <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
-                      Subcategories
-                      <span style={{ color: '#6b7280', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>— leave blank for all</span>
-                    </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                      {JOB_FIELDS[filters.category].map(sub => {
-                        const selected = filters.subcategories.includes(sub)
-                        return (
-                          <button key={sub} type="button"
-                            onClick={() => setFilters(f => ({ ...f, subcategories: selected ? f.subcategories.filter(s => s !== sub) : [...f.subcategories, sub] }))}
-                            style={{
-                              padding: '4px 10px', borderRadius: '4px',
-                              border: `1px solid ${selected ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)'}`,
-                              background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
-                              color: selected ? '#e4e4e7' : '#52525b',
-                              fontSize: '11px', fontWeight: selected ? 600 : 400,
-                              cursor: 'pointer', transition: 'all 120ms',
-                              display: 'flex', alignItems: 'center', gap: '4px',
-                            }}>
-                            {selected && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
-                            {sub}
-                          </button>
-                        )
-                      })}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                      <p style={{ ...sectionLabel, marginTop: 0, marginBottom: 0 }}>Filters (optional)</p>
+                      {activeFilterCount > 0 && (
+                        <button onClick={() => setFilters(EMPTY_FILTERS)} style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: 0 }}>Clear</button>
+                      )}
                     </div>
-                  </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
+                      <div>
+                        <p style={sectionLabel}>Category</p>
+                        <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v, subcategories: [] }))} placeholder="All"
+                          options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
+                      </div>
+                      <div>
+                        <p style={sectionLabel}>Level</p>
+                        <DropdownSelect value={filters.level} onChange={v => setFilters(f => ({ ...f, level: v }))} placeholder="All"
+                          options={[{ label: 'All Levels', value: '' }, { label: 'Moderate', value: 'moderate' }, { label: 'Advanced', value: 'advanced' }]} />
+                      </div>
+                      <div>
+                        <p style={sectionLabel}>Job Type</p>
+                        <DropdownSelect value={filters.jobType} onChange={v => setFilters(f => ({ ...f, jobType: v }))} placeholder="All"
+                          options={[{ label: 'All Types', value: '' }, { label: 'Full Time', value: 'Full Time' }, { label: 'Part Time', value: 'Part Time' }, { label: 'Internship', value: 'Internship' }]} />
+                      </div>
+                      <div>
+                        <p style={sectionLabel}>Remote</p>
+                        <DropdownSelect value={filters.location} onChange={v => setFilters(f => ({ ...f, location: v }))} placeholder="All"
+                          options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
+                      </div>
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <p style={sectionLabel}>City</p>
+                        <CityMultiSelect
+                          value={filters.city}
+                          onChange={v => setFilters(f => ({ ...f, city: v }))}
+                          options={cityOptions}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Subcategory chips */}
+                    {filters.category && JOB_FIELDS[filters.category] && (
+                      <div style={{ marginTop: '12px' }}>
+                        <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
+                          Subcategories
+                          <span style={{ color: '#6b7280', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>— leave blank for all</span>
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                          {JOB_FIELDS[filters.category].map(sub => {
+                            const selected = filters.subcategories.includes(sub)
+                            return (
+                              <button key={sub} type="button"
+                                onClick={() => setFilters(f => ({ ...f, subcategories: selected ? f.subcategories.filter(s => s !== sub) : [...f.subcategories, sub] }))}
+                                style={{
+                                  padding: '4px 10px', borderRadius: '4px',
+                                  border: `1px solid ${selected ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)'}`,
+                                  background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
+                                  color: selected ? '#e4e4e7' : '#52525b',
+                                  fontSize: '11px', fontWeight: selected ? 600 : 400,
+                                  cursor: 'pointer', transition: 'all 120ms',
+                                  display: 'flex', alignItems: 'center', gap: '4px',
+                                }}>
+                                {selected && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
+                                {sub}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
