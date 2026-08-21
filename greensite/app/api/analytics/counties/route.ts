@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/db/supabase-admin'
+import { supabase } from '@/lib/db/supabase'
 import { NextRequest } from 'next/server'
 
 /**
@@ -7,7 +7,7 @@ import { NextRequest } from 'next/server'
  * Response: { counties: { county: string, jobCount: number }[], maxJobs: number }
  */
 export async function GET(_request: NextRequest) {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from('mi_counties')
     .select('name, count_value')
     .order('count_value', { ascending: false })

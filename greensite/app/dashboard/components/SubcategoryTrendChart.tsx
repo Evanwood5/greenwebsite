@@ -53,7 +53,7 @@ export default function SubcategoryTrendChart({ title, category }: SubcategoryTr
   useEffect(() => {
     async function fetchTrends() {
       try {
-        const response = await fetch(`/server/analytics/subcategory-trends?category=${category}`);
+        const response = await fetch(`/api/analytics/subcategory-trends?category=${category}`);
         const result = await response.json();
 
         if (result.trendData && result.topSubcategories) {
