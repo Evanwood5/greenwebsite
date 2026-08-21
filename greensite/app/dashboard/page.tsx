@@ -4,7 +4,6 @@ import TopHiringCompaniesList from "./components/TopHiringCompaniesList";
 import { useState, useEffect } from "react";
 import FieldSelector from "./components/FieldSelector";
 import JobTypeSummary from "./components/JobTypeSummary";
-import MichiganCountyMap from "./components/MichiganCountyMap";
 import SubcategoryTrendChart from "./components/SubcategoryTrendChart";
 import LargeStatCard from "./components/LargeStatCard";
 import TopCitiesChart from "./components/TopCitiesChart";
@@ -107,14 +106,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Row 3: Employment type + county map */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <JobTypeSummary
-                jobTypes={data.jobTypes}
-                totalJobs={data.totalJobs}
-              />
-              <MichiganCountyMap title="Jobs by Michigan County" />
-            </div>
+            {/* Row 3: Employment type */}
+            <JobTypeSummary
+              jobTypes={data.jobTypes}
+              totalJobs={data.totalJobs}
+            />
 
           </div>
         )}
