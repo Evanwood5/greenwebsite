@@ -1,13 +1,34 @@
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { supabaseAdmin } from '@/lib/db/supabase-admin';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: Request) {
     try {
+        // Verify the caller's JWT — userId must come from the token, not the request body
+        const authHeader = request.headers.get('authorization');
+        const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+        if (!token) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const anonClient = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { global: { headers: { Authorization: `Bearer ${token}` } } }
+        );
+
+        const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
+        if (authError || !user) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const formData = await request.formData();
         const file = formData.get('resume') as File;
-        const userId = formData.get('userId') as string;
+        // userId comes from the verified token, NOT the request body
+        const userId = user.id;
 
-        if (!file || !userId) {
-            return Response.json({ error: 'Missing file or user ID' }, { status: 400 });
+        if (!file) {
+            return Response.json({ error: 'Missing file' }, { status: 400 });
         }
 
         if (file.type !== 'application/pdf') {
