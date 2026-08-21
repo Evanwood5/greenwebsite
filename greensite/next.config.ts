@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const securityHeaders = [
   {
-    // Prevents your site from being embedded in an <iframe> on another website.
-    // Stops "clickjacking" — where an attacker overlays your site invisibly inside
+    // Prevents site from being embedded in an <iframe> on another website.
+    // Stops "clickjacking", where an attacker overlays your site invisibly inside
     // their page and tricks users into clicking buttons they can't see (e.g. "Delete Account").
     key: "X-Frame-Options",
     value: "DENY",
@@ -37,7 +37,7 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=()",
   },
   {
-    // Content Security Policy — the most powerful header. Tells the browser exactly
+    // Content Security Policy, the most powerful header. Tells the browser exactly
     // which sources are allowed to load each type of resource. If anything outside
     // this allowlist tries to run, the browser blocks it outright.
     key: "Content-Security-Policy",
