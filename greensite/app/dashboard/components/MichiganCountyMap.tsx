@@ -27,7 +27,7 @@ const [maxJobs, setMaxJobs] = useState(1);
 useEffect(() => {
   async function fetchCountyData() {
     try {
-      const response = await fetch('/server/analytics/counties');
+      const response = await fetch('/api/analytics/counties');
       const result = await response.json();
       
       if (result.counties) {
