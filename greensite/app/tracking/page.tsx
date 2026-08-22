@@ -9,7 +9,7 @@ import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 import { JOB_FIELDS } from '@/lib/jobsApi'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
-const MAX_TRACKED = 2
+const MAX_TRACKED = 5
 
 interface TrackedCompany {
   id: string
@@ -24,7 +24,7 @@ interface TrackingFilters {
   level: string
   jobType: string
   location: string
-  city: string
+  city: string[]
 }
 
 const EMPTY_FILTERS: TrackingFilters = {
@@ -33,7 +33,7 @@ const EMPTY_FILTERS: TrackingFilters = {
   level: '',
   jobType: '',
   location: '',
-  city: '',
+  city: [],
 }
 
 const ACCENT = '#a78bfa'
@@ -61,16 +61,23 @@ const CITY_OPTIONS: DropdownOption[] = [
     .map(c => ({ label: c.label, value: c.label })),
 ]
 
-function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
+function DropdownSelect({ value, onChange, options, placeholder, disabled, searchable }: {
   value: string
   onChange: (v: string) => void
   options: DropdownOption[]
   placeholder?: string
   disabled?: boolean
+  searchable?: boolean
 }) {
   const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const selected = options.find(o => o.value === value)
+
+  const filteredOptions = searchable && searchQuery
+    ? options.filter(o => o.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    : options
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -79,6 +86,13 @@ function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
     if (open) document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
+
+  useEffect(() => {
+    if (open && searchable && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+    if (!open) setSearchQuery('')
+  }, [open, searchable])
 
   return (
     <div ref={ref} style={{ position: 'relative', width: '100%', opacity: disabled ? 0.45 : 1 }}>
@@ -118,26 +132,194 @@ function DropdownSelect({ value, onChange, options, placeholder, disabled }: {
           position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
           background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: '4px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-          zIndex: 100, overflow: 'hidden', maxHeight: '200px', overflowY: 'auto',
+          zIndex: 100, overflow: 'hidden',
         }}>
-          {options.map(opt => {
-            const isActive = opt.value === value
-            return (
-              <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false) }}
+          {searchable && (
+            <div style={{ padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onClick={e => e.stopPropagation()}
                 style={{
-                  width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
-                  padding: '8px 10px', fontSize: '12px',
-                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  color: isActive ? '#ffffff' : '#a1a1aa',
-                  border: 'none', cursor: 'pointer', transition: 'background 100ms',
+                  width: '100%', padding: '5px 8px', borderRadius: '3px',
+                  border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)',
+                  color: '#e4e4e7', fontSize: '11px', outline: 'none',
                 }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
-              >
-                {opt.label}
+              />
+            </div>
+          )}
+          <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {filteredOptions.length === 0 ? (
+              <p style={{ padding: '8px 10px', fontSize: '11px', color: '#52525b', fontStyle: 'italic' }}>No matches</p>
+            ) : filteredOptions.map(opt => {
+              const isActive = opt.value === value
+              return (
+                <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false) }}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', textAlign: 'left',
+                    padding: '8px 10px', fontSize: '12px',
+                    background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                    color: isActive ? '#ffffff' : '#a1a1aa',
+                    border: 'none', cursor: 'pointer', transition: 'background 100ms',
+                  }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                >
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CityMultiSelect({ value, onChange, options }: {
+  value: string[]
+  onChange: (v: string[]) => void
+  options: DropdownOption[]
+}) {
+  const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const ref = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const filteredOptions = searchQuery
+    ? options.filter(o => o.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    : options
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    if (open) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  useEffect(() => {
+    if (open && searchInputRef.current) searchInputRef.current.focus()
+    if (!open) setSearchQuery('')
+  }, [open])
+
+  function toggle(cityValue: string) {
+    if (cityValue === '') {
+      onChange([])
+    } else if (value.includes(cityValue)) {
+      onChange(value.filter(c => c !== cityValue))
+    } else {
+      onChange([...value, cityValue])
+    }
+  }
+
+  const buttonLabel = value.length === 0
+    ? 'All Cities'
+    : value.length === 1
+      ? value[0]
+      : `${value.length} cities`
+
+  return (
+    <div>
+      <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+        <button
+          onClick={() => setOpen(o => !o)}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '7px 10px', borderRadius: '4px',
+            border: value.length
+              ? '1px solid rgba(255,255,255,0.18)'
+              : `1px solid ${open ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
+            background: value.length
+              ? 'rgba(255,255,255,0.07)'
+              : open ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+            color: value.length ? '#e4e4e7' : open ? '#e4e4e7' : '#52525b',
+            fontSize: '12px', cursor: 'pointer', textAlign: 'left',
+            transition: 'border-color 150ms, background 150ms, color 150ms', gap: '6px',
+          }}
+        >
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{buttonLabel}</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ flexShrink: 0, color: value.length ? '#a1a1aa' : '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        {open && (
+          <div style={{
+            position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+            background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: '4px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)', zIndex: 100, overflow: 'hidden',
+          }}>
+            <div style={{ padding: '6px 8px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <input
+                ref={searchInputRef} type="text" placeholder="Search..."
+                value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                onClick={e => e.stopPropagation()}
+                style={{
+                  width: '100%', padding: '5px 8px', borderRadius: '3px',
+                  border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)',
+                  color: '#e4e4e7', fontSize: '11px', outline: 'none',
+                }}
+              />
+            </div>
+            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {filteredOptions.length === 0 ? (
+                <p style={{ padding: '8px 10px', fontSize: '11px', color: '#52525b', fontStyle: 'italic' }}>No matches</p>
+              ) : filteredOptions.map(opt => {
+                const isAll = opt.value === ''
+                const isActive = !isAll && value.includes(opt.value)
+                return (
+                  <button key={opt.value} onClick={() => toggle(opt.value)}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: '8px',
+                      padding: '8px 10px', fontSize: '12px',
+                      background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                      color: isAll ? '#52525b' : isActive ? '#ffffff' : '#a1a1aa',
+                      border: 'none', cursor: 'pointer', transition: 'background 100ms',
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                  >
+                    {!isAll && (
+                      <span style={{
+                        width: '14px', height: '14px', borderRadius: '3px', flexShrink: 0,
+                        border: `1px solid ${isActive ? '#a78bfa' : 'rgba(255,255,255,0.2)'}`,
+                        background: isActive ? '#a78bfa' : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {isActive && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
+                      </span>
+                    )}
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+      {value.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '6px' }}>
+          {value.map(city => (
+            <span key={city} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              padding: '3px 8px', borderRadius: '4px',
+              background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.3)',
+              color: '#c4b5fd', fontSize: '11px',
+            }}>
+              {city}
+              <button onClick={() => toggle(city)}
+                style={{
+                  background: 'none', border: 'none', color: '#c4b5fd', cursor: 'pointer',
+                  padding: 0, lineHeight: 1, fontSize: '12px',
+                }}>
+                ×
               </button>
-            )
-          })}
+            </span>
+          ))}
         </div>
       )}
     </div>
@@ -169,7 +351,7 @@ function filterSummary(filters: TrackingFilters): string {
   if (filters.jobType) parts.push(filters.jobType)
   if (filters.location === 'remote') parts.push('Remote')
   else if (filters.location === 'onsite') parts.push('On-site')
-  if (filters.city) parts.push(filters.city)
+  if (filters.city?.length) parts.push(filters.city.join(', '))
   return parts.length ? parts.join(' \u00b7 ') : 'All jobs'
 }
 
@@ -383,8 +565,23 @@ export default function TrackingPage() {
   const [matchedJobs, setMatchedJobs] = useState<any[]>([])
   const [loadingJobs, setLoadingJobs] = useState(false)
   const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set())
+  const [companyCities, setCompanyCities] = useState<string[]>([])
 
   useEffect(() => { if (user?.id) { loadTracking(); loadSavedJobs() } }, [user?.id])
+
+  useEffect(() => {
+    if (!companyValid || !company) {
+      setCompanyCities([])
+      setFilters(EMPTY_FILTERS)
+      return
+    }
+    let cancelled = false
+    fetch(`/api/companies/locations?company=${encodeURIComponent(company)}`)
+      .then(r => r.json())
+      .then(data => { if (!cancelled) setCompanyCities(data.cities ?? []) })
+      .catch(() => { if (!cancelled) setCompanyCities([]) })
+    return () => { cancelled = true }
+  }, [company, companyValid])
 
   const loadSavedJobs = async () => {
     if (!user?.id) return
@@ -435,8 +632,11 @@ export default function TrackingPage() {
   }
 
   const atLimit = tracked.length >= MAX_TRACKED
-  const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.location, filters.city, ...filters.subcategories].filter(Boolean).length
+  const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.location, ...filters.city, ...filters.subcategories].filter(Boolean).length
   const canTrack = companyValid && !atLimit
+  const cityOptions: DropdownOption[] = companyCities.length > 0
+    ? [{ label: 'All Cities', value: '' }, ...companyCities.map(c => ({ label: c, value: c }))]
+    : CITY_OPTIONS
 
   async function handleTrack() {
     if (!user?.id) return
@@ -532,76 +732,79 @@ export default function TrackingPage() {
                 <CompanyInput value={company} onChange={v => { setCompany(v); setCompanyValid(false); setError('') }} onSelect={v => { setCompany(v); setCompanyValid(true); setError('') }} valid={companyValid} error={error} />
                 {error && <p style={{ color: '#f87171', fontSize: '11px', marginBottom: '8px' }}>{error}</p>}
 
-                <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '14px 0 4px' }} />
+                {(companyValid && company) && (
+                  <>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '14px 0 4px' }} />
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
-                  <p style={{ ...sectionLabel, marginTop: 0, marginBottom: 0 }}>Filters (optional)</p>
-                  {activeFilterCount > 0 && (
-                    <button onClick={() => setFilters(EMPTY_FILTERS)} style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: 0 }}>Clear</button>
-                  )}
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
-                  <div>
-                    <p style={sectionLabel}>Category</p>
-                    <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v, subcategories: [] }))} placeholder="All"
-                      options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
-                  </div>
-                  <div>
-                    <p style={sectionLabel}>Level</p>
-                    <DropdownSelect value={filters.level} onChange={v => setFilters(f => ({ ...f, level: v }))} placeholder="All"
-                      options={[{ label: 'All Levels', value: '' }, { label: 'Moderate', value: 'moderate' }, { label: 'Advanced', value: 'advanced' }]} />
-                  </div>
-                  <div>
-                    <p style={sectionLabel}>Job Type</p>
-                    <DropdownSelect value={filters.jobType} onChange={v => setFilters(f => ({ ...f, jobType: v }))} placeholder="All"
-                      options={[{ label: 'All Types', value: '' }, { label: 'Full Time', value: 'Full Time' }, { label: 'Part Time', value: 'Part Time' }, { label: 'Internship', value: 'Internship' }]} />
-                  </div>
-                  <div>
-                    <p style={sectionLabel}>Location</p>
-                    <DropdownSelect value={filters.location} onChange={v => setFilters(f => ({ ...f, location: v }))} placeholder="All"
-                      options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
-                  </div>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <p style={sectionLabel}>City</p>
-                    <DropdownSelect
-                      value={filters.city}
-                      onChange={v => setFilters(f => ({ ...f, city: v }))}
-                      placeholder="All cities"
-                      options={CITY_OPTIONS}
-                    />
-                  </div>
-                </div>
-
-                {/* Subcategory chips */}
-                {filters.category && JOB_FIELDS[filters.category] && (
-                  <div style={{ marginTop: '12px' }}>
-                    <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
-                      Subcategories
-                      <span style={{ color: '#6b7280', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>— leave blank for all</span>
-                    </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                      {JOB_FIELDS[filters.category].map(sub => {
-                        const selected = filters.subcategories.includes(sub)
-                        return (
-                          <button key={sub} type="button"
-                            onClick={() => setFilters(f => ({ ...f, subcategories: selected ? f.subcategories.filter(s => s !== sub) : [...f.subcategories, sub] }))}
-                            style={{
-                              padding: '4px 10px', borderRadius: '4px',
-                              border: `1px solid ${selected ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)'}`,
-                              background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
-                              color: selected ? '#e4e4e7' : '#52525b',
-                              fontSize: '11px', fontWeight: selected ? 600 : 400,
-                              cursor: 'pointer', transition: 'all 120ms',
-                              display: 'flex', alignItems: 'center', gap: '4px',
-                            }}>
-                            {selected && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
-                            {sub}
-                          </button>
-                        )
-                      })}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                      <p style={{ ...sectionLabel, marginTop: 0, marginBottom: 0 }}>Filters (optional)</p>
+                      {activeFilterCount > 0 && (
+                        <button onClick={() => setFilters(EMPTY_FILTERS)} style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: 0 }}>Clear</button>
+                      )}
                     </div>
-                  </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
+                      <div>
+                        <p style={sectionLabel}>Category</p>
+                        <DropdownSelect value={filters.category} onChange={v => setFilters(f => ({ ...f, category: v, subcategories: [] }))} placeholder="All"
+                          options={[{ label: 'All Categories', value: '' }, { label: 'Tech', value: 'Tech' }, { label: 'Engineering', value: 'Engineering' }, { label: 'Health', value: 'Health' }, { label: 'Business', value: 'Business' }]} />
+                      </div>
+                      <div>
+                        <p style={sectionLabel}>Level</p>
+                        <DropdownSelect value={filters.level} onChange={v => setFilters(f => ({ ...f, level: v }))} placeholder="All"
+                          options={[{ label: 'All Levels', value: '' }, { label: 'Moderate', value: 'moderate' }, { label: 'Advanced', value: 'advanced' }]} />
+                      </div>
+                      <div>
+                        <p style={sectionLabel}>Job Type</p>
+                        <DropdownSelect value={filters.jobType} onChange={v => setFilters(f => ({ ...f, jobType: v }))} placeholder="All"
+                          options={[{ label: 'All Types', value: '' }, { label: 'Full Time', value: 'Full Time' }, { label: 'Part Time', value: 'Part Time' }, { label: 'Internship', value: 'Internship' }]} />
+                      </div>
+                      <div>
+                        <p style={sectionLabel}>Remote</p>
+                        <DropdownSelect value={filters.location} onChange={v => setFilters(f => ({ ...f, location: v }))} placeholder="All"
+                          options={[{ label: 'All', value: '' }, { label: 'Remote Only', value: 'remote' }, { label: 'On-site Only', value: 'onsite' }]} />
+                      </div>
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <p style={sectionLabel}>City</p>
+                        <CityMultiSelect
+                          value={filters.city}
+                          onChange={v => setFilters(f => ({ ...f, city: v }))}
+                          options={cityOptions}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Subcategory chips */}
+                    {filters.category && JOB_FIELDS[filters.category] && (
+                      <div style={{ marginTop: '12px' }}>
+                        <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
+                          Subcategories
+                          <span style={{ color: '#6b7280', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>— leave blank for all</span>
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                          {JOB_FIELDS[filters.category].map(sub => {
+                            const selected = filters.subcategories.includes(sub)
+                            return (
+                              <button key={sub} type="button"
+                                onClick={() => setFilters(f => ({ ...f, subcategories: selected ? f.subcategories.filter(s => s !== sub) : [...f.subcategories, sub] }))}
+                                style={{
+                                  padding: '4px 10px', borderRadius: '4px',
+                                  border: `1px solid ${selected ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)'}`,
+                                  background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
+                                  color: selected ? '#e4e4e7' : '#52525b',
+                                  fontSize: '11px', fontWeight: selected ? 600 : 400,
+                                  cursor: 'pointer', transition: 'all 120ms',
+                                  display: 'flex', alignItems: 'center', gap: '4px',
+                                }}>
+                                {selected && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
+                                {sub}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
@@ -639,14 +842,14 @@ export default function TrackingPage() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {tracked.map(t => (
-                    <div key={t.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                    <div key={t.id} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.55)', borderRadius: '4px', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                         <div style={{ width: '28px', height: '28px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#71717a' }}>
                           <EyeIcon size={12} />
                         </div>
                         <div style={{ minWidth: 0 }}>
                           <p style={{ color: '#e4e4e7', fontSize: '12px', fontWeight: 500, marginBottom: '2px' }}>{t.company_name}</p>
-                          <p style={{ color: '#52525b', fontSize: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{filterSummary(t.filters as TrackingFilters)}</p>
+                          <p style={{ color: '#52525b', fontSize: '10px', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>{filterSummary(t.filters as TrackingFilters)}</p>
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
