@@ -1,5 +1,4 @@
 import { supabaseAdmin } from '@/lib/db/supabase-admin';
-import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: Request) {
     try {
@@ -11,13 +10,8 @@ export async function POST(request: Request) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const anonClient = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            { global: { headers: { Authorization: `Bearer ${token}` } } }
-        );
-
-        const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
+        // Use admin client to verify the token — no need for a separate anon client
+        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
         if (authError || !user) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
