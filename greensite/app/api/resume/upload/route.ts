@@ -33,9 +33,16 @@ export async function POST(request: Request) {
             return Response.json({ error: 'File must be less than 2MB' }, { status: 400 });
         }
 
+        // Validate actual file magic bytes — MIME type can be spoofed by the browser
+        const fileBytes = await file.arrayBuffer();
+        const header = Buffer.from(fileBytes).slice(0, 4).toString('hex');
+        if (header !== '25504446') { // %PDF
+            return Response.json({ error: 'Invalid file: not a real PDF' }, { status: 400 });
+        }
+
         // Send to Python service for PII stripping
         const pythonFormData = new FormData();
-        pythonFormData.append('file', file);
+        pythonFormData.append('file', new Blob([fileBytes], { type: 'application/pdf' }), file.name);
 
         console.log('Sending to Python PII service...');
         const pythonResponse = await fetch('https://greenify-pii-service.onrender.com/strip-pii', {
