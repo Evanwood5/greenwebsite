@@ -1,4 +1,5 @@
-// MOVED: Michigan cities data lives at data/michiganCities.ts
-// This file is a compatibility shim — update imports to '@/data/michiganCities'
-export { MICHIGAN_CITIES } from '@/data/michiganCities'
-export type { MichiganCity } from '@/data/michiganCities'
+// DEPRECATED — this file is no longer used.
+// Michigan city data is now fetched live from the `michigan_cities` Supabase table
+// via the server-side route at /api/cities.
+//
+// This file can be safely deleted once all references have been removed.
