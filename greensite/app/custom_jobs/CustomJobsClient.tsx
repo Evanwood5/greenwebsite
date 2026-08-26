@@ -132,7 +132,8 @@ export default function CustomJobsClient() {
         const prefData = preferenceId === 1 ? preference1 : preference2;
         setLoading(true); setSaveStatus(null);
         try {
-            const locationsArray = prefData.location.split(',').map(loc => loc.trim()).filter(loc => loc.startsWith('MI:'));
+            // Plain city names — empty array means all Michigan
+            const locationsArray = prefData.location.split(',').map(loc => loc.trim()).filter(Boolean);
             const { error } = await supabase.from('user_job_preferences').upsert({
                 user_id: user.id, preference_id: preferenceId,
                 job_types: prefData.jobTypes, max_distance_miles: 30,
@@ -171,10 +172,9 @@ export default function CustomJobsClient() {
     };
 
     const displayLocation = (loc: string) => {
-        if (!loc) return 'Not set';
-        const cities = loc.split(',');
-        if (cities.includes('MI:all')) return 'All Michigan';
-        if (cities.length === 1) return cities[0].replace('MI:', '');
+        const cities = loc.split(',').filter(Boolean);
+        if (cities.length === 0) return 'All Michigan';
+        if (cities.length === 1) return cities[0];
         return `${cities.length} cities selected`;
     };
 
@@ -314,7 +314,7 @@ export default function CustomJobsClient() {
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                         </svg>
                         <p style={{ color: '#71717a', fontSize: '11px' }}>
-                            Matched jobs are shown for <strong>{MATCH_EXPIRY_DAYS} days</strong>. Save any jobs you want to keep using the bookmark icon — saved jobs don't expire.
+                            Matched jobs are shown for <strong>{MATCH_EXPIRY_DAYS} days</strong>. Save any jobs you want to keep using the bookmark icon — saved jobs don&apos;t expire.
                         </p>
                     </div>
 
