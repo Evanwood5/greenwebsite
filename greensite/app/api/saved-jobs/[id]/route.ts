@@ -32,8 +32,9 @@ async function getUser(request: NextRequest) {
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const { user, client } = await getUser(request)
   if (!user || !client) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -51,7 +52,7 @@ export async function PATCH(
   const { error } = await client
     .from('saved_jobs')
     .update(updates)
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
@@ -60,15 +61,16 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const { user, client } = await getUser(request)
   if (!user || !client) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { error } = await client
     .from('saved_jobs')
     .delete()
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
