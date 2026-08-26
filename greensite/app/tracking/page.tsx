@@ -51,18 +51,6 @@ const sectionLabel: React.CSSProperties = {
   marginTop: '12px',
 }
 
-const [allCityOptions, setAllCityOptions] = useState<DropdownOption[]>([])
-
-useEffect(() => {
-  fetch('/api/cities')
-    .then(r => r.json())
-    .then(data => setAllCityOptions([
-      { label: 'All Cities', value: '' },
-      ...(data.cities ?? []).map((c: string) => ({ label: c, value: c }))
-    ]))
-    .catch(() => setAllCityOptions([{ label: 'All Cities', value: '' }]))
-}, [])
-
 interface DropdownOption { label: string; value: string }
 
 function DropdownSelect({ value, onChange, options, placeholder, disabled, searchable }: {
@@ -570,6 +558,18 @@ export default function TrackingPage() {
   const [loadingJobs, setLoadingJobs] = useState(false)
   const [savedJobIds, setSavedJobIds] = useState<Set<string>>(new Set())
   const [companyCities, setCompanyCities] = useState<string[]>([])
+
+  const [allCityOptions, setAllCityOptions] = useState<DropdownOption[]>([])
+
+  useEffect(() => {
+    fetch('/api/cities')
+      .then(r => r.json())
+      .then(data => setAllCityOptions([
+        { label: 'All Cities', value: '' },
+        ...(data.cities ?? []).map((c: string) => ({ label: c, value: c }))
+      ]))
+      .catch(() => setAllCityOptions([{ label: 'All Cities', value: '' }]))
+  }, [])
 
   useEffect(() => { if (user?.id) { loadTracking(); loadSavedJobs() } }, [user?.id])
 
