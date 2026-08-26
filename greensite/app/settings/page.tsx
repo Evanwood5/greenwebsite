@@ -416,10 +416,17 @@ export default function SettingsPage() {
     if (!file || !user?.id) return
     setUploading(true)
     try {
+      // Get the current session token to authenticate the upload request
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { console.error('No active session'); return }
       const formData = new FormData()
       formData.append('resume', file)
       formData.append('userId', user.id)
-      await fetch('/api/resume/upload', { method: 'POST', body: formData })
+      await fetch('/api/resume/upload', {
+        method: 'POST',
+        body: formData,
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
       await loadResumeStatus()
     } catch (err) { console.error('Upload error:', err) }
     finally { setUploading(false) }
@@ -452,7 +459,6 @@ export default function SettingsPage() {
         user_id: user.id,
         preference_id: id,
         job_types: editDraft.jobTypes,
-        max_distance_miles: 30,
         include_remote: editDraft.includeRemote,
         locations: locationsArray,
         experience_level: editDraft.jobTypes.includes('full-time') ? editDraft.experienceLevel : null,

@@ -1,5 +1,4 @@
 import { supabaseAdmin } from '@/lib/db/supabase-admin';
-import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: Request) {
     try {
@@ -11,13 +10,8 @@ export async function POST(request: Request) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const anonClient = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            { global: { headers: { Authorization: `Bearer ${token}` } } }
-        );
-
-        const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
+        // Use admin client to verify the token — no need for a separate anon client
+        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
         if (authError || !user) {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -39,9 +33,16 @@ export async function POST(request: Request) {
             return Response.json({ error: 'File must be less than 2MB' }, { status: 400 });
         }
 
+        // Validate actual file magic bytes — MIME type can be spoofed by the browser
+        const fileBytes = await file.arrayBuffer();
+        const header = Buffer.from(fileBytes).slice(0, 4).toString('hex');
+        if (header !== '25504446') { // %PDF
+            return Response.json({ error: 'Invalid file: not a real PDF' }, { status: 400 });
+        }
+
         // Send to Python service for PII stripping
         const pythonFormData = new FormData();
-        pythonFormData.append('file', file);
+        pythonFormData.append('file', new Blob([fileBytes], { type: 'application/pdf' }), file.name);
 
         console.log('Sending to Python PII service...');
         const pythonResponse = await fetch('https://greenify-pii-service.onrender.com/strip-pii', {
