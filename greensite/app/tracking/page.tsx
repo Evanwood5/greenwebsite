@@ -5,7 +5,6 @@ import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 import { JOB_FIELDS } from '@/lib/jobsApi'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
@@ -52,14 +51,19 @@ const sectionLabel: React.CSSProperties = {
   marginTop: '12px',
 }
 
-interface DropdownOption { label: string; value: string }
+const [allCityOptions, setAllCityOptions] = useState<DropdownOption[]>([])
 
-const CITY_OPTIONS: DropdownOption[] = [
-  { label: 'All Cities', value: '' },
-  ...MICHIGAN_CITIES
-    .filter(c => c.value !== 'MI:all')
-    .map(c => ({ label: c.label, value: c.label })),
-]
+useEffect(() => {
+  fetch('/api/cities')
+    .then(r => r.json())
+    .then(data => setAllCityOptions([
+      { label: 'All Cities', value: '' },
+      ...(data.cities ?? []).map((c: string) => ({ label: c, value: c }))
+    ]))
+    .catch(() => setAllCityOptions([{ label: 'All Cities', value: '' }]))
+}, [])
+
+interface DropdownOption { label: string; value: string }
 
 function DropdownSelect({ value, onChange, options, placeholder, disabled, searchable }: {
   value: string
@@ -636,7 +640,7 @@ export default function TrackingPage() {
   const canTrack = companyValid && !atLimit
   const cityOptions: DropdownOption[] = companyCities.length > 0
     ? [{ label: 'All Cities', value: '' }, ...companyCities.map(c => ({ label: c, value: c }))]
-    : CITY_OPTIONS
+    : allCityOptions
 
   async function handleTrack() {
     if (!user?.id) return
