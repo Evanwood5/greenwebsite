@@ -6,7 +6,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
 import JobList from '@/components/jobs/JobList'
 import { Job, JOB_FIELDS } from '@/lib/jobsApi'
-import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 // Stable IDs that never change — avoids async race condition on first load
 // Other/Irrelevant field id from job_field_counts
@@ -165,6 +164,7 @@ export default function JobsPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [newThisMonthCount, setNewThisMonthCount] = useState(0)
   const [newThisWeekCount, setNewThisWeekCount] = useState(0)
+  const [michiganCities, setMichiganCities] = useState<string[]>([])
   const [filters, setFilters] = useState<FilterOptions>(() => {
     const empty: FilterOptions = { category: '', subCategory: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
     if (typeof window === 'undefined') return empty
@@ -184,6 +184,13 @@ export default function JobsPage() {
   const [fieldSubCategoryMap, setFieldSubCategoryMap] = useState<Record<number, string>>({})
   const requestRef = useRef(0)
   const fieldIdCacheRef = useRef(new Map<string, number[]>())
+
+  useEffect(() => {
+    fetch('/api/cities')
+      .then(r => r.json())
+      .then(data => setMichiganCities(data.cities ?? []))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('jobFilters', JSON.stringify(filters))
@@ -556,9 +563,7 @@ export default function JobsPage() {
               onChange={(v) => handleFilterChange('city', v)}
               options={[
                 { label: 'All Cities', value: '' },
-                ...MICHIGAN_CITIES
-                  .filter(c => c.value !== 'MI:all')
-                  .map(c => ({ label: c.label, value: c.label }))
+                ...michiganCities.map(c => ({ label: c, value: c }))
               ]}
             />
 
