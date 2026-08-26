@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/AppShell'
-import { MICHIGAN_CITIES } from '@/lib/michiganCities'
 
 const JOB_FIELDS: Record<string, string[]> = {
   Tech: [
@@ -68,10 +67,9 @@ function TrashIcon() {
 }
 
 function displayLocation(loc: string) {
-  if (!loc) return 'Not set'
   const parts = loc.split(',').filter(Boolean)
-  if (parts.includes('MI:all')) return 'All Michigan'
-  if (parts.length === 1) return parts[0].replace('MI:', '')
+  if (parts.length === 0) return 'All Michigan'
+  if (parts.length === 1) return parts[0]
   return `${parts.length} cities`
 }
 
@@ -107,6 +105,14 @@ const CATEGORY_COLORS: Record<string, string> = {
 function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Preference) => void }) {
   const jobTypeOptions = ['full-time', 'internship', 'part-time']
   const selectedCities = pref.location ? pref.location.split(',').filter(Boolean) : []
+  const [michiganCities, setMichiganCities] = useState<string[]>([])
+
+  useEffect(() => {
+    fetch('/api/cities')
+      .then(r => r.json())
+      .then(data => setMichiganCities(data.cities ?? []))
+      .catch(() => {})
+  }, [])
 
   function toggleJobType(type: string) {
     if (pref.jobTypes.includes(type)) {
@@ -140,16 +146,12 @@ function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Prefer
 
   function toggleCity(cityValue: string) {
     let next: string[]
-    if (cityValue === 'MI:all') {
-      next = selectedCities.includes('MI:all') ? [] : ['MI:all']
+    if (cityValue === '') {
+      next = []
+    } else if (selectedCities.includes(cityValue)) {
+      next = selectedCities.filter(c => c !== cityValue)
     } else {
-      if (selectedCities.includes('MI:all')) {
-        next = [cityValue]
-      } else if (selectedCities.includes(cityValue)) {
-        next = selectedCities.filter(c => c !== cityValue)
-      } else {
-        next = [...selectedCities, cityValue]
-      }
+      next = [...selectedCities, cityValue]
     }
     onChange({ ...pref, location: next.join(',') })
   }
@@ -300,31 +302,39 @@ function PrefEditor({ pref, onChange }: { pref: Preference; onChange: (p: Prefer
         </p>
         <p style={{ color: '#52525b', fontSize: '12px', marginBottom: '8px' }}>Each city includes a 30-mile radius</p>
         <div style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '12px', maxHeight: '220px', overflowY: 'auto' }}>
-          {MICHIGAN_CITIES.map(city => (
-            <label key={city.value} style={{
+          <label style={{
+            display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 4px',
+            borderRadius: '4px', cursor: 'pointer',
+            background: 'rgba(255,255,255,0.04)',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            marginBottom: '6px',
+          }}>
+            <input
+              type="checkbox"
+              checked={selectedCities.length === 0}
+              onChange={() => toggleCity('')}
+              style={{ accentColor: '#e4e4e7', width: '14px', height: '14px', flexShrink: 0 }}
+            />
+            <span style={{ fontSize: '13px', color: '#e4e4e7', fontWeight: 600 }}>All Michigan</span>
+          </label>
+          {michiganCities.map(city => (
+            <label key={city} style={{
               display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 4px',
               borderRadius: '4px', cursor: 'pointer',
-              background: city.value === 'MI:all' ? 'rgba(255,255,255,0.04)' : 'transparent',
-              borderBottom: city.value === 'MI:all' ? '1px solid rgba(255,255,255,0.06)' : 'none',
-              marginBottom: city.value === 'MI:all' ? '6px' : '0',
             }}>
               <input
                 type="checkbox"
-                checked={selectedCities.includes(city.value)}
-                onChange={() => toggleCity(city.value)}
+                checked={selectedCities.includes(city)}
+                onChange={() => toggleCity(city)}
                 style={{ accentColor: '#e4e4e7', width: '14px', height: '14px', flexShrink: 0 }}
               />
-              <span style={{ fontSize: '13px', color: city.value === 'MI:all' ? '#e4e4e7' : '#a1a1aa', fontWeight: city.value === 'MI:all' ? 600 : 400 }}>
-                {city.label}
-              </span>
+              <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 400 }}>{city}</span>
             </label>
           ))}
         </div>
         {selectedCities.length > 0 && (
           <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '6px' }}>
-            {selectedCities.includes('MI:all')
-              ? 'Matching jobs across all of Michigan'
-              : `${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
+            {`${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
           </p>
         )}
       </div>
@@ -437,7 +447,7 @@ export default function SettingsPage() {
     if (!user?.id) return
     setSaving(true); setSaveMsg('')
     try {
-      const locationsArray = editDraft.location.split(',').map(l => l.trim()).filter(l => l.startsWith('MI:'))
+      const locationsArray = editDraft.location.split(',').map(l => l.trim()).filter(Boolean)
       const { error } = await supabase.from('user_job_preferences').upsert({
         user_id: user.id,
         preference_id: id,
