@@ -459,7 +459,6 @@ export default function SettingsPage() {
         user_id: user.id,
         preference_id: id,
         job_types: editDraft.jobTypes,
-        max_distance_miles: 30,
         include_remote: editDraft.includeRemote,
         locations: locationsArray,
         experience_level: editDraft.jobTypes.includes('full-time') ? editDraft.experienceLevel : null,
