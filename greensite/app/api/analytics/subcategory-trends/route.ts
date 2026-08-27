@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
       )
     `)
     .eq('job_field_counts.category', dbCategory)
-    .eq('is_relevant', true)
     .gte('created_at', cutoffDate.toISOString())
 
   if (location) {
