@@ -2,51 +2,89 @@ import { supabase } from '@/lib/db/supabase'
 import { NextRequest } from 'next/server'
 
 /**
- * GET /api/analytics/subcategory-trends?category=engineering
- * Returns subcategory breakdown + weekly trend data for a given category.
- * Category values: tech | engineering | business | health
- * Response: {
- *   topSubcategories: { subcategory: string, count: number }[],
- *   trendData: { date: string, [subcategory]: number }[]
- * }
+ * GET /api/analytics/subcategory-trends?category=tech&location=MI:all&timeframe=1year
+ * Returns real subcategory breakdown + weekly trend data for a given category.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const category = searchParams.get('category') ?? 'engineering'
+  const location = searchParams.get('location') ?? 'MI:all'
+  const timeframe = searchParams.get('timeframe') ?? '1year'
 
-  // DB stores category capitalized: Engineering, Business, Tech, Health
   const dbCategory = category.charAt(0).toUpperCase() + category.slice(1)
 
-  const { data, error } = await supabase
-    .from('job_field_counts')
-    .select('subcategory, job_count')
-    .eq('category', dbCategory)
-    .order('job_count', { ascending: false })
-    .limit(8)
+  const timeframeDays: Record<string, number> = {
+    '1month': 30,
+    '6months': 180,
+    '1year': 365,
+  }
+  const days = timeframeDays[timeframe] ?? 365
+  const cutoffDate = new Date()
+  cutoffDate.setDate(cutoffDate.getDate() - days)
+
+  let query = supabase
+    .from('job_postings_ingest_test')
+    .select(`
+      created_at,
+      job_field_counts!inner (
+        category,
+        subcategory
+      )
+    `)
+    .eq('job_field_counts.category', dbCategory)
+    .eq('is_relevant', true)
+    .gte('created_at', cutoffDate.toISOString())
+
+  if (location !== 'MI:all') {
+    const cityName = location.replace('MI:', '')
+    query = query.eq('city', cityName)
+  }
+
+  const { data: jobs, error } = await query
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
 
-  const topSubcategories = (data ?? []).map(row => ({
-    subcategory: row.subcategory,
-    count: row.job_count ?? 0,
-  }))
-
-  // Build 12-week trend buckets.
-  // job_field_counts stores totals not time-series, so we distribute
-  // counts across weeks with light variation for visualization.
-  const now = new Date()
-  const weeks = Array.from({ length: 12 }, (_, i) => {
-    const d = new Date(now)
-    d.setDate(d.getDate() - (11 - i) * 7)
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  // Count jobs per subcategory
+  const subcategoryCounts: Record<string, number> = {}
+  ;(jobs ?? []).forEach((job: any) => {
+    const sub = job.job_field_counts?.subcategory || 'Unknown'
+    subcategoryCounts[sub] = (subcategoryCounts[sub] || 0) + 1
   })
 
-  const trendData = weeks.map((date, wi) => {
-    const point: Record<string, string | number> = { date }
-    topSubcategories.forEach(({ subcategory, count }, si) => {
-      const base = count / 12
-      const variation = 1 + 0.15 * Math.sin((wi + si * 2) * 0.9)
-      point[subcategory] = Math.max(0, Math.round(base * variation))
+  // Get top 8 subcategories sorted by count
+  const topSubcategories = Object.entries(subcategoryCounts)
+    .map(([subcategory, count]) => ({ subcategory, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8)
+
+  const topNames = new Set(topSubcategories.map(s => s.subcategory))
+
+  // Build weekly buckets over the timeframe
+  const weekCount = Math.min(Math.ceil(days / 7), 52)
+  const weeks: { label: string; start: Date; end: Date }[] = []
+  for (let i = weekCount - 1; i >= 0; i--) {
+    const end = new Date()
+    end.setDate(end.getDate() - i * 7)
+    const start = new Date(end)
+    start.setDate(start.getDate() - 7)
+    const label = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    weeks.push({ label, start, end })
+  }
+
+  // Count jobs per subcategory per week
+  const trendData = weeks.map(({ label, start, end }) => {
+    const point: Record<string, string | number> = { date: label }
+    ;(jobs ?? []).forEach((job: any) => {
+      const sub = job.job_field_counts?.subcategory
+      if (!sub || !topNames.has(sub)) return
+      const created = new Date(job.created_at)
+      if (created >= start && created < end) {
+        point[sub] = (point[sub] as number || 0) + 1
+      }
+    })
+    // Fill in 0 for subcategories with no jobs that week
+    topNames.forEach(name => {
+      if (!(name in point)) point[name] = 0
     })
     return point
   })

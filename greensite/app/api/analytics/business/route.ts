@@ -1,8 +1,22 @@
-import { supabase } from '@/lib/db/supabase';
+import { supabase } from '@/lib/supabase';
+import { NextRequest } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const { data: jobs, error } = await supabase
+        const { searchParams } = new URL(request.url);
+        const location = searchParams.get('location') ?? 'MI:all';
+        const timeframe = searchParams.get('timeframe') ?? '1year';
+
+        const timeframeDays: Record<string, number> = {
+            '1month': 30,
+            '6months': 180,
+            '1year': 365,
+        };
+        const days = timeframeDays[timeframe] ?? 365;
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - days);
+
+        let query = supabase
             .from('job_postings_ingest_test')
             .select(`
                 *,
@@ -13,7 +27,15 @@ export async function GET() {
                 )
             `)
             .eq('job_field_counts.category', 'Business')
-            .eq('is_relevant', true);
+            .eq('is_relevant', true)
+            .gte('created_at', cutoffDate.toISOString());
+
+        if (location !== 'MI:all') {
+            const cityName = location.replace('MI:', '');
+            query = query.eq('city', cityName);
+        }
+
+        const { data: jobs, error } = await query;
 
         if (error) throw error;
 
@@ -82,12 +104,9 @@ export async function GET() {
             ? Math.round(((thisMonthJobs - lastMonthJobs) / lastMonthJobs) * 100)
             : 0;
 
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
         const recentJobs = jobs?.filter(job => {
             const created = new Date(job.created_at);
-            return created >= thirtyDaysAgo;
+            return created >= cutoffDate;
         }) || [];
 
         const jobsByDate: { [date: string]: number } = {};
@@ -97,8 +116,9 @@ export async function GET() {
             jobsByDate[dateKey] = (jobsByDate[dateKey] || 0) + 1;
         });
 
+        const trendDays = Math.min(days, 90);
         const trendData = [];
-        for (let i = 29; i >= 0; i--) {
+        for (let i = trendDays - 1; i >= 0; i--) {
             const date = new Date();
             date.setDate(date.getDate() - i);
             const dateKey = `${date.getMonth() + 1}/${date.getDate()}`;
