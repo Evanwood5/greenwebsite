@@ -7,7 +7,7 @@ import JobTypeSummary from "./components/JobTypeSummary";
 import SubcategoryTrendChart from "./components/SubcategoryTrendChart";
 import LargeStatCard from "./components/LargeStatCard";
 import TopCitiesChart from "./components/TopCitiesChart";
-import AppShell from "@/components/AppShell";
+import AppShell from "@/components/layout/AppShell";
 
 type Field = "tech" | "engineering" | "business" | "health";
 

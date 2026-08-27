@@ -5,8 +5,8 @@ import ResumeUpload from '../../components/custom/resume-upload';
 import PreferencesForm from '../../components/custom/preferences-form';
 import { DarkJobCard } from '../../components/jobs/JobList';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
-import AppShell from '../../components/AppShell';
+import { supabase } from '../../lib/db/supabase';
+import AppShell from '../../components/layout/AppShell';
 
 const MATCH_EXPIRY_DAYS = 7;
 

@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/db/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import AppShell from '@/components/AppShell'
+import AppShell from '@/components/layout/AppShell'
 import JobList from '@/components/jobs/JobList'
-import { Job, JOB_FIELDS } from '@/lib/jobsApi'
+import { Job, JOB_FIELDS } from '@/lib/api/jobsApi'
 
 // Stable IDs that never change — avoids async race condition on first load
 // Other/Irrelevant field id from job_field_counts

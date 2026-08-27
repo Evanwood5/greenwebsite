@@ -1,0 +1,1 @@
+1. Never import or use SUPABASE_SERVICE_ROLE_KEY in client components or any file prefixed with 'use client'. It must only appear in server-side API routes or server utilities.

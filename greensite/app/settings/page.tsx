@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/db/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import AppShell from '@/components/AppShell'
+import AppShell from '@/components/layout/AppShell'
 
 const JOB_FIELDS: Record<string, string[]> = {
   Tech: [

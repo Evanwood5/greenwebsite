@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import AppShell from '@/components/AppShell'
+import AppShell from '@/components/layout/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
-import { supabase } from '@/lib/supabase'
-import { JOB_FIELDS } from '@/lib/jobsApi'
+import { supabase } from '@/lib/db/supabase'
+import { JOB_FIELDS } from '@/lib/api/jobsApi'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
 const MAX_TRACKED = 5
