@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/db/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import AppShell from '@/components/AppShell'
+import AppShell from '@/components/layout/AppShell'
 import { DarkJobCard } from '@/components/jobs/JobList'
-import { fetchFieldSubCategoryMap } from '@/lib/jobsApi'
+import { fetchFieldSubCategoryMap } from '@/lib/api/jobsApi'
 
 const MATCH_EXPIRY_DAYS = 7
 

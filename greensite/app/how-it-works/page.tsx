@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import WrapperSection from "@/components/home/WrapperSection";
 import Image from "next/image";
 

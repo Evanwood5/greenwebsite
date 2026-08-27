@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from "@/contexts/AuthContext";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/home/HeroSection";
 import CTASection from "@/components/home/CTASection";
 import AIMatchingSection from "@/components/home/AIMatchingSection";

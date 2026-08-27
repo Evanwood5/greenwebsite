@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/db/supabase'
 import { useRouter } from 'next/navigation'
-import Navbar from '@/components/Navbar'
+import Navbar from '@/components/layout/Navbar'
 
 type Mode = 'signin' | 'signup'
 type SignUpPath = 'school' | 'none'
