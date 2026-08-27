@@ -8,7 +8,7 @@ import { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const category = searchParams.get('category') ?? 'engineering'
-  const location = searchParams.get('location') ?? 'MI:all'
+  const location = searchParams.get('location') ?? ''
   const timeframe = searchParams.get('timeframe') ?? '1year'
 
   const dbCategory = category.charAt(0).toUpperCase() + category.slice(1)
@@ -35,9 +35,8 @@ export async function GET(request: NextRequest) {
     .eq('is_relevant', true)
     .gte('created_at', cutoffDate.toISOString())
 
-  if (location !== 'MI:all') {
-    const cityName = location.replace('MI:', '')
-    query = query.eq('city', cityName)
+  if (location) {
+    query = query.eq('city', location)
   }
 
   const { data: jobs, error } = await query

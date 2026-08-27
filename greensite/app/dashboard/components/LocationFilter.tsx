@@ -1,22 +1,31 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MICHIGAN_CITIES } from "@/data/michiganCities";
 
 interface LocationFilterProps {
   value: string;
   onChange: (value: string) => void;
 }
 
-const cities = [
-  { value: "MI:all", label: "All Cities" },
-  ...MICHIGAN_CITIES.filter((c) => c.value !== "MI:all"),
-];
-
 export default function LocationFilter({ value, onChange }: LocationFilterProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const selected = cities.find((c) => c.value === value) ?? cities[0];
+  const [cities, setCities] = useState<{ value: string; label: string }[]>([
+    { value: "", label: "All Cities" },
+  ]);
+
+  useEffect(() => {
+    fetch("/api/cities")
+      .then((r) => r.json())
+      .then((data) => {
+        const fetched = (data.cities ?? []).map((c: string) => ({
+          value: c,
+          label: c,
+        }));
+        setCities([{ value: "", label: "All Cities" }, ...fetched]);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -25,6 +34,8 @@ export default function LocationFilter({ value, onChange }: LocationFilterProps)
     if (open) document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
+
+  const selected = cities.find((c) => c.value === value) ?? cities[0];
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

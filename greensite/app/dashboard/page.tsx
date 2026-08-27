@@ -12,7 +12,7 @@ type Field = "tech" | "engineering" | "business" | "health";
 
 export default function DashboardPage() {
   const [field, setField] = useState<Field>("tech");
-  const [location, setLocation] = useState("MI:all");
+  const [location, setLocation] = useState("");
   const [timeframe, setTimeframe] = useState("1year");
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ export default function DashboardPage() {
     fetchData();
   }, [field, location, timeframe]);
 
-  const isAllCities = location === "MI:all";
+  const isAllCities = !location;
 
   return (
     <AppShell>
