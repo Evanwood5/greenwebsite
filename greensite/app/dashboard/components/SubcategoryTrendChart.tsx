@@ -6,6 +6,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 interface SubcategoryTrendChartProps {
   title: string;
   category: string;
+  location: string;
+  timeframe: string;
 }
 
 const COLORS = [
@@ -45,7 +47,7 @@ function CustomTooltip({ active, payload, label }: any) {
   )
 }
 
-export default function SubcategoryTrendChart({ title, category }: SubcategoryTrendChartProps) {
+export default function SubcategoryTrendChart({ title, category, location, timeframe }: SubcategoryTrendChartProps) {
   const [trendData, setTrendData] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export default function SubcategoryTrendChart({ title, category }: SubcategoryTr
   useEffect(() => {
     async function fetchTrends() {
       try {
-        const response = await fetch(`/api/analytics/subcategory-trends?category=${category}`);
+        const response = await fetch(`/api/analytics/subcategory-trends?category=${category}&location=${location}&timeframe=${timeframe}`);
         const result = await response.json();
 
         if (result.trendData && result.topSubcategories) {
@@ -67,7 +69,7 @@ export default function SubcategoryTrendChart({ title, category }: SubcategoryTr
       }
     }
     fetchTrends();
-  }, [category]);
+  }, [category, location, timeframe]);
 
   if (loading) {
     return (

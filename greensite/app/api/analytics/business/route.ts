@@ -1,8 +1,22 @@
 import { supabase } from '@/lib/db/supabase';
+import { NextRequest } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const { data: jobs, error } = await supabase
+        const { searchParams } = new URL(request.url);
+        const location = searchParams.get('location') ?? '';
+        const timeframe = searchParams.get('timeframe') ?? '1year';
+
+        const timeframeDays: Record<string, number> = {
+            '1month': 30,
+            '6months': 180,
+            '1year': 365,
+        };
+        const days = timeframeDays[timeframe] ?? 365;
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - days);
+
+        let query = supabase
             .from('job_postings_ingest_test')
             .select(`
                 *,
@@ -13,7 +27,13 @@ export async function GET() {
                 )
             `)
             .eq('job_field_counts.category', 'Business')
-            .eq('is_relevant', true);
+            .gte('created_at', cutoffDate.toISOString());
+
+        if (location) {
+            query = query.eq('city', location);
+        }
+
+        const { data: jobs, error } = await query;
 
         if (error) throw error;
 
@@ -25,10 +45,9 @@ export async function GET() {
             return acc;
         }, {});
 
-        const topCompanies = Object.entries(companyCounts || {})
+        const allCompanies = Object.entries(companyCounts || {})
             .map(([company, jobCount]) => ({ company, jobCount }))
-            .sort((a: any, b: any) => b.jobCount - a.jobCount)
-            .slice(0, 5);
+            .sort((a: any, b: any) => b.jobCount - a.jobCount);
 
         const totalCompanies = Object.keys(companyCounts || {}).length;
 
@@ -50,10 +69,9 @@ export async function GET() {
             return acc;
         }, {});
 
-        const topCities = Object.entries(cityCounts || {})
+        const allCities = Object.entries(cityCounts || {})
             .map(([name, jobCount]) => ({ name, jobCount }))
-            .sort((a: any, b: any) => b.jobCount - a.jobCount)
-            .slice(0, 5);
+            .sort((a: any, b: any) => b.jobCount - a.jobCount);
 
         const subcategoryCounts = jobs?.reduce((acc: any, job) => {
             const subcategory = job.job_field_counts?.subcategory || 'Unknown';
@@ -82,12 +100,9 @@ export async function GET() {
             ? Math.round(((thisMonthJobs - lastMonthJobs) / lastMonthJobs) * 100)
             : 0;
 
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
         const recentJobs = jobs?.filter(job => {
             const created = new Date(job.created_at);
-            return created >= thirtyDaysAgo;
+            return created >= cutoffDate;
         }) || [];
 
         const jobsByDate: { [date: string]: number } = {};
@@ -97,8 +112,9 @@ export async function GET() {
             jobsByDate[dateKey] = (jobsByDate[dateKey] || 0) + 1;
         });
 
+        const trendDays = Math.min(days, 90);
         const trendData = [];
-        for (let i = 29; i >= 0; i--) {
+        for (let i = trendDays - 1; i >= 0; i--) {
             const date = new Date();
             date.setDate(date.getDate() - i);
             const dateKey = `${date.getMonth() + 1}/${date.getDate()}`;
@@ -108,11 +124,13 @@ export async function GET() {
         return Response.json({
             category: 'business',
             totalJobs,
-            topCompanies,
+            topCompanies: allCompanies.slice(0, 5),
+            allCompanies,
             totalCompanies,
             experienceLevels,
             jobTypes,
-            topCities,
+            topCities: allCities.slice(0, 5),
+            allCities,
             subcategoryCounts,
             monthlyStats: {
                 totalJobs: thisMonthJobs,

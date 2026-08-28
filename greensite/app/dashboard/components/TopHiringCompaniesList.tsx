@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface Company {
   company: string;
   jobCount: number;
@@ -19,8 +21,16 @@ function formatCompanyName(name: string): string {
 }
 
 export default function TopHiringCompaniesList({ data, title }: TopHiringCompaniesListProps) {
+  const fullList = data;
+  const initialCount = 5;
+  const canExpand = fullList.length > initialCount;
+
+  const [showCount, setShowCount] = useState(initialCount);
+
+  const atFullList = showCount >= fullList.length;
+  const visibleData = fullList.slice(0, showCount);
   // Calculate total for percentage
-  const totalJobs = data.reduce((sum, company) => sum + company.jobCount, 0);
+  const totalJobs = visibleData.reduce((sum, company) => sum + company.jobCount, 0);
 
   return (
     <div
@@ -41,25 +51,50 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
         <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
           {title}
         </p>
-        <button
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#52525b",
-            fontSize: 11,
-            cursor: "pointer",
-            fontWeight: 500,
-          }}
-        >
-          View All
-        </button>
+        {canExpand && (
+          <div style={{ display: "flex", gap: 16 }}>
+            {showCount > initialCount && (
+              <button
+                onClick={() => setShowCount(initialCount)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#52525b",
+                  fontSize: 11,
+                  cursor: "pointer",
+                  fontWeight: 500,
+                  padding: 0,
+                }}
+              >
+                Show less
+              </button>
+            )}
+            {!atFullList && (
+              <button
+                onClick={() => setShowCount(fullList.length)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#52525b",
+                  fontSize: 11,
+                  cursor: "pointer",
+                  fontWeight: 500,
+                  padding: 0,
+                }}
+              >
+                View All
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        {data.slice(0, 5).map((company, index) => {
+        {visibleData.map((company, index) => {
           const percentage = ((company.jobCount / totalJobs) * 100).toFixed(0);
           const displayName = formatCompanyName(company.company);
-          
+          const showDivider = index < showCount - 1 || (index === showCount - 1 && !atFullList);
+
           return (
             <div
               key={company.company}
@@ -68,7 +103,7 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: "7px 0",
-                borderBottom: index < 4 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                borderBottom: showDivider ? "1px solid rgba(255,255,255,0.05)" : "none",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -116,6 +151,32 @@ export default function TopHiringCompaniesList({ data, title }: TopHiringCompani
           );
         })}
       </div>
+
+      {canExpand && !atFullList && (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 12 }}>
+          <button
+            onClick={() => setShowCount(prev => Math.min(prev + 5, fullList.length))}
+            style={{
+              width: "100%",
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 4,
+              color: "#a1a1aa",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "pointer",
+              padding: "9px 0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+            }}
+          >
+            <span style={{ fontSize: 11 }}>▾</span>
+            View More
+          </button>
+        </div>
+      )}
     </div>
   );
 }

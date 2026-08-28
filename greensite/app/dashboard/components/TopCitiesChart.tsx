@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface City {
   name: string;
   jobCount: number;
@@ -19,8 +21,16 @@ function formatCityName(name: string): string {
 }
 
 export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
-  // Get max value for scaling bars
-  const maxJobs = Math.max(...data.map(city => city.jobCount), 1);
+  const fullList = data;
+  const initialCount = 4;
+  const canExpand = fullList.length > initialCount;
+
+  const [showCount, setShowCount] = useState(initialCount);
+
+  const atFullList = showCount >= fullList.length;
+  const visibleData = fullList.slice(0, showCount);
+  // Get max value for scaling bars (use full list so bars stay proportionally scaled)
+  const maxJobs = Math.max(...fullList.map(city => city.jobCount), 1);
 
   return (
     <div
@@ -32,12 +42,55 @@ export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
         height: "100%",
       }}
     >
-      <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b", marginBottom: 14 }}>
-        {title}
-      </p>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 14,
+      }}>
+        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
+          {title}
+        </p>
+        {canExpand && (
+          <div style={{ display: "flex", gap: 16 }}>
+            {showCount > initialCount && (
+              <button
+                onClick={() => setShowCount(initialCount)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#52525b",
+                  fontSize: 11,
+                  cursor: "pointer",
+                  fontWeight: 500,
+                  padding: 0,
+                }}
+              >
+                Show less
+              </button>
+            )}
+            {!atFullList && (
+              <button
+                onClick={() => setShowCount(fullList.length)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#52525b",
+                  fontSize: 11,
+                  cursor: "pointer",
+                  fontWeight: 500,
+                  padding: 0,
+                }}
+              >
+                View All
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {data.slice(0, 4).map((city, index) => {
+        {visibleData.map((city) => {
           const barWidth = (city.jobCount / maxJobs) * 100;
           const displayName = formatCityName(city.name);
           
@@ -94,6 +147,31 @@ export default function TopCitiesChart({ data, title }: TopCitiesChartProps) {
           );
         })}
       </div>
+
+      {canExpand && !atFullList && (
+        <button
+          onClick={() => setShowCount(prev => Math.min(prev + 5, fullList.length))}
+          style={{
+            width: "100%",
+            marginTop: 12,
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 4,
+            color: "#a1a1aa",
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: "pointer",
+            padding: "9px 0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 6,
+          }}
+        >
+          <span style={{ fontSize: 11 }}>▾</span>
+          View More
+        </button>
+      )}
     </div>
   );
 }
