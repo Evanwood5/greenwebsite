@@ -53,13 +53,13 @@ export default function DashboardPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
             <TopHiringCompaniesList
-              data={data.topCompanies}
+              data={data.allCompanies}
               title="Top Hiring Companies"
             />
 
             {isAllCities && (
               <TopCitiesChart
-                data={data.topCities}
+                data={data.allCities}
                 title="Top Hiring Cities"
               />
             )}

@@ -45,10 +45,9 @@ export async function GET(request: NextRequest) {
             return acc;
         }, {});
 
-        const topCompanies = Object.entries(companyCounts || {})
+        const allCompanies = Object.entries(companyCounts || {})
             .map(([company, jobCount]) => ({ company, jobCount }))
-            .sort((a: any, b: any) => b.jobCount - a.jobCount)
-            .slice(0, 5);
+            .sort((a: any, b: any) => b.jobCount - a.jobCount);
 
         const totalCompanies = Object.keys(companyCounts || {}).length;
 
@@ -70,10 +69,9 @@ export async function GET(request: NextRequest) {
             return acc;
         }, {});
 
-        const topCities = Object.entries(cityCounts || {})
+        const allCities = Object.entries(cityCounts || {})
             .map(([name, jobCount]) => ({ name, jobCount }))
-            .sort((a: any, b: any) => b.jobCount - a.jobCount)
-            .slice(0, 5);
+            .sort((a: any, b: any) => b.jobCount - a.jobCount);
 
         const subcategoryCounts = jobs?.reduce((acc: any, job) => {
             const subcategory = job.job_field_counts?.subcategory || 'Unknown';
@@ -126,11 +124,13 @@ export async function GET(request: NextRequest) {
         return Response.json({
             category: 'engineering',
             totalJobs,
-            topCompanies,
+            topCompanies: allCompanies.slice(0, 5),
+            allCompanies,
             totalCompanies,
             experienceLevels,
             jobTypes,
-            topCities,
+            topCities: allCities.slice(0, 5),
+            allCities,
             subcategoryCounts,
             monthlyStats: {
                 totalJobs: thisMonthJobs,
