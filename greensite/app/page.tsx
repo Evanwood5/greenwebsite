@@ -3,7 +3,8 @@
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/home/HeroSection";
-import CTASection from "@/components/home/CTASection";
+import CTASection from "@/components/home/CTASection"
+import ContactSection from "@/components/home/ContactSection";
 import AIMatchingSection from "@/components/home/AIMatchingSection";
 import GrandSection from "@/components/home/GrandSection";
 import DetroitHeroSection from "@/components/home/DetroitHeroSection";
@@ -62,6 +63,7 @@ export default function Home() {
       <SuccessSection />
       <AIMatchingSection user={user} />
       <GrandSection />
+      <ContactSection />
       <CTASection />
     </div>
   );
