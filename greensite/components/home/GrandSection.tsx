@@ -22,11 +22,11 @@ export default function GrandSection() {
           className="text-5xl md:text-6xl lg:text-[68px] font-extrabold text-white leading-[1.05] mb-5"
           style={{ letterSpacing: '-0.03em' }}
         >
-          Get in Touch
+          Why us?
         </h2>
 
         <p className="text-[18px] text-white/80 leading-relaxed mb-10 max-w-lg">
-          Have questions or want to partner with us? We&apos;d love to hear from you.
+          Built by students who've been there, no ghost listings, no noise. Just real opportunities, straight from the source.
         </p>
 
         <Link
@@ -34,7 +34,7 @@ export default function GrandSection() {
           className="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold rounded transition-all duration-200 active:scale-[0.97]"
           style={{ background: '#ffffff', color: '#1a1a1a' }}
         >
-          Contact Us
+          Learn more
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
