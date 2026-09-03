@@ -1,3 +1,4 @@
+//shape definitions
 export type JobStatus = 'Saved' | 'Applied' | 'Interview' | 'Offer'
 
 export interface SavedJob {

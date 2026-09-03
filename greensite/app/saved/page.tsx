@@ -7,12 +7,19 @@ import { getSavedJobs, deleteSavedJob } from '@/lib/services/savedJobs'
 import { SavedJob, JobStatus } from './types'
 import { StatCard, JobsTable } from './components'
 
-export default function SavedJobsPage() {
+
+export default function SavedJobsPage() 
+{
+
+  // declaring state (page memory)
+  //---------------------------------------------------------------
   const { user } = useAuth()
   const [jobs, setJobs] = useState<SavedJob[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Defines the fetch function — sets loading true, calls the database, stores the result in jobs, and catches any errors.
+  //---------------------------------------------------------------
   const loadSaved = useCallback(async () => {
     if (!user?.id) return
     setLoading(true)
@@ -27,10 +34,16 @@ export default function SavedJobsPage() {
     }
   }, [user?.id])
 
+  // actually calling loadSaved when the page loads, and when the user changes (login/logout)
+  //----------------------------------------------------------------
+
   useEffect(() => {
     if (user?.id) loadSaved()
     else setLoading(false)
   }, [user?.id, loadSaved])
+
+  // for handling status changes and deletions of saved jobs, updating the state accordingly (called in jobs table)
+  //---------------------------------------------------------------
 
   const handleStatusChange = (savedJobId: number, status: JobStatus) => {
     setJobs(prev => prev.map(j => j.saved_job_id === savedJobId ? { ...j, status } : j))
@@ -41,6 +54,9 @@ export default function SavedJobsPage() {
     setJobs(prev => prev.filter(j => j.saved_job_id !== savedJobId))
   }
 
+
+// defining the different counts for the stat cards, based on the jobs state
+//---------------------------------------------------------------
   const counts = {
     total:     jobs.length,
     applied:   jobs.filter(j => j.status === 'Applied').length,
@@ -48,6 +64,9 @@ export default function SavedJobsPage() {
     offer:     jobs.filter(j => j.status === 'Offer').length,
   }
 
+
+  // actual display of the page, including header, stat cards, error message, and jobs table (or loading state / empty state)
+  //---------------------------------------------------------------
   return (
     <AppShell>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>

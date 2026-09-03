@@ -129,6 +129,8 @@ export function JobsTable({
   onStatusChange: (id: number, status: JobStatus) => void
   onDelete: (id: number) => void
 }) {
+
+  
   return (
     <div style={{ background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
       {/* Column headers */}
