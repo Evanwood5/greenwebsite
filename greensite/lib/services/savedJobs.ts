@@ -58,3 +58,22 @@ export async function deleteSavedJob(savedJobId: number): Promise<void> {
     .eq('id', savedJobId)
   if (error) throw error
 }
+
+export async function getSavedJobIds(userId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('saved_jobs')
+    .select('job_id')
+    .eq('user_id', userId)
+  if (error) throw error
+  return data?.map(r => r.job_id) ?? []
+}
+
+export async function toggleJobSaved(userId: string, jobId: string, willBeSaved: boolean): Promise<void> {
+  if (willBeSaved) {
+    const { error } = await supabase.from('saved_jobs').insert({ user_id: userId, job_id: jobId })
+    if (error) throw error
+  } else {
+    const { error } = await supabase.from('saved_jobs').delete().eq('user_id', userId).eq('job_id', jobId)
+    if (error) throw error
+  }
+}
