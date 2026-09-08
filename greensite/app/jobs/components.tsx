@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { JOB_FIELDS } from '@/lib/api/jobsApi'
 import { FilterOptions } from './types'
 
-// ── Filter Icon ───────────────────────────────────────────────────────────────
-
 function FilterIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,8 +11,6 @@ function FilterIcon() {
     </svg>
   )
 }
-
-// ── Dropdown ──────────────────────────────────────────────────────────────────
 
 interface DropdownOption { label: string; value: string; icon?: React.ReactNode; iconColor?: string }
 
@@ -127,8 +123,6 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
   )
 }
 
-// ── Stat Card ─────────────────────────────────────────────────────────────────
-
 export function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -137,8 +131,6 @@ export function StatCard({ label, value, color }: { label: string; value: string
     </div>
   )
 }
-
-// ── Filter Panel ──────────────────────────────────────────────────────────────
 
 const sectionLabelStyle: React.CSSProperties = {
   color: '#52525b',
@@ -304,8 +296,6 @@ export function FilterPanel({
     </div>
   )
 }
-
-// ── Other small pieces ────────────────────────────────────────────────────────
 
 export function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
