@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/db/supabase'
 import { Preference, PreferenceId, emptyPref } from '@/app/settings/types'
+import { Org } from '@/app/auth/types'
 
 // All database calls related to user profile, resume uploads, org sync,
 // and saved job preferences.
@@ -51,6 +52,15 @@ export async function getProfile(userId: string): Promise<ProfileInfo> {
 
 export async function removeResume(userId: string): Promise<void> {
   await supabase.from('profiles').update({ resume: null }).eq('user_id', userId)
+}
+
+export async function listOrgs(): Promise<Org[]> {
+  const { data, error } = await supabase
+    .from('orgs')
+    .select('id, name, domain')
+    .order('name', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as Org[]
 }
 
 function mapPreferenceRow(row: PreferenceRow): Preference {
