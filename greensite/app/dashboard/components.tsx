@@ -410,8 +410,6 @@ export function TimeframeFilter({
   );
 }
 
-// ── Top Hiring Companies List ─────────────────────────────────────────────────
-
 function formatCompanyName(name: string): string {
   return name
     .split('_')
@@ -577,8 +575,6 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
     </div>
   );
 }
-
-// ── Top Cities Chart ──────────────────────────────────────────────────────────
 
 function formatCityName(name: string): string {
   return name

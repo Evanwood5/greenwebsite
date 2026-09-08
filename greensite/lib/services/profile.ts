@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/db/supabase'
 import { Preference, PreferenceId, emptyPref } from '@/app/settings/types'
 
-// ── Profile Service ───────────────────────────────────────────────────────────
 // All database calls related to user profile, resume uploads, org sync,
 // and saved job preferences.
 

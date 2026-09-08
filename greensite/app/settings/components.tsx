@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { JOB_FIELDS, Preference, cardStyle, displayLocation } from './types'
 
-// ── Icons ────────────────────────────────────────────────────────────────────
-
 function CheckCircleIcon({ color = '#52525b' }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -41,8 +39,6 @@ const EXPERIENCE_OPTIONS = [
   { value: 'advanced', label: 'Advanced (2+ years)' },
   { value: 'any', label: 'Any level' },
 ]
-
-// ── PrefEditor ───────────────────────────────────────────────────────────────
 
 export function PrefEditor({
   pref,
@@ -293,8 +289,6 @@ export function PrefEditor({
   )
 }
 
-// ── Preference card (list + edit) ─────────────────────────────────────────────
-
 export function PreferenceCard({
   pref,
   draft,
@@ -394,8 +388,6 @@ export function PreferenceCard({
   )
 }
 
-// ── Preference summary (read-only list) ───────────────────────────────────────
-
 function PreferenceSummary({ pref }: { pref: Preference }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -449,8 +441,6 @@ function PreferenceSummary({ pref }: { pref: Preference }) {
   )
 }
 
-// ── Profile card ──────────────────────────────────────────────────────────────
-
 export function ProfileCard({ email, university }: { email?: string; university: string }) {
   return (
     <div style={cardStyle}>
@@ -473,8 +463,6 @@ export function ProfileCard({ email, university }: { email?: string; university:
     </div>
   )
 }
-
-// ── Resume card ───────────────────────────────────────────────────────────────
 
 const RESUME_NOTE_ROWS = [
   "We'll anonymize your personal data",
@@ -537,8 +525,6 @@ export function ResumeCard({
     </div>
   )
 }
-
-// ── Notifications card ────────────────────────────────────────────────────────
 
 export function NotificationsCard({ email }: { email?: string }) {
   const [status, setStatus] = useState<'idle' | 'saved'>('idle')

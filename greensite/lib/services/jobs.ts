@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/db/supabase'
 import { IRRELEVANT_FIELD_ID, FilterOptions, Job } from '@/app/jobs/types'
 
-// ── Jobs Service ──────────────────────────────────────────────────────────────
 // All database calls related to fetching and filtering job postings,
 // resolving field ids, and saved-job membership.
 
@@ -65,6 +64,16 @@ export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from
     count: count || 0,
     hasMore: count ? (to + 1) < count : false,
   }
+}
+
+export async function fetchJobsByIds(ids: string[]): Promise<Job[]> {
+  if (ids.length === 0) return []
+  const { data, error } = await supabase
+    .from('job_postings_ingest_test')
+    .select('*')
+    .in('job_id', ids)
+  if (error) throw error
+  return (data ?? []) as Job[]
 }
 
 export async function countJobsSince(filters: FilterOptions, fieldIds: number[], date: Date): Promise<number> {

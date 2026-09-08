@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/db/supabase'
 import { SavedJob, JobStatus } from '@/app/saved/types'
 
-// ── Saved Jobs Service ────────────────────────────────────────────────────────
 // All database calls related to the saved_jobs table.
 
 export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
