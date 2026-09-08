@@ -75,7 +75,7 @@ export async function POST(request: Request) {
             if (insertError) throw insertError;
         }
 
-        console.log('✅ Resume saved to Supabase');
+        console.log('Resume saved to Supabase');
         return Response.json({
             success: true,
             message: 'Resume uploaded and processed successfully'
