@@ -1,41 +1,238 @@
-'use client';
+'use client'
 
-import { useAuth } from '@/contexts/AuthContext';
-import Link from 'next/link';
-import CustomJobsClient from './CustomJobsClient';
+import { useCallback, useEffect, useState } from 'react'
+import AppShell from '@/components/layout/AppShell'
+import { useAuth } from '@/contexts/AuthContext'
+import { fetchJobsByIds } from '@/lib/services/jobs'
+import { getRecentMatchRows } from '@/lib/services/matches'
+import {
+  deletePreference,
+  getPreferences,
+  getResumeStatus,
+  removeResume,
+  upsertCustomPreference,
+} from '@/lib/services/profile'
+import {
+  CustomPreference,
+  EMPTY_PREFERENCE,
+  MatchedJob,
+  PreferenceId,
+  SaveStatus,
+  View,
+  errorMessage,
+  mergeMatchedJobs,
+  toCustomPreference,
+} from './types'
+import {
+  LoadingGate,
+  MatchedJobsPanel,
+  MessageBanner,
+  PageHeader,
+  PreferenceCard,
+  PreferenceEditor,
+  ResumePanel,
+  SignInCard,
+} from './components'
 
 export default function CustomJobsPage() {
-    const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth()
 
-    if (loading) {
-        return (
-            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
-                <p style={{ color: '#52525b', fontSize: '13px' }}>Loading...</p>
-            </div>
-        );
+  const [view, setView] = useState<View>('main')
+  const [loading, setLoading] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<SaveStatus | null>(null)
+  const [resumeUploaded, setResumeUploaded] = useState(false)
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null)
+  const [preferences, setPreferences] = useState<Record<PreferenceId, CustomPreference>>({
+    1: { ...EMPTY_PREFERENCE },
+    2: { ...EMPTY_PREFERENCE },
+  })
+  const [matchedJobs, setMatchedJobs] = useState<MatchedJob[]>([])
+  const [loadingJobs, setLoadingJobs] = useState(false)
+
+  const loadUserPreferences = useCallback(async () => {
+    if (!user?.id) return
+    try {
+      const prefs = await getPreferences(user.id)
+      setPreferences({
+        1: toCustomPreference(prefs[1]),
+        2: toCustomPreference(prefs[2]),
+      })
+    } catch (err) {
+      console.error('Error loading preferences:', err)
     }
+  }, [user?.id])
 
-    if (!user) {
-        return (
-            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
-                <div style={{ maxWidth: '400px', width: '100%', background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '32px', textAlign: 'center' }}>
-                    <svg style={{ margin: '0 auto 20px', display: 'block', color: '#3f3f46' }} width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    <h2 style={{ color: '#e4e4e7', fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Sign in required</h2>
-                    <p style={{ color: '#52525b', fontSize: '12px', marginBottom: '20px' }}>
-                        Please sign in to access custom job matching features.
-                    </p>
-                    <Link
-                        href="/auth"
-                        style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.08)', color: '#e4e4e7', fontWeight: 600, padding: '9px 16px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.14)', textDecoration: 'none', fontSize: '13px', boxSizing: 'border-box' }}
-                    >
-                        Sign In
-                    </Link>
-                </div>
-            </div>
-        );
+  const loadResumeStatus = useCallback(async () => {
+    if (!user?.id) return
+    try {
+      const status = await getResumeStatus(user.id)
+      setResumeUploaded(status.resumeUploaded)
+      setResumeUrl(status.resumeUrl)
+    } catch (err) {
+      console.error('Error loading resume status:', err)
     }
+  }, [user?.id])
 
-    return <CustomJobsClient />;
+  const loadMatchedJobs = useCallback(async () => {
+    if (!user?.id) return
+    setLoadingJobs(true)
+    try {
+      const rows = await getRecentMatchRows(user.id)
+      const jobs = await fetchJobsByIds(rows.map(row => row.job_id))
+      setMatchedJobs(mergeMatchedJobs(rows, jobs))
+    } catch (err) {
+      console.error('Error loading matched jobs:', err)
+    } finally {
+      setLoadingJobs(false)
+    }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (user?.id) {
+      loadUserPreferences()
+      loadResumeStatus()
+      loadMatchedJobs()
+    }
+  }, [user?.id, loadUserPreferences, loadResumeStatus, loadMatchedJobs])
+
+  const handleResumeUploaded = (uploaded: boolean) => {
+    setResumeUploaded(uploaded)
+    loadResumeStatus()
+  }
+
+  const handleUpdateResume = () => {
+    document.getElementById('resume-upload-update')?.click()
+  }
+
+  const handleRemoveResume = async () => {
+    if (!user?.id) return
+    setLoading(true)
+    try {
+      await removeResume(user.id)
+      setResumeUploaded(false)
+      setResumeUrl(null)
+      setSaveStatus({ type: 'success', message: 'Resume removed successfully!' })
+      window.setTimeout(() => setSaveStatus(null), 3000)
+    } catch (err) {
+      setSaveStatus({ type: 'error', message: errorMessage(err) })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleUpdate = useCallback((id: PreferenceId, field: string, value: unknown) => {
+    setPreferences(prev => {
+      const current = prev[id]
+      if (field === 'jobTypes') {
+        const jobTypes = value as string[]
+        return { ...prev, [id]: { ...current, jobTypes, experienceLevel: jobTypes.includes('full-time') ? current.experienceLevel : 'any' } }
+      }
+      if (field === 'experienceLevel') return { ...prev, [id]: { ...current, experienceLevel: value as CustomPreference['experienceLevel'] } }
+      if (field === 'location') return { ...prev, [id]: { ...current, location: value as string } }
+      if (field === 'includeRemote') return { ...prev, [id]: { ...current, includeRemote: Boolean(value) } }
+      return prev
+    })
+  }, [])
+
+  const handleSave = async (id: PreferenceId) => {
+    if (!user?.id) return
+    setLoading(true)
+    setSaveStatus(null)
+    try {
+      await upsertCustomPreference(user.id, id, preferences[id])
+      setSaveStatus({ type: 'success', message: `Preference #${id} saved!` })
+      window.setTimeout(() => { setSaveStatus(null); setView('main') }, 1000)
+      await Promise.all([loadUserPreferences(), loadResumeStatus(), loadMatchedJobs()])
+    } catch (err) {
+      setSaveStatus({ type: 'error', message: errorMessage(err) })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: PreferenceId) => {
+    if (!user?.id) return
+    setLoading(true)
+    setSaveStatus(null)
+    try {
+      await deletePreference(user.id, id)
+      setPreferences(prev => ({ ...prev, [id]: { ...EMPTY_PREFERENCE } }))
+      setSaveStatus({ type: 'success', message: `Preference #${id} removed!` })
+      window.setTimeout(() => { setSaveStatus(null); setView('main') }, 1000)
+    } catch (err) {
+      setSaveStatus({ type: 'error', message: errorMessage(err) })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (authLoading) return <LoadingGate />
+  if (!user) return <SignInCard />
+
+  if (view !== 'main') {
+    const id: PreferenceId = view === 'preference1' ? 1 : 2
+    return (
+      <AppShell>
+        <PreferenceEditor
+          id={id}
+          pref={preferences[id]}
+          loading={loading}
+          saveStatus={saveStatus}
+          onUpdate={(field, value) => handleUpdate(id, field, value)}
+          onBack={() => setView('main')}
+          onCancel={() => setView('main')}
+          onSave={() => handleSave(id)}
+          onDelete={() => handleDelete(id)}
+        />
+      </AppShell>
+    )
+  }
+
+  const hasPreferences = preferences[1].jobTypes.length > 0 || preferences[2].jobTypes.length > 0
+
+  return (
+    <AppShell>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <PageHeader
+          title="Custom Job Matching"
+          subtitle="Upload your resume and set preferences to get personalized job matches"
+        />
+
+        {saveStatus && <MessageBanner status={saveStatus} />}
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+          <ResumePanel
+            userId={user.id}
+            existingResumeUrl={resumeUrl}
+            resumeUploaded={resumeUploaded}
+            loading={loading}
+            onResumeUploaded={handleResumeUploaded}
+            onUpdateResume={handleUpdateResume}
+            onRemoveResume={handleRemoveResume}
+          />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {([1, 2] as const).map(id => (
+              <PreferenceCard
+                key={id}
+                id={id}
+                pref={preferences[id]}
+                loading={loading}
+                onOpen={() => setView(id === 1 ? 'preference1' : 'preference2')}
+                onDelete={() => handleDelete(id)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <MatchedJobsPanel
+          jobs={matchedJobs}
+          loadingJobs={loadingJobs}
+          resumeUploaded={resumeUploaded}
+          hasPreferences={hasPreferences}
+          onRefresh={loadMatchedJobs}
+        />
+      </div>
+    </AppShell>
+  )
 }

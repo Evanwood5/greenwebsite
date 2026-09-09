@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/db/supabase'
 import { Preference, PreferenceId, emptyPref } from '@/app/settings/types'
 import { Org } from '@/app/auth/types'
+import { CustomPreference } from '@/app/custom_jobs/types'
 
 // All database calls related to user profile, resume uploads, org sync,
 // and saved job preferences.
@@ -52,6 +53,18 @@ export async function getProfile(userId: string): Promise<ProfileInfo> {
 
 export async function removeResume(userId: string): Promise<void> {
   await supabase.from('profiles').update({ resume: null }).eq('user_id', userId)
+}
+
+export async function getResumeStatus(
+  userId: string,
+): Promise<{ resumeUploaded: boolean; resumeUrl: string | null }> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('resume')
+    .eq('user_id', userId)
+    .single<{ resume: string | null }>()
+  if (error && error.code !== 'PGRST116') throw error
+  return { resumeUploaded: !!data?.resume, resumeUrl: data?.resume ?? null }
 }
 
 export async function listOrgs(): Promise<Org[]> {
@@ -116,6 +129,24 @@ export async function upsertPreference(
 
 export async function deletePreference(userId: string, id: PreferenceId): Promise<void> {
   await supabase.from('user_job_preferences').delete().eq('user_id', userId).eq('preference_id', id)
+}
+
+export async function upsertCustomPreference(
+  userId: string,
+  id: PreferenceId,
+  pref: CustomPreference,
+): Promise<void> {
+  const locationsArray = pref.location.split(',').map(l => l.trim()).filter(Boolean)
+  const { error } = await supabase.from('user_job_preferences').upsert({
+    user_id: userId,
+    preference_id: id,
+    job_types: pref.jobTypes,
+    max_distance_miles: 30,
+    include_remote: pref.includeRemote,
+    locations: locationsArray,
+    experience_level: pref.jobTypes.includes('full-time') ? pref.experienceLevel : null,
+  }, { onConflict: 'user_id,preference_id' })
+  if (error) throw error
 }
 
 export async function getAccessToken(): Promise<string | null> {
