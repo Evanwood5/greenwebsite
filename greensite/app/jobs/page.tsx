@@ -1,155 +1,21 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { supabase } from '@/lib/db/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/layout/AppShell'
 import JobList from '@/components/jobs/JobList'
-import { Job, JOB_FIELDS } from '@/lib/api/jobsApi'
+import { getFieldMaps, resolveFieldIds, fetchJobs, countJobsSince } from '@/lib/services/jobs'
+import { getSavedJobIds, toggleJobSaved } from '@/lib/services/savedJobs'
+import { JOBS_PER_PAGE, Job, FilterOptions, EMPTY_FILTERS } from './types'
+import { StatCard, FilterPanel, ErrorBanner, LoadMoreButton } from './components'
 
-// Stable IDs that never change — avoids async race condition on first load
-// Other/Irrelevant field id from job_field_counts
-const IRRELEVANT_FIELD_ID = 29244
-
-interface FilterOptions {
-  category: string
-  subCategory: string
-  level: string
-  jobType: string
-  isRemote: string
-  city: string
-  searchTerm: string
-}
-
-const sectionLabelStyle: React.CSSProperties = {
-  color: '#52525b',
-  fontSize: '9px',
-  fontWeight: 700,
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  marginBottom: '4px',
-  marginTop: '12px',
-}
-
-function FilterIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  )
-}
-
-const JOBS_PER_PAGE = 20
-
-interface DropdownOption { label: string; value: string; icon?: React.ReactNode; iconColor?: string }
-
-function DropdownSelect({ value, onChange, options, disabled }: { value: string; onChange: (v: string) => void; options: DropdownOption[]; disabled?: boolean }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-  const selected = options.find(o => o.value === value) ?? options[0]
-  const hasValue = Boolean(value)
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    if (open) document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
-
-  return (
-    <div ref={ref} style={{ position: 'relative', width: '100%', opacity: disabled ? 0.45 : 1 }}>
-      <button
-        onClick={() => { if (!disabled) setOpen(o => !o) }}
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '7px 10px',
-          borderRadius: '4px',
-          border: hasValue
-            ? '1px solid rgba(255,255,255,0.18)'
-            : `1px solid ${open ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
-          background: hasValue
-            ? 'rgba(255,255,255,0.07)'
-            : open ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
-          color: hasValue ? '#e4e4e7' : open ? '#e4e4e7' : '#52525b',
-          fontSize: '12px',
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          textAlign: 'left',
-          transition: 'border-color 150ms, background 150ms, color 150ms',
-          gap: '6px',
-        }}
-      >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
-          {selected.icon && (
-            <span style={{ flexShrink: 0, color: hasValue ? '#e4e4e7' : selected.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
-              {selected.icon}
-            </span>
-          )}
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selected.label}</span>
-        </span>
-        <svg
-          width="11" height="11" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={{ flexShrink: 0, color: hasValue ? '#a1a1aa' : '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </button>
-
-      {open && (
-        <div style={{
-          position: 'absolute',
-          top: 'calc(100% + 4px)',
-          left: 0,
-          right: 0,
-          background: '#1e1e1e',
-          border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: '4px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-          zIndex: 100,
-          overflow: 'hidden',
-          maxHeight: '200px',
-          overflowY: 'auto',
-        }}>
-          {options.map(opt => {
-            const isActive = opt.value === value
-            return (
-              <button
-                key={opt.value}
-                onClick={() => { onChange(opt.value); setOpen(false) }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  textAlign: 'left',
-                  padding: '8px 10px',
-                  fontSize: '12px',
-                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  color: isActive ? '#ffffff' : '#a1a1aa',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background 100ms',
-                }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
-              >
-                {opt.icon && (
-                  <span style={{ flexShrink: 0, color: opt.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
-                    {opt.icon}
-                  </span>
-                )}
-                {opt.label}
-              </button>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
+function loadFiltersFromStorage(): FilterOptions {
+  const empty = { ...EMPTY_FILTERS }
+  if (typeof window === 'undefined') return empty
+  try {
+    const saved = localStorage.getItem('jobFilters')
+    return saved ? { ...empty, ...JSON.parse(saved) } : empty
+  } catch { return empty }
 }
 
 export default function JobsPage() {
@@ -165,14 +31,7 @@ export default function JobsPage() {
   const [newThisMonthCount, setNewThisMonthCount] = useState(0)
   const [newThisWeekCount, setNewThisWeekCount] = useState(0)
   const [michiganCities, setMichiganCities] = useState<string[]>([])
-  const [filters, setFilters] = useState<FilterOptions>(() => {
-    const empty: FilterOptions = { category: '', subCategory: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }
-    if (typeof window === 'undefined') return empty
-    try {
-      const saved = localStorage.getItem('jobFilters')
-      return saved ? { ...empty, ...JSON.parse(saved) } : empty
-    } catch { return empty }
-  })
+  const [filters, setFilters] = useState<FilterOptions>(loadFiltersFromStorage)
   const [searchInput, setSearchInput] = useState(() => {
     if (typeof window === 'undefined') return ''
     try {
@@ -198,167 +57,104 @@ export default function JobsPage() {
 
   useEffect(() => {
     if (!user?.id) return
-    supabase
-      .from('saved_jobs')
-      .select('job_id')
-      .eq('user_id', user.id)
-      .then(({ data }) => {
-        setSavedJobIds(new Set(data?.map((r: any) => r.job_id) ?? []))
-      })
+    getSavedJobIds(user.id)
+      .then(ids => setSavedJobIds(new Set(ids)))
+      .catch(() => {})
   }, [user?.id])
 
   const handleSaveToggle = async (jobId: string, willBeSaved: boolean) => {
     if (!user?.id) return
     setSavedJobIds(prev => {
       const next = new Set(prev)
-      willBeSaved ? next.add(jobId) : next.delete(jobId)
+      if (willBeSaved) next.add(jobId)
+      else next.delete(jobId)
       return next
     })
-    if (willBeSaved) {
-      await supabase.from('saved_jobs').insert({ user_id: user.id, job_id: jobId })
-    } else {
-      await supabase.from('saved_jobs').delete().eq('user_id', user.id).eq('job_id', jobId)
+    try {
+      await toggleJobSaved(user.id, jobId, willBeSaved)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update saved job')
     }
   }
 
   // Build fieldCategoryMap and fieldSubCategoryMap for job icons and subcategory display
   useEffect(() => {
-    supabase
-      .from('job_field_counts')
-      .select('id, category, subcategory')
-      .then(({ data }) => {
-        const catMap: Record<number, string> = {}
-        const subMap: Record<number, string> = {}
-        data?.forEach(r => {
-          catMap[r.id] = r.category.toLowerCase()
-          subMap[r.id] = r.subcategory
-        })
-        setFieldCategoryMap(catMap)
-        setFieldSubCategoryMap(subMap)
-      })
+    getFieldMaps().then(({ category, subCategory }) => {
+      setFieldCategoryMap(category)
+      setFieldSubCategoryMap(subCategory)
+    })
   }, [])
 
-  const resolveFieldIds = useCallback(async (category: string, subCategory: string): Promise<number[]> => {
+  const resolveFieldIdsCached = useCallback(async (category: string, subCategory: string): Promise<number[]> => {
     if (!category) return []
     const key = `${category}|${subCategory}`
     const cached = fieldIdCacheRef.current.get(key)
     if (cached) return cached
-    let query = supabase
-      .from('job_field_counts')
-      .select('id')
-      .ilike('category', category)
-    if (subCategory) query = query.eq('subcategory', subCategory)
-    const { data } = await query
-    const ids = data?.map(r => r.id) ?? []
+    const ids = await resolveFieldIds(category, subCategory)
     fieldIdCacheRef.current.set(key, ids)
     return ids
   }, [])
-
-  const buildQuery = useCallback((fieldIds: number[]) => {
-    let query = supabase
-      .from('job_postings_ingest_test')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .eq('is_relevant', true)
-      .neq('job_field_id', IRRELEVANT_FIELD_ID)
-
-    if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
-    if (filters.category) {
-      if (fieldIds.length > 0) query = query.in('job_field_id', fieldIds)
-      else query = query.eq('job_field_id', -1)
-    }
-    if (filters.level) query = query.eq('experience_level', filters.level)
-    if (filters.jobType) query = query.eq('job_type', filters.jobType)
-    if (filters.city) query = query.eq('city', filters.city)
-    if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
-    else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
-
-    return query
-  }, [filters])
-
-  const buildCountQuery = useCallback((dateFrom: Date, fieldIds: number[]) => {
-    let query = supabase
-      .from('job_postings_ingest_test')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_relevant', true)
-      .neq('job_field_id', IRRELEVANT_FIELD_ID)
-      .gte('created_at', dateFrom.toISOString())
-
-    if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
-    if (filters.category) {
-      if (fieldIds.length > 0) query = query.in('job_field_id', fieldIds)
-      else query = query.eq('job_field_id', -1)
-    }
-    if (filters.level) query = query.eq('experience_level', filters.level)
-    if (filters.jobType) query = query.eq('job_type', filters.jobType)
-    if (filters.city) query = query.eq('city', filters.city)
-    if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
-    else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
-
-    return query
-  }, [filters])
 
   const refreshAll = useCallback(async () => {
     const requestId = ++requestRef.current
     setLoading(true)
     setError(null)
     try {
-      const fieldIds = await resolveFieldIds(filters.category, filters.subCategory)
+      const fieldIds = await resolveFieldIdsCached(filters.category, filters.subCategory)
       const monthStart = new Date(Date.now() - 30 * 86400000)
       const weekStart = new Date(Date.now() - 7 * 86400000)
 
       const [jobsResult, monthResult, weekResult] = await Promise.all([
-        buildQuery(fieldIds).range(0, JOBS_PER_PAGE - 1),
-        buildCountQuery(monthStart, fieldIds),
-        buildCountQuery(weekStart, fieldIds),
+        fetchJobs(filters, fieldIds, 0, JOBS_PER_PAGE - 1),
+        countJobsSince(filters, fieldIds, monthStart),
+        countJobsSince(filters, fieldIds, weekStart),
       ])
 
       if (requestId !== requestRef.current) return
 
-      if (jobsResult.error) throw jobsResult.error
-
-      setJobs(jobsResult.data ?? [])
-      setTotalCount(jobsResult.count || 0)
-      setHasMore(jobsResult.count ? JOBS_PER_PAGE < jobsResult.count : false)
+      setJobs(jobsResult.data)
+      setTotalCount(jobsResult.count)
+      setHasMore(jobsResult.hasMore)
       setCurrentPage(0)
-      setNewThisMonthCount(monthResult.count || 0)
-      setNewThisWeekCount(weekResult.count || 0)
+      setNewThisMonthCount(monthResult)
+      setNewThisWeekCount(weekResult)
     } catch (err: unknown) {
       if (requestId !== requestRef.current) return
       setError(err instanceof Error ? err.message : 'Failed to fetch jobs')
     } finally {
       if (requestId === requestRef.current) setLoading(false)
     }
-  }, [buildQuery, buildCountQuery, resolveFieldIds, filters])
+  }, [filters, resolveFieldIdsCached])
 
   const loadMore = useCallback(async () => {
     if (!hasMore) return
     const requestId = ++requestRef.current
     setLoadingMore(true)
     try {
-      const fieldIds = await resolveFieldIds(filters.category, filters.subCategory)
-      const { data, error: fetchError, count } = await buildQuery(fieldIds)
-        .range((currentPage + 1) * JOBS_PER_PAGE, (currentPage + 2) * JOBS_PER_PAGE - 1)
+      const fieldIds = await resolveFieldIdsCached(filters.category, filters.subCategory)
+      const result = await fetchJobs(
+        filters,
+        fieldIds,
+        (currentPage + 1) * JOBS_PER_PAGE,
+        (currentPage + 2) * JOBS_PER_PAGE - 1,
+      )
 
       if (requestId !== requestRef.current) return
-      if (fetchError) throw fetchError
 
-      if (data) {
-        setJobs(prev => {
-          const existing = new Set(prev.map(j => j.job_id))
-          return [...prev, ...data.filter(j => !existing.has(j.job_id))]
-        })
-        setTotalCount(count || 0)
-        setHasMore(count ? (currentPage + 2) * JOBS_PER_PAGE < count : false)
-        setCurrentPage(currentPage + 1)
-      }
+      setJobs(prev => {
+        const existing = new Set(prev.map(j => j.job_id))
+        return [...prev, ...result.data.filter(j => !existing.has(j.job_id))]
+      })
+      setTotalCount(result.count)
+      setHasMore(result.hasMore)
+      setCurrentPage(currentPage + 1)
     } catch (err: unknown) {
       if (requestId !== requestRef.current) return
       setError(err instanceof Error ? err.message : 'Failed to fetch jobs')
     } finally {
       if (requestId === requestRef.current) setLoadingMore(false)
     }
-  }, [buildQuery, resolveFieldIds, filters, hasMore, currentPage])
+  }, [filters, resolveFieldIdsCached, hasMore, currentPage])
 
   useEffect(() => { refreshAll() }, [refreshAll])
 
@@ -380,6 +176,12 @@ export default function JobsPage() {
     setJobs([])
   }
 
+  const handleClearFilters = () => {
+    setFilters({ ...EMPTY_FILTERS })
+    setSearchInput('')
+    localStorage.setItem('jobFilters', JSON.stringify(EMPTY_FILTERS))
+  }
+
   const statCards = [
     { label: 'Past 30 Days', value: loading ? '...' : newThisMonthCount.toLocaleString(), color: '#4ade80' },
     { label: 'Past 7 Days',  value: loading ? '...' : newThisWeekCount.toLocaleString(),  color: '#93c5fd' },
@@ -397,8 +199,6 @@ export default function JobsPage() {
     )
   }
 
-  const activeFilterCount = [filters.category, filters.subCategory, filters.level, filters.jobType, filters.isRemote, filters.city, filters.searchTerm].filter(Boolean).length
-
   return (
     <AppShell>
       <div style={{ display: 'flex', gap: '20px', maxWidth: '1300px', margin: '0 auto', alignItems: 'flex-start' }}>
@@ -406,21 +206,11 @@ export default function JobsPage() {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '14px' }}>
             {statCards.map((card) => (
-              <div key={card.label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <p style={{ color: '#52525b', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{card.label}</p>
-                <p style={{ color: card.color, fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>{card.value}</p>
-              </div>
+              <StatCard key={card.label} label={card.label} value={card.value} color={card.color} />
             ))}
           </div>
 
-          {error && (
-            <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: '#fca5a5', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {error}
-              <button onClick={() => refreshAll()} style={{ marginLeft: 'auto', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
-                Try again
-              </button>
-            </div>
-          )}
+          {error && <ErrorBanner message={error} onRetry={refreshAll} />}
 
           <JobList
             jobs={jobs}
@@ -432,153 +222,23 @@ export default function JobsPage() {
           />
 
           {hasMore && jobs.length > 0 && !loading && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
-              <button
-                onClick={() => loadMore()}
-                disabled={loadingMore}
-                style={{ padding: '8px 20px', background: 'rgba(255,255,255,0.05)', color: '#a1a1aa', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loadingMore ? 'not-allowed' : 'pointer', opacity: loadingMore ? 0.6 : 1 }}
-              >
-                {loadingMore ? 'Loading...' : `Load More (${totalCount - jobs.length} remaining)`}
-              </button>
-            </div>
+            <LoadMoreButton
+              totalRemaining={totalCount - jobs.length}
+              loading={loadingMore}
+              onLoadMore={loadMore}
+            />
           )}
         </div>
 
         {/* Right filter panel */}
-        <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
-          <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', padding: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>
-                <FilterIcon />
-                Filters
-              </span>
-              {activeFilterCount > 0 && (
-                <button
-                  onClick={() => { const empty = { category: '', subCategory: '', level: '', jobType: '', isRemote: '', city: '', searchTerm: '' }; setFilters(empty); setSearchInput(''); localStorage.setItem('jobFilters', JSON.stringify(empty)) }}
-                  style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: '0' }}
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-
-            <div style={{ position: 'relative', margin: '10px 0 14px' }}>
-              <svg
-                width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: '#52525b', pointerEvents: 'none' }}
-              >
-                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Title or company..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 28px 8px 28px',
-                  borderRadius: '4px',
-                  border: '1px solid rgba(255,255,255,0.14)',
-                  background: '#141414',
-                  color: '#e4e4e7',
-                  fontSize: '12px',
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                }}
-              />
-              {searchInput && (
-                <button
-                  onClick={() => setSearchInput('')}
-                  style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px' }}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-            <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', marginBottom: '4px' }} />
-
-            <p style={sectionLabelStyle}>Category</p>
-            <DropdownSelect
-              value={filters.category}
-              onChange={(v) => handleFilterChange('category', v)}
-              options={[
-                { label: 'All Categories', value: '' },
-                {
-                  label: 'Tech', value: 'Tech', iconColor: '#60a5fa',
-                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
-                },
-                {
-                  label: 'Engineering', value: 'Engineering', iconColor: '#f97316',
-                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
-                },
-                {
-                  label: 'Health', value: 'Health', iconColor: '#f43f5e',
-                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
-                },
-                {
-                  label: 'Business', value: 'Business', iconColor: '#a78bfa',
-                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
-                },
-              ]}
-            />
-
-            <p style={{ ...sectionLabelStyle, color: filters.category ? '#71717a' : '#3f3f46' }}>Sub-category</p>
-            <DropdownSelect
-              value={filters.subCategory}
-              onChange={(v) => handleFilterChange('subCategory', v)}
-              disabled={!filters.category}
-              options={[
-                { label: filters.category ? 'All Sub-categories' : 'Select a category first', value: '' },
-                ...(filters.category ? (JOB_FIELDS[filters.category] ?? []).map(s => ({ label: s, value: s })) : []),
-              ]}
-            />
-
-            <p style={sectionLabelStyle}>Level</p>
-            <DropdownSelect
-              value={filters.level}
-              onChange={(v) => handleFilterChange('level', v)}
-              options={[
-                { label: 'All Levels', value: '' },
-                { label: 'Moderate', value: 'moderate' },
-                { label: 'Advanced', value: 'advanced' },
-              ]}
-            />
-
-            <p style={sectionLabelStyle}>Job Type</p>
-            <DropdownSelect
-              value={filters.jobType}
-              onChange={(v) => handleFilterChange('jobType', v)}
-              options={[
-                { label: 'All Types', value: '' },
-                { label: 'Full Time', value: 'Full Time' },
-                { label: 'Part Time', value: 'Part Time' },
-                { label: 'Internship', value: 'Internship' },
-              ]}
-            />
-
-            <p style={sectionLabelStyle}>City</p>
-            <DropdownSelect
-              value={filters.city}
-              onChange={(v) => handleFilterChange('city', v)}
-              options={[
-                { label: 'All Cities', value: '' },
-                ...michiganCities.map(c => ({ label: c, value: c }))
-              ]}
-            />
-
-            <p style={sectionLabelStyle}>Remote</p>
-            <DropdownSelect
-              value={filters.isRemote}
-              onChange={(v) => handleFilterChange('isRemote', v)}
-              options={[
-                { label: 'All', value: '' },
-                { label: 'Remote Only', value: 'remote' },
-                { label: 'On-site Only', value: 'onsite' },
-              ]}
-            />
-          </div>
-        </div>
+        <FilterPanel
+          filters={filters}
+          searchInput={searchInput}
+          onSearchInputChange={setSearchInput}
+          onFilterChange={handleFilterChange}
+          onClear={handleClearFilters}
+          michiganCities={michiganCities}
+        />
 
       </div>
     </AppShell>

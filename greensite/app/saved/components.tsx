@@ -4,8 +4,6 @@ import { useState, useCallback } from 'react'
 import { updateJobStatus, updateJobNotes } from '@/lib/services/savedJobs'
 import { JobStatus, SavedJob, STATUS_OPTIONS, STATUS_STYLE, formatDate } from './types'
 
-// ── Stat Card ─────────────────────────────────────────────────────────────────
-
 export function StatCard({ label, count, color }: { label: string; count: number; color: string }) {
   return (
     <div style={{
@@ -22,8 +20,6 @@ export function StatCard({ label, count, color }: { label: string; count: number
     </div>
   )
 }
-
-// ── Status Dropdown ───────────────────────────────────────────────────────────
 
 export function StatusDropdown({
   savedJobId,
@@ -72,8 +68,6 @@ export function StatusDropdown({
     </select>
   )
 }
-
-// ── Notes Cell ────────────────────────────────────────────────────────────────
 
 export function NotesCell({ savedJobId, initial }: { savedJobId: number; initial: string | null }) {
   const [value, setValue] = useState(initial ?? '')
@@ -125,8 +119,6 @@ export function NotesCell({ savedJobId, initial }: { savedJobId: number; initial
     />
   )
 }
-
-// ── Jobs Table ────────────────────────────────────────────────────────────────
 
 export function JobsTable({
   jobs,
