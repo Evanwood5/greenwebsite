@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
-import { Mode, SignUpPath, Org, parseMetadataOrgId, panelCardStyle } from '../../lib/types/auth'
+import { Mode, SignUpPath, Org, parseMetadataOrgId, panelCardStyle } from '@/lib/types/auth'
 import { signIn, signUp } from '@/lib/services/auth'
 import { listOrgs } from '@/lib/services/profile'
 import {

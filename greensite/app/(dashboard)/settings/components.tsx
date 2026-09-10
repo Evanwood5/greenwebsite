@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { JOB_FIELDS, Preference, cardStyle, displayLocation } from '../../../lib/types/settings'
+import { JOB_FIELDS, Preference, cardStyle, displayLocation } from '@/lib/types/settings'
 
 function CheckCircleIcon({ color = '#52525b' }: { color?: string }) {
   return (

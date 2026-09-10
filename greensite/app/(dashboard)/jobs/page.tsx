@@ -6,7 +6,7 @@ import AppShell from '@/components/layout/AppShell'
 import JobList from '@/components/jobs/JobList'
 import { getFieldMaps, resolveFieldIds, fetchJobs, countJobsSince } from '@/lib/services/jobs'
 import { getSavedJobIds, toggleJobSaved } from '@/lib/services/savedJobs'
-import { JOBS_PER_PAGE, Job, FilterOptions, EMPTY_FILTERS } from '../../../lib/types/jobs'
+import { JOBS_PER_PAGE, Job, FilterOptions, EMPTY_FILTERS } from '@/lib/types/jobs'
 import { StatCard, FilterPanel, ErrorBanner, LoadMoreButton } from './components'
 
 function loadFiltersFromStorage(): FilterOptions {

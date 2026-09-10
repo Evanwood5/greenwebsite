@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Experience, RESUME_MATCH_BULLETS, SKILLS } from '../../../lib/types/ai-powered'
-import { EXPERIENCES } from '../../../lib/types/ai-powered'
+import { Experience, RESUME_MATCH_BULLETS, SKILLS } from '@/lib/types/ai-powered'
+import { EXPERIENCES } from '@/lib/types/ai-powered'
 
 export function AiHero() {
   return (

@@ -7,7 +7,7 @@ import { fetchFieldSubCategoryMap } from '@/lib/api/jobsApi'
 import { getRecentMatchRows } from '@/lib/services/matches'
 import { fetchJobsByIds } from '@/lib/services/jobs'
 import { countSavedJobs } from '@/lib/services/savedJobs'
-import { MatchedJob, StatCardData, errorMessage, mergeMatchedJobs } from '../../../../lib/types/matches'
+import { MatchedJob, StatCardData, errorMessage, mergeMatchedJobs } from '@/lib/types/matches'
 import {
   ErrorBanner,
   MatchedJobsPanel,

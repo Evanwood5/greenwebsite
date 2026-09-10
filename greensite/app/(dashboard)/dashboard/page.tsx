@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { getAnalytics, getSubcategoryTrends } from '@/lib/services/analytics'
-import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption } from '../../lib/types/dashboard'
+import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption } from '@/lib/types/dashboard'
 import {
   FieldSelector,
   LocationFilter,

@@ -16,7 +16,7 @@ import {
   TrackingFilters,
   EMPTY_FILTERS,
   DropdownOption,
-} from '../../../lib/types/tracking'
+} from '@/lib/types/tracking'
 import { Job } from '@/lib/types/jobs'
 import {
   TrackCompanyCard,

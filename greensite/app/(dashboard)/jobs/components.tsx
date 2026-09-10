@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { JOB_FIELDS } from '@/lib/api/jobsApi'
-import { FilterOptions } from '../../../lib/types/jobs'
+import { FilterOptions } from '@/lib/types/jobs'
 
 function FilterIcon() {
   return (

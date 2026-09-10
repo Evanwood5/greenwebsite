@@ -22,7 +22,7 @@ import {
   errorMessage,
   mergeMatchedJobs,
   toCustomPreference,
-} from '../../../lib/types/custom_jobs'
+} from '@/lib/types/custom_jobs'
 import {
   LoadingGate,
   MatchedJobsPanel,

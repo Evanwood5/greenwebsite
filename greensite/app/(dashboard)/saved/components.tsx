@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { updateJobStatus, updateJobNotes } from '@/lib/services/savedJobs'
-import { JobStatus, SavedJob, STATUS_OPTIONS, STATUS_STYLE, formatDate } from '../../../lib/types/saved'
+import { JobStatus, SavedJob, STATUS_OPTIONS, STATUS_STYLE, formatDate } from '@/lib/types/saved'
 
 export function StatCard({ label, count, color }: { label: string; count: number; color: string }) {
   return (

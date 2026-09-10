@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/layout/AppShell'
 import { getSavedJobs, deleteSavedJob } from '@/lib/services/savedJobs'
-import { SavedJob, JobStatus } from '../../../lib/types/saved'
+import { SavedJob, JobStatus } from '@/lib/types/saved'
 import { StatCard, JobsTable } from './components'
 
 

@@ -1,6 +1,6 @@
 import Navbar from '@/components/layout/Navbar'
 import { BeforeAfterCard, TerminalCard } from '@/components/home/WhyUsVisuals'
-import { FEATURE_SECTIONS, TOOLS } from '../../lib/types/contact'
+import { FEATURE_SECTIONS, TOOLS } from '@/lib/types/contact'
 import { FeatureSection, Hero, MichiganMap, SiteFooter, ToolsSection } from './components'
 
 export default function WhyUsPage() {

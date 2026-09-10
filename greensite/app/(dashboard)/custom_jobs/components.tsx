@@ -11,7 +11,7 @@ import {
   SaveStatus,
   MATCH_EXPIRY_DAYS,
   displayLocation,
-} from '../../../lib/types/custom_jobs'
+} from '@/lib/types/custom_jobs'
 
 function ClockIcon() {
   return (

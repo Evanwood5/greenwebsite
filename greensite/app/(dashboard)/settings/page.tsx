@@ -19,7 +19,7 @@ import {
   sectionHeadingStyle,
   sectionSubStyle,
   getUniversityFromDomain,
-} from '../../../lib/types/settings'
+} from '@/lib/types/settings'
 import {
   PreferenceCard,
   ProfileCard,

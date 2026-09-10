@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { FIELDS } from '@/lib/types/how-it-works'
+import { Field, FieldId } from '@/lib/types/how-it-works'
 
 function CodeIcon() {
   return (

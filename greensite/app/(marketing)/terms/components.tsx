@@ -1,4 +1,4 @@
-import { LegalSection, paragraphsOf } from '../../../lib/types/terms'
+import { LegalSection, paragraphsOf } from '@/lib/types/terms'
 
 export function TermsHeader({ lastUpdated }: { lastUpdated: string }) {
   return (

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Mode, SignUpPath, Org, inputStyle, labelStyle } from '../../lib/types/auth'
+import { Mode, SignUpPath, Org, inputStyle, labelStyle } from '@/lib/types/auth'
 
 const ORG_CHUNK_SIZE = 8
 

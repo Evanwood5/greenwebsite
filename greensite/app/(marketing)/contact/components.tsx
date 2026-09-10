@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { FeatureSectionData, Tool } from '../../lib/types/contact'
+import { FeatureSectionData, Tool } from '@/lib/types/contact'
 
 export function Hero() {
   return (

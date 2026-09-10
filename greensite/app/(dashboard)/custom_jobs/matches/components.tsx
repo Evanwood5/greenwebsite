@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { DarkJobCard } from '@/components/jobs/JobList'
-import { MatchedJob, MATCH_EXPIRY_DAYS, StatCardData } from '../../../../lib/types/matches'
+import { MatchedJob, MATCH_EXPIRY_DAYS, StatCardData } from '@/lib/types/matches'
 
 function FileIcon() {
   return (
