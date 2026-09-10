@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/db/supabase'
-import { Preference, PreferenceId, emptyPref } from '@/app/settings/types'
-import { Org } from '@/app/auth/types'
-import { CustomPreference } from '@/app/custom_jobs/types'
+import { Preference, PreferenceId, emptyPref } from '@/lib/types/settings'
+import { Org } from '@/lib/types/auth'
+import { CustomPreference } from '@/lib/types/custom_jobs'
 
 // All database calls related to user profile, resume uploads, org sync,
 // and saved job preferences.

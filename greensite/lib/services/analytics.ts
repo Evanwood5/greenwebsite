@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/db/supabase'
-import { Field, AnalyticsData, SubcategoryTrendData } from '@/app/dashboard/types'
+import { Field, AnalyticsData, SubcategoryTrendData } from '@/lib/types/dashboard'
 
 // All database calls related to analytics data (trends, counties, subcategories).
 

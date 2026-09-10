@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/db/supabase'
-import { SavedJob, JobStatus } from '@/app/saved/types'
+import { SavedJob, JobStatus } from '@/lib/types/saved'
 
 // All database calls related to the saved_jobs table.
 

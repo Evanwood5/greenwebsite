@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/db/supabase'
-import { IRRELEVANT_FIELD_ID, FilterOptions, Job } from '@/app/jobs/types'
+import { IRRELEVANT_FIELD_ID, FilterOptions, Job } from '@/lib/types/jobs'
 
 // All database calls related to fetching and filtering job postings,
 // resolving field ids, and saved-job membership.

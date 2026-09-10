@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/db/supabase'
 import { fetchJobsByIds } from '@/lib/services/jobs'
-import { TrackedCompany, TrackingFilters } from '@/app/tracking/types'
-import { Job } from '@/app/jobs/types'
+import { TrackedCompany, TrackingFilters } from '@/lib/types/tracking'
+import { Job } from '@/lib/types/jobs'
 
 // All database calls related to company tracking (user_company_preferences)
 // and daily matches (user_company_matches).
