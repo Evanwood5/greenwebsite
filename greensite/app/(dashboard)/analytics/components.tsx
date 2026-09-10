@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { Field, City, Company, CityOption, SubcategoryCount } from '@/lib/types/dashboard'
+import { Field, City, Company, CityOption, SubcategoryCount } from '@/lib/types/analytics'
 
 const FIELDS: { id: Field; label: string; icon: React.ReactNode }[] = [
   {

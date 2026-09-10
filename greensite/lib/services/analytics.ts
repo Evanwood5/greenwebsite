@@ -1,18 +1,7 @@
 import { supabase } from '@/lib/db/supabase'
-import { Field, AnalyticsData, SubcategoryTrendData } from '@/lib/types/dashboard'
+import { Field, AnalyticsData, SubcategoryTrendData, SubcategoryTrendRow, TIMEFRAME_DAYS } from '@/lib/types/analytics'
 
 // All database calls related to analytics data (trends, counties, subcategories).
-
-interface SubcategoryTrendRow {
-  created_at: string
-  job_field_counts: { category: string; subcategory: string } | null
-}
-
-const TIMEFRAME_DAYS: Record<string, number> = {
-  '1month': 30,
-  '6months': 180,
-  '1year': 365,
-}
 
 export async function getAnalytics(field: Field, location: string, timeframe: string): Promise<AnalyticsData> {
   const category = field.charAt(0).toUpperCase() + field.slice(1)

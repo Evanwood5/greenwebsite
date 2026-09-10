@@ -60,7 +60,7 @@ export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from
   if (error) throw error
 
   return {
-    data: (data ?? []) as Job[],
+    data: data ?? [],
     count: count || 0,
     hasMore: count ? (to + 1) < count : false,
   }
@@ -73,7 +73,7 @@ export async function fetchJobsByIds(ids: string[]): Promise<Job[]> {
     .select('*')
     .in('job_id', ids)
   if (error) throw error
-  return (data ?? []) as Job[]
+  return data ?? []
 }
 
 export async function countJobsSince(filters: FilterOptions, fieldIds: number[], date: Date): Promise<number> {

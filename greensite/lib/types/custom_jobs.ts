@@ -1,6 +1,7 @@
 import { Preference, PreferenceId } from '@/lib/types/settings'
 import { Job } from '@/lib/types/jobs'
-import { MatchRow, MATCH_EXPIRY_DAYS } from '@/lib/services/matches'
+import { MatchRow} from '@/lib/services/matches'
+import { MATCH_EXPIRY_DAYS } from '@/lib/types/matches'
 
 export { MATCH_EXPIRY_DAYS }
 

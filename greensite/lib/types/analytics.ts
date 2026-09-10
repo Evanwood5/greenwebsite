@@ -1,10 +1,24 @@
+import { Database } from '@/lib/supabase'
+
 export type Field = 'tech' | 'engineering' | 'business' | 'health'
+
+export type SubcategoryTrendRow = 
+  Pick<Database['public']['Tables']['job_postings_ingest_test']['Row'], 'created_at'> & {
+    job_field_counts: Pick<Database['public']['Tables']['job_field_counts']['Row'], 'category' | 'subcategory'> | null
+  }
 
 export const TIMEFRAMES: { value: string; label: string }[] = [
   { value: '1month', label: 'Past 1 Month' },
   { value: '6months', label: 'Past 6 Months' },
   { value: '1year', label: 'Past 1 Year' },
 ]
+
+export const TIMEFRAME_DAYS: Record<string, number> = {
+  '1month': 30,
+  '6months': 180,
+  '1year': 365,
+}
+
 
 export interface City {
   name: string
