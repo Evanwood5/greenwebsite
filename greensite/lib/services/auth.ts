@@ -1,16 +1,6 @@
 import { supabase } from '@/lib/db/supabase'
+import {AuthUserInfo, AuthSessionInfo} from '@/lib/types/auth'
 
-export interface AuthUserInfo {
-  id: string
-  metadata: {
-    sign_up_path?: string | null
-    org_id?: string | number | null
-  }
-}
-
-export interface AuthSessionInfo {
-  access_token: string
-}
 
 export type AuthResponse =
   | { ok: true; user: AuthUserInfo; session: AuthSessionInfo | null }

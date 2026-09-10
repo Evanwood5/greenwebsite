@@ -8,8 +8,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/db/supabase'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
-  '/custom_jobs/matches': { bg: 'rgba(239,68,68,0.15)',   text: '#ef4444', border: 'rgba(239,68,68,0.35)',   shadow: '#161616' },
-  '/tracking':            { bg: 'rgba(139,92,246,0.18)',  text: '#a78bfa', border: 'rgba(139,92,246,0.45)',  shadow: '#161616' },
+  '/resume':   { bg: 'rgba(239,68,68,0.15)',   text: '#ef4444', border: 'rgba(239,68,68,0.35)',   shadow: '#161616' },
+  '/tracking': { bg: 'rgba(139,92,246,0.18)',  text: '#a78bfa', border: 'rgba(139,92,246,0.45)',  shadow: '#161616' },
 }
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -106,12 +106,12 @@ const HEADER_HEIGHT = 56
 
 const navItems = [
   { label: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
-  { label: 'Analytics', href: '/dashboard', icon: TrendingUpIcon },
+  { label: 'Analytics', href: '/analytics', icon: TrendingUpIcon },
   null,
-  { label: 'Custom Jobs', href: '/custom_jobs/matches', icon: FileTextIcon },
+  { label: 'Resume', href: '/resume', icon: FileTextIcon },
   { label: 'Tracking', href: '/tracking', icon: EyeIcon },
   null,
-  { label: 'Saved Jobs', href: '/saved', icon: BookmarkIcon },
+  { label: 'Saved', href: '/saved', icon: BookmarkIcon },
   { label: 'Settings', href: '/settings', icon: GearIcon },
 ]
 
@@ -127,7 +127,7 @@ export default function AppShell({ children }: AppShellProps) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const profileMenuRef = useRef<HTMLDivElement>(null)
   const [badges, setBadges] = useState<Record<string, number>>({
-    '/custom_jobs/matches': 0,
+    '/resume': 0,
     '/tracking': 0,
   })
 
@@ -140,14 +140,14 @@ export default function AppShell({ children }: AppShellProps) {
       .eq('user_id', user.id)
       .gt('created_at', lastViewed)
       .then(({ count }) => {
-        setBadges(prev => ({ ...prev, '/custom_jobs/matches': count ?? 0 }))
+        setBadges(prev => ({ ...prev, '/resume': count ?? 0 }))
       })
   }, [user?.id])
 
   useEffect(() => {
-    if (pathname === '/custom_jobs/matches') {
+    if (pathname === '/resume') {
       localStorage.setItem('customJobsLastViewed', new Date().toISOString())
-      setBadges(prev => ({ ...prev, '/custom_jobs/matches': 0 }))
+      setBadges(prev => ({ ...prev, '/resume': 0 }))
     } else if (pathname === '/tracking') {
       localStorage.setItem('trackingLastViewed', new Date().toISOString())
       setBadges(prev => ({ ...prev, '/tracking': 0 }))

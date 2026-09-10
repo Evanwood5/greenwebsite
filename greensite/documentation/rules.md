@@ -14,9 +14,12 @@
 
 ## File Organization
 
-Services — one file per domain area (jobs, profile, analytics, saved, etc). Named by what data they manage, not by what app page uses them.
+**Services** — one file per domain area (`jobs`, `profile`, `analytics`, `saved`, etc). Named by what data they manage, not by what app page uses them. Pages and components import from `lib/services/` only — Supabase never appears outside these files.
 
-Types — only create lib/types/<name>.ts when that type is imported by more than one file. Otherwise define it locally where it's used.
+**Types** — all types live in `lib/types/<domain>.ts`, regardless of how many files use them.
+
+- **Database row types**: always derived from `Database['public']['Tables'][...]['Row']` in `lib/supabase.ts`
+- **App-level types** (UI shapes, interfaces, enums, constants): defined in the matching domain types file
 
 ### `lib/services/<name>.ts` contains:
 - All Supabase query functions

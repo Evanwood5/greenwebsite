@@ -2,16 +2,14 @@ import { supabase } from '@/lib/db/supabase'
 import { fetchJobsByIds } from '@/lib/services/jobs'
 import { TrackedCompany, TrackingFilters } from '@/lib/types/tracking'
 import { Job } from '@/lib/types/jobs'
+import { Database } from '@/lib/supabase'
 
 // All database calls related to company tracking (user_company_preferences)
 // and daily matches (user_company_matches).
 
 const MATCH_WINDOW_DAYS = 7
 
-interface MatchRow {
-  job_id: string
-  created_at: string
-}
+type MatchRow = Pick<Database['public']['Tables']['user_company_matches']['Row'], 'job_id' | 'created_at'>
 
 export async function listTrackedCompanies(userId: string): Promise<TrackedCompany[]> {
   const { data, error } = await supabase

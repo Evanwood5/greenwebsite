@@ -217,8 +217,8 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
     if (!q) return orgs
     return orgs.filter(
       (o) =>
-        o.name.toLowerCase().includes(q) ||
-        o.domain.toLowerCase().includes(q),
+        o.name?.toLowerCase().includes(q) ||
+        o.domain?.toLowerCase().includes(q),
     )
   }, [orgs, query])
   const visibleOrgs = filteredOrgs.slice(0, visibleLimit)
