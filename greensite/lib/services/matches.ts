@@ -1,10 +1,7 @@
-import { Database } from '@/lib/supabase'
 import { supabase } from '@/lib/db/supabase'
-import { MATCH_EXPIRY_DAYS } from '@/lib/types/matches'
+import { MATCH_EXPIRY_DAYS, MatchRow } from '@/lib/types/matches'
 // All database calls related to the user_job_matches table (resume-based
 // matches for custom jobs). Matches expire after MATCH_EXPIRY_DAYS.
-
-export type MatchRow = Pick<Database['public']['Tables']['user_job_matches']['Row'], 'job_id' | 'created_at'>
 
 export async function getRecentMatchRows(userId: string): Promise<MatchRow[]> {
   const cutoff = new Date()

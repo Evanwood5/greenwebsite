@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/layout/AppShell'
 import { getProfile } from '@/lib/services/profile'
-import { sectionHeadingStyle, sectionSubStyle, getUniversityFromDomain } from '@/lib/types/settings'
+import { sectionHeadingStyle, sectionSubStyle, getUniversityFromDomain } from '@/lib/utils/settings'
 import { ProfileCard, NotificationsCard } from './components'
 
 export default function SettingsPage() {

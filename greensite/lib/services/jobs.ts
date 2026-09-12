@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/db/supabase'
-import { IRRELEVANT_FIELD_ID, FilterOptions, Job } from '@/lib/types/jobs'
+import { IRRELEVANT_FIELD_ID, FilterOptions, Job, JobPage } from '@/lib/types/jobs'
 
 // All database calls related to fetching and filtering job postings,
 // resolving field ids, and saved-job membership.
@@ -27,12 +27,6 @@ export async function resolveFieldIds(category: string, subCategory: string): Pr
   if (subCategory) query = query.eq('subcategory', subCategory)
   const { data } = await query
   return data?.map(r => r.id) ?? []
-}
-
-export interface JobPage {
-  data: Job[]
-  count: number
-  hasMore: boolean
 }
 
 export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from: number, to: number): Promise<JobPage> {

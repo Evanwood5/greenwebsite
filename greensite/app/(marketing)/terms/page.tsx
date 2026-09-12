@@ -1,5 +1,5 @@
 import Navbar from '@/components/layout/Navbar'
-import { LAST_UPDATED, SECTIONS } from '@/lib/types/terms'
+import { LAST_UPDATED, SECTIONS } from '@/lib/utils/terms'
 import { TermsHeader, TermsSection } from './components'
 
 export default function TermsPage() {

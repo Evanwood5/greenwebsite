@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { JOB_FIELDS, Preference, displayLocation } from '@/lib/types/settings'
+import {Preference} from '@/lib/types/settings'
+import { JOB_FIELDS, displayLocation } from '@/lib/utils/settings'
 import { MatchedJob } from '@/lib/types/matches'
 import { DarkJobCard } from '@/components/jobs/JobList'
 

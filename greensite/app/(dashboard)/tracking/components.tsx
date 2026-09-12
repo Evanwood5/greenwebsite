@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { DropdownOption, TrackingFilters, sectionLabel, filterSummary } from '@/lib/types/tracking'
+import { DropdownOption, TrackingFilters } from '@/lib/types/tracking'
+import {sectionLabel, filterSummary} from '@/lib/utils/tracking'
 import { TrackedCompany } from '@/lib/types/tracking'
 import { Job } from '@/lib/types/jobs'
 import { DarkJobCard } from '@/components/jobs/JobList'

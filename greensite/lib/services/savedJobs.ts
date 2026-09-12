@@ -1,13 +1,7 @@
 import { supabase } from '@/lib/db/supabase'
 import { SavedJob, JobStatus } from '@/lib/types/saved'
-import { Database } from '@/lib/supabase'
-
+import{SavedJobRow} from '@/lib/types/saved'
 // All database calls related to the saved_jobs table.
-
-type JobRow = Database['public']['Tables']['job_postings_ingest_test']['Row']
-type SavedJobRow = Database['public']['Tables']['saved_jobs']['Row'] & {
-  job_postings_ingest_test: Pick<JobRow, 'job_id' | 'company_name' | 'job_title' | 'job_href' | 'job_type' | 'city' | 'state' | 'is_remote'> | null
-}
 
 export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
   const { data, error } = await supabase

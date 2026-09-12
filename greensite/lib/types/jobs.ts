@@ -27,3 +27,9 @@ export const EMPTY_FILTERS: FilterOptions = {
   city: '',
   searchTerm: '',
 }
+
+export interface JobPage {
+  data: Job[]
+  count: number
+  hasMore: boolean
+}

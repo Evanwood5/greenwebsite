@@ -1,33 +1,8 @@
-import { Preference, PreferenceId } from '@/lib/types/settings'
+import { Preference } from '@/lib/types/settings'
 import { Job } from '@/lib/types/jobs'
-import { MatchRow} from '@/lib/services/matches'
-import { MATCH_EXPIRY_DAYS } from '@/lib/types/matches'
+import { MatchRow } from '@/lib/types/matches'
+import { CustomPreference, ExperienceLevel, MatchedJob } from '@/lib/types/resume'
 
-export { MATCH_EXPIRY_DAYS }
-
-export type ExperienceLevel = 'moderate' | 'advanced' | 'any'
-export type View = 'main' | 'preference1' | 'preference2'
-
-export interface CustomPreference {
-  jobTypes: string[]
-  experienceLevel: ExperienceLevel
-  location: string
-  includeRemote: boolean
-}
-
-export const EMPTY_PREFERENCE: CustomPreference = {
-  jobTypes: [],
-  experienceLevel: 'any',
-  location: '',
-  includeRemote: true,
-}
-
-export interface SaveStatus {
-  type: 'success' | 'error'
-  message: string
-}
-
-export type MatchedJob = Job & { matched_at: string }
 
 export function toCustomPreference(pref: Preference): CustomPreference {
   const experienceLevel: ExperienceLevel =
@@ -66,5 +41,3 @@ export function errorMessage(err: unknown): string {
   if (typeof err === 'string') return err
   return 'An unexpected error occurred'
 }
-
-export type { MatchRow, PreferenceId }
