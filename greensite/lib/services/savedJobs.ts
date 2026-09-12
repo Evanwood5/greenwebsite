@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/db/supabase'
-import { SavedJob, JobStatus } from '@/app/saved/types'
-
-// ── Saved Jobs Service ────────────────────────────────────────────────────────
+import { SavedJob, JobStatus } from '@/lib/types/saved'
+import{SavedJobRow} from '@/lib/types/saved'
 // All database calls related to the saved_jobs table.
 
 export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
@@ -10,11 +9,12 @@ export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
     .select('id, saved_at, status, notes, job_id, job_postings_ingest_test(*)')
     .eq('user_id', userId)
     .order('saved_at', { ascending: false })
+    .returns<SavedJobRow[]>()
 
   if (error) throw error
 
   return (data ?? [])
-    .map((row: any) => {
+    .map((row) => {
       const job = row.job_postings_ingest_test
       if (!job) return null
       return {
@@ -57,4 +57,32 @@ export async function deleteSavedJob(savedJobId: number): Promise<void> {
     .delete()
     .eq('id', savedJobId)
   if (error) throw error
+}
+
+export async function countSavedJobs(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('saved_jobs')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+  if (error) throw error
+  return count || 0
+}
+
+export async function getSavedJobIds(userId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('saved_jobs')
+    .select('job_id')
+    .eq('user_id', userId)
+  if (error) throw error
+  return data?.map(r => r.job_id) ?? []
+}
+
+export async function toggleJobSaved(userId: string, jobId: string, willBeSaved: boolean): Promise<void> {
+  if (willBeSaved) {
+    const { error } = await supabase.from('saved_jobs').insert({ user_id: userId, job_id: jobId })
+    if (error) throw error
+  } else {
+    const { error } = await supabase.from('saved_jobs').delete().eq('user_id', userId).eq('job_id', jobId)
+    if (error) throw error
+  }
 }
