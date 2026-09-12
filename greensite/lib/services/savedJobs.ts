@@ -1,25 +1,7 @@
 import { supabase } from '@/lib/db/supabase'
-import { SavedJob, JobStatus } from '@/app/saved/types'
-
+import { SavedJob, JobStatus } from '@/lib/types/saved'
+import{SavedJobRow} from '@/lib/types/saved'
 // All database calls related to the saved_jobs table.
-
-interface SavedJobRow {
-  id: number
-  job_id: string
-  saved_at: string
-  status: string | null
-  notes: string | null
-  job_postings_ingest_test: {
-    job_id: string
-    company_name: string | null
-    job_title: string | null
-    job_href: string | null
-    job_type: string | null
-    city: string | null
-    state: string | null
-    is_remote: boolean | null
-  } | null
-}
 
 export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
   const { data, error } = await supabase

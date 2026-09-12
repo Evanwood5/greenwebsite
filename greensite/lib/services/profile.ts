@@ -1,34 +1,11 @@
 import { supabase } from '@/lib/db/supabase'
-import { Preference, PreferenceId, emptyPref } from '@/app/settings/types'
-import { Org } from '@/app/auth/types'
-import { CustomPreference } from '@/app/custom_jobs/types'
+import { Preference, PreferenceId, emptyPref } from '@/lib/types/settings'
+import { Org } from '@/lib/types/auth'
+import { CustomPreference } from '@/lib/types/resume'
+import { ProfileRow, OrgRow, PreferenceRow, ProfileInfo } from '@/lib/types/profile'
 
 // All database calls related to user profile, resume uploads, org sync,
 // and saved job preferences.
-
-interface ProfileRow {
-  resume: string | null
-  org_id: string | null
-}
-
-interface OrgRow {
-  domain: string | null
-}
-
-interface PreferenceRow {
-  preference_id: number
-  job_types: string[]
-  locations: string[]
-  experience_level: string | null
-  include_remote: boolean
-  job_categories: string[]
-  job_subcategories: string[]
-}
-
-export interface ProfileInfo {
-  resumeUploaded: boolean
-  orgDomain: string | null | undefined
-}
 
 export async function getProfile(userId: string): Promise<ProfileInfo> {
   const { data } = await supabase
