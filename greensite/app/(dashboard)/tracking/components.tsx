@@ -539,7 +539,7 @@ export function TrackCompanyCard({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
         <p style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, letterSpacing: '-0.01em', margin: 0 }}>Track a company</p>
         <Link
-          href="/dashboard"
+          href="/analytics"
           style={{
             display: 'flex', alignItems: 'center', gap: '4px',
             color: '#a78bfa', fontSize: '11px', fontWeight: 600,
