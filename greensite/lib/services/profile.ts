@@ -22,7 +22,7 @@ export async function getProfile(userId: string): Promise<ProfileInfo> {
       .select('domain')
       .eq('id', data.org_id)
       .single<OrgRow>()
-    return { resumeUploaded, orgDomain: orgData?.domain ?? null }
+    return { resumeUploaded, orgDomain: orgData?.email_domain ?? null }
   }
 
   return { resumeUploaded, orgDomain: null }
