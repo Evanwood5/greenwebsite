@@ -218,8 +218,8 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
     if (!q) return orgs
     return orgs.filter(
       (o) =>
-        o.name?.toLowerCase().includes(q) ||
-        o.domain?.toLowerCase().includes(q),
+        o.org_name?.toLowerCase().includes(q) ||
+        o.email_domain?.toLowerCase().includes(q),
     )
   }, [orgs, query])
   const visibleOrgs = filteredOrgs.slice(0, visibleLimit)
@@ -291,10 +291,10 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
             {selectedOrg ? (
               <>
                 <span style={{ color: '#1a2e1a', fontSize: '14px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {selectedOrg.name}
+                  {selectedOrg.org_name}
                 </span>
                 <span style={{ color: '#4a5e4a', fontSize: '12px' }}>
-                  @{selectedOrg.domain}
+                  @{selectedOrg.email_domain}
                 </span>
               </>
             ) : (
@@ -396,10 +396,10 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                   >
                     <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                       <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {o.name}
+                        {o.org_name}
                       </span>
                       <span style={{ color: '#4a5e4a', fontSize: '12px' }}>
-                        @{o.domain}
+                        @{o.email_domain}
                       </span>
                     </span>
                     {active && <CheckIcon />}
@@ -417,8 +417,8 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
       </div>
       {selectedOrg && (
         <p style={{ color: '#4a5e4a', fontSize: '12px', marginTop: '6px' }}>
-          Your email must end with @{selectedOrg.domain}
-        </p>
+          Your email must end with @{selectedOrg.email_domain}  
+        </p>  
       )}
     </div>
   )

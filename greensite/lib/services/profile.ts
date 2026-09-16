@@ -47,8 +47,8 @@ export async function getResumeStatus(
 export async function listOrgs(): Promise<Org[]> {
   const { data, error } = await supabase
     .from('orgs')
-    .select('id, name, domain')
-    .order('name', { ascending: true })
+    .select('id, org_name, email_domain')
+    .order('org_name', { ascending: true })
   if (error) throw error
   return (data ?? []) as Org[]
 }

@@ -169,15 +169,15 @@ export default function AuthPage() {
         }
 
         const emailDomain = email.split('@')[1]?.toLowerCase().trim()
-        const orgDomain = selectedOrg.domain.toLowerCase().trim()
+        const orgDomain = selectedOrg.email_domain.toLowerCase().trim()
         if (!emailDomain || emailDomain !== orgDomain) {
           setMessageType('error')
-          setMessage(`Email must end with @${orgDomain} to join ${selectedOrg.name}.`)
+          setMessage(`Email must end with @${orgDomain} to join ${selectedOrg.org_name}.`)
           return
         }
 
         signUpMetadata.org_id = selectedOrg.id
-        signUpMetadata.org_name = selectedOrg.name
+        signUpMetadata.org_name = selectedOrg.org_name
       } else {
         signUpMetadata.org_id = null
         signUpMetadata.org_name = null
@@ -212,7 +212,7 @@ export default function AuthPage() {
   const emailPlaceholder = isSignUp
     ? signUpPath === 'school'
       ? selectedOrg
-        ? `you@${selectedOrg.domain}`
+        ? `you@${selectedOrg.org_name}`
         : 'student@university.edu'
       : 'you@example.com'
     : 'you@example.com'
