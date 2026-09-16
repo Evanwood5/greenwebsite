@@ -16,4 +16,4 @@ export interface AuthSessionInfo {
   access_token: string
 }
 
-export type Org = Pick<Database['public']['Tables']['orgs']['Row'], 'id' | 'name' | 'domain'>
+export type Org = Pick<Database['public']['Tables']['orgs']['Row'], 'id' | 'org_name' | 'email_domain'>
