@@ -69,7 +69,6 @@ export interface Job {
     job_href: string | null
     job_type: string | null
     city: string | null
-    state: string | null
     is_remote: boolean | null
     job_field_id: number | null
 }

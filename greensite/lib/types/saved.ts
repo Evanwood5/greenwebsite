@@ -4,7 +4,7 @@ import { Database } from '@/lib/supabase'
 
 type JobRow = Database['public']['Tables']['job_postings_ingest_test']['Row']
 export type SavedJobRow = Database['public']['Tables']['saved_jobs']['Row'] & {
-  job_postings_ingest_test: Pick<JobRow, 'job_id' | 'company_name' | 'job_title' | 'job_href' | 'job_type' | 'city' | 'state' | 'is_remote'> | null
+  job_postings_ingest_test: Pick<JobRow, 'job_id' | 'company_name' | 'job_title' | 'job_href' | 'job_type' | 'city' | 'is_remote'> | null
 }
 
 export interface SavedJob {
