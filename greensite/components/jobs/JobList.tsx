@@ -12,7 +12,6 @@ interface Job {
   job_href: string | null
   job_type: string | null
   city: string | null
-  state: string | null
   is_remote: boolean | null
   experience_level?: string | null
   job_field_id?: number | null
@@ -172,7 +171,7 @@ export function DarkJobCard({
     setSaving(false)
   }
 
-  const location = [job.city, job.state].filter(Boolean).join(', ') || (job.is_remote ? 'Remote' : 'Not listed')
+  const location = job.city || (job.is_remote ? 'Remote' : 'Not listed')
   const cat = inferCategory(job.job_title)
   const meta = CATEGORY_META[cat] ?? CATEGORY_META.other
   const subCategory = job.job_field_id != null ? fieldSubCategoryMap?.[job.job_field_id] : undefined
@@ -389,7 +388,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
     setSaved(next)
     onSaveToggle?.(job.job_id, next)
   }
-  const location = job.is_remote ? 'Remote' : [job.city, job.state].filter(Boolean).join(', ') || '—'
+  const location = job.is_remote ? 'Remote' : job.city || '—'
 
   const cellStyle: React.CSSProperties = {
     padding: '10px 10px',

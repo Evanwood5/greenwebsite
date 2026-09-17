@@ -28,7 +28,6 @@ export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
         job_href:     job.job_href,
         job_type:     job.job_type,
         city:         job.city,
-        state:        job.state,
         is_remote:    job.is_remote,
       }
     })
