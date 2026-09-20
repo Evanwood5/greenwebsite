@@ -104,15 +104,28 @@ function ChevronDownIcon({ size = 14 }: { size?: number }) {
 
 const HEADER_HEIGHT = 56
 
-const navItems = [
-  { label: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
-  { label: 'Analytics', href: '/analytics', icon: TrendingUpIcon },
-  null,
-  { label: 'Resume', href: '/resume', icon: FileTextIcon },
-  { label: 'Tracking', href: '/tracking', icon: EyeIcon },
-  null,
-  { label: 'Saved', href: '/saved', icon: BookmarkIcon },
-  { label: 'Settings', href: '/settings', icon: GearIcon },
+const navSections = [
+  {
+    header: 'Main',
+    items: [
+      { label: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
+      { label: 'Analytics', href: '/analytics', icon: TrendingUpIcon },
+    ],
+  },
+  {
+    header: 'Custom',
+    items: [
+      { label: 'Resume', href: '/resume', icon: FileTextIcon },
+      { label: 'Tracking', href: '/tracking', icon: EyeIcon },
+      { label: 'Saved', href: '/saved', icon: BookmarkIcon },
+    ],
+  },
+  {
+    header: 'Settings',
+    items: [
+      { label: 'Settings', href: '/settings', icon: GearIcon },
+    ],
+  },
 ]
 
 interface AppShellProps {
@@ -376,11 +389,21 @@ export default function AppShell({ children }: AppShellProps) {
         }}>
 
           <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', minHeight: 0 }}>
-            {navItems.map((item, idx) => {
-              if (item === null) {
-                return <div key={idx} style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '6px 8px' }} />
-              }
-
+            {navSections.map((section, sIdx) => (
+              <div key={section.header} style={{ marginBottom: sIdx < navSections.length - 1 ? '8px' : 0 }}>
+                {!collapsed && (
+                  <div style={{
+                    color: '#52525b',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'capitalize',
+                    padding: '6px 12px 4px',
+                  }}>
+                    {section.header}
+                  </div>
+                )}
+                {section.items.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               const badgeCount = badges[item.href] ?? 0
@@ -394,7 +417,7 @@ export default function AppShell({ children }: AppShellProps) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '12px',
-                    padding: '10px 12px',
+                    padding: '8px 12px',
                     borderRadius: '4px',
                     marginBottom: '2px',
                     background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
@@ -476,7 +499,9 @@ export default function AppShell({ children }: AppShellProps) {
                   )}
                 </Link>
               )
-            })}
+                })}
+              </div>
+            ))}
           </nav>
 
           <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
