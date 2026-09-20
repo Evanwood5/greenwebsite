@@ -78,18 +78,7 @@ export function DecorativeBackground() {
           }}
         />
       </div>
-      <div
-        className="absolute left-14 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3"
-        aria-hidden
-      >
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="w-1.5 h-1.5 rounded-full"
-            style={{ background: '#1e3a1e', opacity: i === 2 ? 0.85 : 0.28 }}
-          />
-        ))}
-      </div>
+
     </>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import FadeIn from "@/components/ui/FadeIn";
+import FadeIn from "@/components/ui/FadeIn"
 
 interface HeroSectionProps {
   user?: any;
@@ -11,26 +11,19 @@ export default function HeroSection({ user }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden" style={{ background: '#f0ece4', minHeight: '780px' }}>
 
-      {/* Left vertical dots */}
-      <div className="absolute left-14 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-10 hidden lg:flex">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="w-1.5 h-1.5 rounded-full"
-            style={{ background: '#1e3a1e', opacity: i === 2 ? 0.8 : 0.25 }}
-          />
-        ))}
-      </div>
+
+
 
 
 
       {/* Floating job cards — right side */}
       <style>{`
+        @keyframes pulseGreen { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @keyframes float0 { 0%,100%{transform:translateY(0px) rotate(-1deg)} 50%{transform:translateY(-14px) rotate(-1deg)} }
         @keyframes float1 { 0%,100%{transform:translateY(0px) rotate(1.5deg)} 50%{transform:translateY(-10px) rotate(1.5deg)} }
         @keyframes float2 { 0%,100%{transform:translateY(0px) rotate(-0.5deg)} 50%{transform:translateY(-18px) rotate(-0.5deg)} }
-        @keyframes pulseGreen { 0%,100%{opacity:1} 50%{opacity:0.5} }
       `}</style>
+
 
       <div className="absolute right-0 top-0 bottom-0 w-[42%] hidden lg:flex items-center justify-start overflow-hidden" style={{ pointerEvents: 'none', paddingLeft: '0px' }}>
         <div style={{ position: 'relative', width: 360, height: 480 }}>
