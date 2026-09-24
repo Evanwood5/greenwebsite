@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { JOB_FIELDS } from '@/lib/api/jobsApi'
+import { JOB_FIELDS } from '@/lib/utils/settings'
 import { FilterOptions } from '@/lib/types/jobs'
 
 function FilterIcon() {

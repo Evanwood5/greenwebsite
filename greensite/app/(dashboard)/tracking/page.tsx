@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
-import { JOB_FIELDS } from '@/lib/api/jobsApi'
+import { JOB_FIELDS } from '@/lib/utils/settings'
 import {
   listTrackedCompanies,
   createTrackedCompany,
