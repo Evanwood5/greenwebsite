@@ -36,6 +36,7 @@ export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from
     .order('created_at', { ascending: false })
     .eq('is_relevant', true)
     .neq('job_field_id', IRRELEVANT_FIELD_ID)
+    .eq('is_initial_load', false)
 
   if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
   if (filters.category) {
@@ -77,6 +78,7 @@ export async function countJobsSince(filters: FilterOptions, fieldIds: number[],
     .eq('is_relevant', true)
     .neq('job_field_id', IRRELEVANT_FIELD_ID)
     .gte('created_at', date.toISOString())
+    .eq('is_initial_load', false)
 
   if (filters.searchTerm) query = query.or(`job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`)
   if (filters.category) {
