@@ -496,7 +496,7 @@ function Modal({ open, onClose, title, children }: {
         aria-label={title}
         style={{
           background: '#1e1e1e',
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.14)',
           borderRadius: 4,
           width: '100%',
           maxWidth: 560,
@@ -504,7 +504,7 @@ function Modal({ open, onClose, title, children }: {
           display: 'flex',
           flexDirection: 'column',
           color: '#e4e4e7',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08)',
         }}
       >
         <div
@@ -514,7 +514,7 @@ function Modal({ open, onClose, title, children }: {
             justifyContent: 'space-between',
             gap: 16,
             padding: 16,
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid rgba(255,255,255,0.09)',
             flexShrink: 0,
           }}
         >
@@ -715,7 +715,7 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
             <div style={{
               width: 100,
               fontSize: 12,
-              color: "#52525b",
+              color: "#e4e4e7",
               textAlign: "right",
             }}>
               {displayName}
