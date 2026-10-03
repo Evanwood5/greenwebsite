@@ -14,7 +14,7 @@ export interface FilterOptions {
   level: string
   jobType: string
   isRemote: string
-  city: string
+  location: string
   searchTerm: string
 }
 
@@ -24,7 +24,7 @@ export const EMPTY_FILTERS: FilterOptions = {
   level: '',
   jobType: '',
   isRemote: '',
-  city: '',
+  location: '',
   searchTerm: '',
 }
 

@@ -27,7 +27,7 @@ export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
         job_title:    job.job_title,
         job_href:     job.job_href,
         job_type:     job.job_type,
-        city:         job.city,
+        locations:    Array.isArray(job.locations) ? job.locations as string[] : [],
         is_remote:    job.is_remote,
       }
     })

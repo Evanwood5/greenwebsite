@@ -170,7 +170,7 @@ export function JobsTable({
               {job.job_title ?? 'Untitled'}
             </a>
             <span style={{ color: '#52525b', fontSize: '11px' }}>
-              {[job.company_name, job.city ? `${job.city}, ${job.state ?? ''}` : null, job.is_remote ? 'Remote' : null].filter(Boolean).join(' · ')}
+              {[job.company_name, job.locations?.length ? job.locations.join(', ') : null, job.is_remote ? 'Remote' : null].filter(Boolean).join(' · ')}
             </span>
           </div>
 

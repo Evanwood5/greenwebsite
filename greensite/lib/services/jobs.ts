@@ -45,7 +45,7 @@ export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from
   }
   if (filters.level) query = query.eq('experience_level', filters.level)
   if (filters.jobType) query = query.eq('job_type', filters.jobType)
-  if (filters.city) query = query.eq('city', filters.city)
+  if (filters.location) query = query.contains('locations', JSON.stringify([filters.location]))
   if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
   else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
@@ -87,7 +87,7 @@ export async function countJobsSince(filters: FilterOptions, fieldIds: number[],
   }
   if (filters.level) query = query.eq('experience_level', filters.level)
   if (filters.jobType) query = query.eq('job_type', filters.jobType)
-  if (filters.city) query = query.eq('city', filters.city)
+  if (filters.location) query = query.contains('locations', JSON.stringify([filters.location]))
   if (filters.isRemote === 'remote') query = query.eq('is_remote', true)
   else if (filters.isRemote === 'onsite') query = query.eq('is_remote', false)
 
