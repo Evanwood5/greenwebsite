@@ -23,7 +23,7 @@ export async function getAnalytics(field: Field, location: string, timeframe: st
     .gte('created_at', cutoffDate.toISOString())
 
   if (location) {
-    query = query.eq('city', location)
+    query = query.contains('locations', JSON.stringify([location]))
   }
 
   const { data: jobs, error } = await query
@@ -56,8 +56,12 @@ export async function getAnalytics(field: Field, location: string, timeframe: st
   }, {})
 
   const cityCounts = jobs?.reduce((acc: Record<string, number>, job) => {
-    const city = job.city || 'Unknown'
-    acc[city] = (acc[city] || 0) + 1
+    const locs: string[] = Array.isArray(job.locations) ? job.locations as string[] : []
+    if (locs.length === 0) {
+      acc['Unknown'] = (acc['Unknown'] || 0) + 1
+    } else {
+      locs.forEach(city => { acc[city] = (acc[city] || 0) + 1 })
+    }
     return acc
   }, {})
 
@@ -156,7 +160,7 @@ export async function getSubcategoryTrends(
     .gte('created_at', cutoffDate.toISOString())
 
   if (location) {
-    query = query.eq('city', location)
+    query = query.contains('locations', JSON.stringify([location]))
   }
 
   const { data, error } = await query

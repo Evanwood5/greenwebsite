@@ -157,7 +157,7 @@ export function FilterPanel({
   onClear: () => void
   michiganCities: string[]
 }) {
-  const activeFilterCount = [filters.category, filters.subCategory, filters.level, filters.jobType, filters.isRemote, filters.city, filters.searchTerm].filter(Boolean).length
+  const activeFilterCount = [filters.category, filters.subCategory, filters.level, filters.jobType, filters.isRemote, filters.location, filters.searchTerm].filter(Boolean).length
 
   return (
     <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
@@ -274,8 +274,8 @@ export function FilterPanel({
 
         <p style={sectionLabelStyle}>City</p>
         <DropdownSelect
-          value={filters.city}
-          onChange={(v) => onFilterChange('city', v)}
+          value={filters.location}
+          onChange={(v) => onFilterChange("location", v)}
           options={[
             { label: 'All Cities', value: '' },
             ...michiganCities.map(c => ({ label: c, value: c }))
