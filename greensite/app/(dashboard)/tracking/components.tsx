@@ -590,8 +590,8 @@ export function TrackCompanyCard({
             <div style={{ gridColumn: '1 / -1' }}>
               <p style={sectionLabel}>City</p>
               <CityMultiSelect
-                value={filters.city}
-                onChange={v => onFilterChange({ city: v })}
+                value={filters.location ? [filters.location] : []}
+                onChange={v => onFilterChange({ location: v[v.length - 1] ?? '' })}
                 options={cityOptions}
               />
             </div>
