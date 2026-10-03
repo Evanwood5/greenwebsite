@@ -2,20 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/db/supabase'
+import { Job } from '@/lib/types/jobs'
 import { useAuth } from '@/contexts/AuthContext'
-
-interface Job {
-  job_id: string
-  created_at: string
-  company_name: string | null
-  job_title: string | null
-  job_href: string | null
-  job_type: string | null
-  city: string | null
-  is_remote: boolean | null
-  experience_level?: string | null
-  job_field_id?: number | null
-}
 
 interface JobListProps {
   jobs: Job[]
@@ -171,7 +159,8 @@ export function DarkJobCard({
     setSaving(false)
   }
 
-  const location = job.city || (job.is_remote ? 'Remote' : 'Not listed')
+  const locs = Array.isArray(job.locations) ? job.locations as string[] : []
+  const location = locs.length ? locs.join(', ') : (job.is_remote ? 'Remote' : 'Not listed')
   const cat = inferCategory(job.job_title)
   const meta = CATEGORY_META[cat] ?? CATEGORY_META.other
   const subCategory = job.job_field_id != null ? fieldSubCategoryMap?.[job.job_field_id] : undefined
@@ -388,7 +377,8 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
     setSaved(next)
     onSaveToggle?.(job.job_id, next)
   }
-  const location = job.is_remote ? 'Remote' : job.city || '—'
+  const locs2 = Array.isArray(job.locations) ? job.locations as string[] : []
+  const location = job.is_remote ? 'Remote' : locs2.join(', ') || '—'
 
   const cellStyle: React.CSSProperties = {
     padding: '10px 10px',
