@@ -643,35 +643,29 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
         <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
           {title}
         </p>
-      </div>
-
-      {renderRows(visibleData)}
-
-      {canExpand && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 12 }}>
+        {canExpand && (
           <button
             onClick={() => setModalOpen(true)}
             style={{
-              width: "100%",
-              background: "transparent",
+              background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: 4,
               color: "#a1a1aa",
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 600,
               cursor: "pointer",
-              padding: "9px 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 6,
+              padding: "4px 10px",
+              transition: "background 150ms",
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
           >
-            <span style={{ fontSize: 11 }}>▾</span>
             View More
           </button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {renderRows(visibleData)}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={title}>
         {renderRows(fullList)}
@@ -773,34 +767,29 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
         <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
           {title}
         </p>
+        {canExpand && (
+          <button
+            onClick={() => setModalOpen(true)}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 4,
+              color: "#a1a1aa",
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: "pointer",
+              padding: "4px 10px",
+              transition: "background 150ms",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+          >
+            View More
+          </button>
+        )}
       </div>
 
       {renderRows(visibleData)}
-
-      {canExpand && (
-        <button
-          onClick={() => setModalOpen(true)}
-          style={{
-            width: "100%",
-            marginTop: 12,
-            background: "transparent",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: 4,
-            color: "#a1a1aa",
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-            padding: "9px 0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 6,
-          }}
-        >
-          <span style={{ fontSize: 11 }}>▾</span>
-          View More
-        </button>
-      )}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={title}>
         {renderRows(fullList)}
