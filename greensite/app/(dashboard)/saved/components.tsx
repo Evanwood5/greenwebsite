@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { updateJobStatus, updateJobNotes } from '@/lib/services/savedJobs'
 import { JobStatus, SavedJob, STATUS_OPTIONS, STATUS_STYLE, formatDate } from '@/lib/types/saved'
+import LinkedInButton from '@/components/ui/LinkedInButton'
 
 export function StatCard({ label, count, color }: { label: string; count: number; color: string }) {
   return (
@@ -187,15 +188,7 @@ export function JobsTable({
 
           {/* Actions */}
           <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', paddingTop: '2px' }}>
-            <a
-              href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent((job.job_title ?? '') + ' ' + (job.company_name ?? ''))}`}
-              target="_blank"
-              rel="noreferrer"
-              title="Search on LinkedIn"
-              style={{ color: '#60a5fa', fontSize: '11px', fontWeight: 600, textDecoration: 'none', padding: '4px 7px', border: '1px solid rgba(96,165,250,0.25)', borderRadius: '4px', background: 'rgba(96,165,250,0.06)' }}
-            >
-              in
-            </a>
+            <LinkedInButton companyName={job.company_name} />
             <button
               onClick={() => onDelete(job.saved_job_id)}
               title="Remove"

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Field, City, Company, CityOption, SubcategoryCount } from '@/lib/types/analytics'
 
@@ -417,16 +418,211 @@ function formatCompanyName(name: string): string {
     .join(' ');
 }
 
+function Modal({ open, onClose, title, children }: {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
+
+    const main = document.querySelector('main');
+    const previousOverflow = main ? main.style.overflowY : null;
+    if (main) main.style.overflowY = 'hidden';
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab' || !boxRef.current) return;
+
+      const focusable = boxRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      if (main && previousOverflow !== null) main.style.overflowY = previousOverflow;
+      previouslyFocused.current?.focus?.();
+    };
+  }, [open, onClose]);
+
+  if (!open || typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div
+      ref={backdropRef}
+      onClick={(e) => {
+        if (e.target === backdropRef.current) onClose();
+      }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.6)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        zIndex: 1000,
+      }}
+    >
+      <div
+        ref={boxRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        style={{
+          background: '#1e1e1e',
+          border: '1px solid rgba(255,255,255,0.14)',
+          borderRadius: 4,
+          width: '100%',
+          maxWidth: 560,
+          maxHeight: '70vh',
+          display: 'flex',
+          flexDirection: 'column',
+          color: '#e4e4e7',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+            padding: 16,
+            borderBottom: '1px solid rgba(255,255,255,0.09)',
+            flexShrink: 0,
+          }}
+        >
+          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52525b' }}>
+            {title}
+          </p>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#a1a1aa',
+              fontSize: 20,
+              lineHeight: 1,
+              cursor: 'pointer',
+              padding: 0,
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#e4e4e7')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#a1a1aa')}
+          >
+            ×
+          </button>
+        </div>
+
+        <div style={{ flex: 1, minHeight: 0, padding: 16, overflowY: 'auto' }}>
+          {children}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export function TopHiringCompaniesList({ data, title }: { data: Company[]; title: string }) {
   const fullList = data;
   const initialCount = 5;
   const canExpand = fullList.length > initialCount;
 
-  const [showCount, setShowCount] = useState(initialCount);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const atFullList = showCount >= fullList.length;
-  const visibleData = fullList.slice(0, showCount);
+  const visibleData = fullList.slice(0, initialCount);
   const totalJobs = visibleData.reduce((sum, company) => sum + company.jobCount, 0);
+
+  const renderRows = (rows: Company[]) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      {rows.map((company, index) => {
+        const percentage = ((company.jobCount / totalJobs) * 100).toFixed(0);
+        const displayName = formatCompanyName(company.company);
+        const showDivider = index < rows.length - 1;
+
+        return (
+          <div
+            key={company.company}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "7px 0",
+              borderBottom: showDivider ? "1px solid rgba(255,255,255,0.05)" : "none",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  background: "rgba(255,255,255,0.07)",
+                  borderRadius: 4,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: "white",
+                }}
+              >
+                {displayName.substring(0, 2).toUpperCase()}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 500 }}>
+                  {displayName}
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}>
+              <div style={{
+                fontSize: 13,
+                fontWeight: 700,
+              }}>
+                {company.jobCount}
+              </div>
+              <div style={{ fontSize: 11, color: "#52525b", fontWeight: 500 }}>
+                {percentage}%
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div
@@ -448,130 +644,32 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
           {title}
         </p>
         {canExpand && (
-          <div style={{ display: "flex", gap: 16 }}>
-            {showCount > initialCount && (
-              <button
-                onClick={() => setShowCount(initialCount)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#52525b",
-                  fontSize: 11,
-                  cursor: "pointer",
-                  fontWeight: 500,
-                  padding: 0,
-                }}
-              >
-                Show less
-              </button>
-            )}
-            {!atFullList && (
-              <button
-                onClick={() => setShowCount(fullList.length)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#52525b",
-                  fontSize: 11,
-                  cursor: "pointer",
-                  fontWeight: 500,
-                  padding: 0,
-                }}
-              >
-                View All
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        {visibleData.map((company, index) => {
-          const percentage = ((company.jobCount / totalJobs) * 100).toFixed(0);
-          const displayName = formatCompanyName(company.company);
-          const showDivider = index < showCount - 1 || (index === showCount - 1 && !atFullList);
-
-          return (
-            <div
-              key={company.company}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "7px 0",
-                borderBottom: showDivider ? "1px solid rgba(255,255,255,0.05)" : "none",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    background: "rgba(255,255,255,0.07)",
-                    borderRadius: 4,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "white",
-                  }}
-                >
-                  {displayName.substring(0, 2).toUpperCase()}
-                </div>
-
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 500 }}>
-                    {displayName}
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: 12,
-              }}>
-                <div style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                }}>
-                  {company.jobCount}
-                </div>
-                <div style={{ fontSize: 11, color: "#52525b", fontWeight: 500 }}>
-                  {percentage}%
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {canExpand && !atFullList && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 12 }}>
           <button
-            onClick={() => setShowCount(prev => Math.min(prev + 5, fullList.length))}
+            onClick={() => setModalOpen(true)}
             style={{
-              width: "100%",
-              background: "transparent",
+              background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: 4,
               color: "#a1a1aa",
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 600,
               cursor: "pointer",
-              padding: "9px 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 6,
+              padding: "4px 10px",
+              transition: "background 150ms",
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
           >
-            <span style={{ fontSize: 11 }}>▾</span>
             View More
           </button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {renderRows(visibleData)}
+
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={title}>
+        {renderRows(fullList)}
+      </Modal>
     </div>
   );
 }
@@ -588,11 +686,67 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
   const initialCount = 4;
   const canExpand = fullList.length > initialCount;
 
-  const [showCount, setShowCount] = useState(initialCount);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const atFullList = showCount >= fullList.length;
-  const visibleData = fullList.slice(0, showCount);
+  const visibleData = fullList.slice(0, initialCount);
   const maxJobs = Math.max(...fullList.map(city => city.jobCount), 1);
+
+  const renderRows = (rows: City[]) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {rows.map((city) => {
+        const barWidth = (city.jobCount / maxJobs) * 100;
+        const displayName = formatCityName(city.name);
+
+        return (
+          <div
+            key={city.name}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <div style={{
+              width: 100,
+              fontSize: 12,
+              color: "#e4e4e7",
+              textAlign: "right",
+            }}>
+              {displayName}
+            </div>
+
+            <div style={{ 
+              flex: 1,
+              position: "relative",
+              height: 32,
+              display: "flex",
+              alignItems: "center",
+            }}>
+              <div
+                style={{
+                  width: `${barWidth}%`,
+                  height: "100%",
+                  background: "rgba(255,255,255,0.14)",
+                  borderRadius: 2,
+                  transition: "width 0.3s ease",
+                }}
+              />
+              
+              <div style={{
+                position: "absolute",
+                right: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                color: "white",
+              }}>
+                {city.jobCount}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div
@@ -614,122 +768,32 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
           {title}
         </p>
         {canExpand && (
-          <div style={{ display: "flex", gap: 16 }}>
-            {showCount > initialCount && (
-              <button
-                onClick={() => setShowCount(initialCount)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#52525b",
-                  fontSize: 11,
-                  cursor: "pointer",
-                  fontWeight: 500,
-                  padding: 0,
-                }}
-              >
-                Show less
-              </button>
-            )}
-            {!atFullList && (
-              <button
-                onClick={() => setShowCount(fullList.length)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#52525b",
-                  fontSize: 11,
-                  cursor: "pointer",
-                  fontWeight: 500,
-                  padding: 0,
-                }}
-              >
-                View All
-              </button>
-            )}
-          </div>
+          <button
+            onClick={() => setModalOpen(true)}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 4,
+              color: "#a1a1aa",
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: "pointer",
+              padding: "4px 10px",
+              transition: "background 150ms",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+          >
+            View More
+          </button>
         )}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {visibleData.map((city) => {
-          const barWidth = (city.jobCount / maxJobs) * 100;
-          const displayName = formatCityName(city.name);
-          
-          return (
-            <div
-              key={city.name}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-              }}
-            >
-              <div style={{
-                width: 100,
-                fontSize: 12,
-                color: "#52525b",
-                textAlign: "right",
-              }}>
-                {displayName}
-              </div>
+      {renderRows(visibleData)}
 
-              <div style={{ 
-                flex: 1,
-                position: "relative",
-                height: 32,
-                display: "flex",
-                alignItems: "center",
-              }}>
-                <div
-                  style={{
-                    width: `${barWidth}%`,
-                    height: "100%",
-                    background: "rgba(255,255,255,0.14)",
-                    borderRadius: 2,
-                    transition: "width 0.3s ease",
-                  }}
-                />
-                
-                <div style={{
-                  position: "absolute",
-                  right: 8,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "white",
-                }}>
-                  {city.jobCount}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {canExpand && !atFullList && (
-        <button
-          onClick={() => setShowCount(prev => Math.min(prev + 5, fullList.length))}
-          style={{
-            width: "100%",
-            marginTop: 12,
-            background: "transparent",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: 4,
-            color: "#a1a1aa",
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: "pointer",
-            padding: "9px 0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 6,
-          }}
-        >
-          <span style={{ fontSize: 11 }}>▾</span>
-          View More
-        </button>
-      )}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={title}>
+        {renderRows(fullList)}
+      </Modal>
     </div>
   );
 }
