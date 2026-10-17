@@ -6,7 +6,7 @@ export const IRRELEVANT_FIELD_ID = 35
 
 export const JOBS_PER_PAGE = 20
 
-export type Job = Database['public']['Tables']['job_postings_ingest_test']['Row']
+export type Job = Database['public']['Tables']['job_postings_ingest']['Row']
 
 export interface FilterOptions {
   category: string

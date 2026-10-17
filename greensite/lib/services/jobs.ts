@@ -31,10 +31,10 @@ export async function resolveFieldIds(category: string, subCategory: string): Pr
 
 export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from: number, to: number): Promise<JobPage> {
   let query = supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .eq('is_relevant', true)
+    .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
     .neq('job_field_id', IRRELEVANT_FIELD_ID)
     .eq('is_initial_load', false)
 
@@ -64,7 +64,7 @@ export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from
 export async function fetchJobsByIds(ids: string[]): Promise<Job[]> {
   if (ids.length === 0) return []
   const { data, error } = await supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select('*')
     .in('job_id', ids)
   if (error) throw error
@@ -73,9 +73,8 @@ export async function fetchJobsByIds(ids: string[]): Promise<Job[]> {
 
 export async function countJobsSince(filters: FilterOptions, fieldIds: number[], date: Date): Promise<number> {
   let query = supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select('*', { count: 'exact', head: true })
-    .eq('is_relevant', true)
     .neq('job_field_id', IRRELEVANT_FIELD_ID)
     .gte('created_at', date.toISOString())
     .eq('is_initial_load', false)

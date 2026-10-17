@@ -4,7 +4,7 @@ const PAGE_SIZE = 1000
 
 /**
  * GET /api/companies/list
- * Returns every distinct company name in job_postings_ingest_test, sorted alphabetically.
+ * Returns every distinct company name in job_postings_ingest, sorted alphabetically.
  * Response: { companies: string[] }
  */
 export async function GET() {
@@ -13,7 +13,7 @@ export async function GET() {
 
   while (true) {
     const { data, error } = await supabase
-      .from('job_postings_ingest_test')
+      .from('job_postings_ingest')
       .select('company_name')
       .not('company_name', 'is', null)
       .order('company_name')

@@ -3,7 +3,7 @@ import { Database } from '@/lib/supabase'
 export type Field = 'tech' | 'engineering' | 'business' | 'health'
 
 export type SubcategoryTrendRow = 
-  Pick<Database['public']['Tables']['job_postings_ingest_test']['Row'], 'created_at'> & {
+  Pick<Database['public']['Tables']['job_postings_ingest']['Row'], 'created_at'> & {
     job_field_counts: Pick<Database['public']['Tables']['job_field_counts']['Row'], 'category' | 'subcategory'> | null
   }
 
