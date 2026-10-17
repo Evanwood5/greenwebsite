@@ -10,7 +10,7 @@ export async function getAnalytics(field: Field, location: string, timeframe: st
   cutoffDate.setDate(cutoffDate.getDate() - days)
 
   let query = supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select(`
       *,
       job_field_counts!inner (
@@ -148,7 +148,7 @@ export async function getSubcategoryTrends(
   cutoffDate.setDate(cutoffDate.getDate() - days)
 
   let query = supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select(`
       created_at,
       job_field_counts!inner (
