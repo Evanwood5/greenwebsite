@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   }
 
   const { data, error } = await supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select('city')
     .ilike('company_name', `%${company.trim()}%`)
     .not('city', 'is', null)

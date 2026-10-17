@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   cutoffDate.setDate(cutoffDate.getDate() - days)
 
   let query = supabase
-    .from('job_postings_ingest_test')
+    .from('job_postings_ingest')
     .select(`
       created_at,
       job_field_counts!inner (

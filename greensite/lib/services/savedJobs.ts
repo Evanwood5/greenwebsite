@@ -6,7 +6,7 @@ import{SavedJobRow} from '@/lib/types/saved'
 export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
   const { data, error } = await supabase
     .from('saved_jobs')
-    .select('id, saved_at, status, notes, job_id, job_postings_ingest_test(*)')
+    .select('id, saved_at, status, notes, job_id, job_postings_ingest(*)')
     .eq('user_id', userId)
     .order('saved_at', { ascending: false })
     .returns<SavedJobRow[]>()
@@ -15,7 +15,7 @@ export async function getSavedJobs(userId: string): Promise<SavedJob[]> {
 
   return (data ?? [])
     .map((row) => {
-      const job = row.job_postings_ingest_test
+      const job = row.job_postings_ingest
       if (!job) return null
       return {
         saved_job_id: row.id,
