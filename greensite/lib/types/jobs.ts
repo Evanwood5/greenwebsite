@@ -2,7 +2,7 @@ import { Database } from '@/lib/supabase'
 // Stable IDs that never change — avoids async race condition on first load
 // Other/Irrelevant field id from job_field_counts
 
-export const IRRELEVANT_FIELD_ID = 35
+export const IRRELEVANT_FIELD_ID = 61
 
 export const JOBS_PER_PAGE = 20
 
