@@ -28,7 +28,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     ],
     dark: true,
     reverse: false,
-    background: '#0f2510',
+    background: 'var(--palette-forest-900)',
   },
   {
     id: 'source-of-truth',
@@ -42,7 +42,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     ],
     dark: false,
     reverse: true,
-    background: '#f0ece4',
+    background: 'var(--palette-cream-50)',
   },
   {
     id: 'michigan-focused',
@@ -56,15 +56,15 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     ],
     dark: true,
     reverse: false,
-    background: '#0a1f0a',
+    background: 'var(--palette-forest-980)',
   },
 ]
 
 export const TOOLS: Tool[] = [
-  { label: 'Job Feed', desc: 'Browse thousands of real-time listings filtered by field, location, and type.', color: '#29C115' },
-  { label: 'Saved Jobs', desc: 'Save roles, track your status, and keep notes , all in one organized view.', color: '#2563EB' },
-  { label: 'Company Tracking', desc: 'Follow specific companies and get notified the moment they post a new role.', color: '#D97706' },
-  { label: 'Custom Matching', desc: 'AI-powered job matches based on your resume and preferences.', color: '#c8391e' },
-  { label: 'Analytics', desc: 'See hiring trends by field, city, and company across Michigan.', color: '#7C3AED' },
-  { label: 'Application Tracking', desc: 'Know where you stand , from saved to offer, track every application.', color: '#0891B2' },
+  { label: 'Job Feed', desc: 'Browse thousands of real-time listings filtered by field, location, and type.', color: 'var(--palette-green-500)' },
+  { label: 'Saved Jobs', desc: 'Save roles, track your status, and keep notes , all in one organized view.', color: 'var(--palette-blue-600)' },
+  { label: 'Company Tracking', desc: 'Follow specific companies and get notified the moment they post a new role.', color: 'var(--palette-amber-600)' },
+  { label: 'Custom Matching', desc: 'AI-powered job matches based on your resume and preferences.', color: 'var(--palette-rust-500)' },
+  { label: 'Analytics', desc: 'See hiring trends by field, city, and company across Michigan.', color: 'var(--palette-violet-600)' },
+  { label: 'Application Tracking', desc: 'Know where you stand , from saved to offer, track every application.', color: 'var(--palette-cyan-600)' },
 ]

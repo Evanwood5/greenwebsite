@@ -14,7 +14,7 @@ export default function DetroitHeroSection() {
         }}
       />
       {/* Lighter overlay — image stays visible */}
-      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.58)' }} />
+      <div className="absolute inset-0" style={{ background: 'rgb(var(--palette-black-rgb) / 0.58)' }} />
 
       {/* Centered content */}
       <FadeIn className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto">
@@ -34,7 +34,7 @@ export default function DetroitHeroSection() {
         <Link
           href="/how-it-works"
           className="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold rounded transition-all duration-200 active:scale-[0.97]"
-          style={{ background: '#ffffff', color: '#1a1a1a' }}
+          style={{ background: 'var(--palette-white)', color: 'var(--palette-neutral-820)' }}
         >
           How It Works
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

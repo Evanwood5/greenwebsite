@@ -4,9 +4,342 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ==========================================================================
+   Greenify color system
+   --------------------------------------------------------------------------
+   Pass A: this file is the single source of truth for application colors.
+   Every primitive below preserves the exact value it replaced; no shades were
+   merged. Semantic tokens are layered on top and are scoped per product area
+   (dashboard, marketing dark, marketing light, auth) via existing wrappers.
+
+   Rules:
+   - Components should reference `var(--palette-*)` or the semantic tokens.
+   - Use `rgb(var(--palette-*-rgb) / <alpha>)` for translucent colors.
+   - Add new raw colors here, never in components.
+   - Run `npm run colors:check` to enforce the rules above.
+   - Full documentation: documentation/colors.md
+   ========================================================================== */
+
 :root {
-  --background: #080808;
-  --foreground: #fafafa;
+  /* ----------------------------------------------------------------------
+     Primitive palette (raw values)
+     ---------------------------------------------------------------------- */
+
+  /* white */
+  --palette-white: #ffffff;
+
+  /* black */
+  --palette-black: #000000;
+
+  /* neutral */
+  --palette-neutral-50: #fafafa;
+  --palette-neutral-55: #f9fafb;
+  --palette-neutral-100: #f3f4f6;
+  --palette-neutral-150: #e5e7eb;
+  --palette-neutral-200: #e4e4e7;
+  --palette-neutral-300: #d4d4d8;
+  --palette-neutral-400: #a1a1aa;
+  --palette-neutral-450: #9ca3af;
+  --palette-neutral-475: #888888;
+  --palette-neutral-500: #71717a;
+  --palette-neutral-525: #6b7280;
+  --palette-neutral-600: #52525b;
+  --palette-neutral-700: #3f3f46;
+  --palette-neutral-705: #3f3f3f;
+  --palette-neutral-710: #3a3a3a;
+  --palette-neutral-715: #374151;
+  --palette-neutral-720: #333333;
+  --palette-neutral-750: #2a2a2a;
+  --palette-neutral-800: #1e1e1e;
+  --palette-neutral-810: #1a1b1e;
+  --palette-neutral-820: #1a1a1a;
+  --palette-neutral-830: #161616;
+  --palette-neutral-840: #111827;
+  --palette-neutral-850: #141414;
+  --palette-neutral-860: #111111;
+  --palette-neutral-870: #0d0d0d;
+  --palette-neutral-875: #0e0e0e;
+  --palette-neutral-900: #0a0a0a;
+  --palette-neutral-950: #080808;
+
+  /* cream */
+  --palette-cream-50: #f0ece4;
+  --palette-cream-100: #f7f3ea;
+  --palette-cream-150: #fffdf8;
+  --palette-cream-200: #f5f5f0;
+
+  /* green */
+  --palette-green-50: #f0fdf4;
+  --palette-green-55: #f0fdf0;
+  --palette-green-200: #bbf7d0;
+  --palette-green-400: #4ade80;
+  --palette-green-450: #22c55e;
+  --palette-green-500: #29c115;
+  --palette-green-550: #1a8a0d;
+  --palette-green-600: #1a7a0a;
+  --palette-green-650: #1f6b1a;
+  --palette-green-700: #15803d;
+  --palette-green-850: #0f5c0f;
+  --palette-green-950: #052e16;
+
+  /* forest */
+  --palette-forest-300: #7a9a7a;
+  --palette-forest-400: #5a7a5a;
+  --palette-forest-500: #4a5e4a;
+  --palette-forest-600: #2d6e28;
+  --palette-forest-650: #355235;
+  --palette-forest-700: #1a2e1a;
+  --palette-forest-800: #1e3a1e;
+  --palette-forest-900: #0f2510;
+  --palette-forest-925: #0a1208;
+  --palette-forest-950: #050a05;
+  --palette-forest-980: #0a1f0a;
+  --palette-forest-990: #0a1f0d;
+
+  /* red */
+  --palette-red-50: #fee2e2;
+  --palette-red-300: #fca5a5;
+  --palette-red-400: #f87171;
+  --palette-red-500: #ef4444;
+  --palette-red-800: #991b1b;
+
+  /* orange */
+  --palette-orange-400: #fb923c;
+  --palette-orange-500: #f97316;
+  --palette-orange-700: #c2410c;
+  --palette-orange-950: #3b1f0a;
+
+  /* amber */
+  --palette-amber-400: #fbbf24;
+  --palette-amber-500: #f59e0b;
+  --palette-amber-600: #d97706;
+
+  /* yellow */
+  --palette-yellow-500: #eab308;
+
+  /* blue */
+  --palette-blue-300: #93c5fd;
+  --palette-blue-400: #60a5fa;
+  --palette-blue-500: #3b82f6;
+  --palette-blue-600: #2563eb;
+  --palette-blue-700: #1d4ed8;
+
+  /* navy */
+  --palette-navy-800: #1e3a5f;
+  --palette-navy-850: #1f2937;
+
+  /* sky */
+  --palette-sky-500: #0ea5e9;
+
+  /* cyan */
+  --palette-cyan-500: #06b6d4;
+  --palette-cyan-600: #0891b2;
+
+  /* teal */
+  --palette-teal-500: #14b8a6;
+
+  /* purple */
+  --palette-purple-300: #c4b5fd;
+  --palette-purple-400: #a78bfa;
+  --palette-purple-500: #a855f7;
+
+  /* violet */
+  --palette-violet-500: #8b5cf6;
+  --palette-violet-600: #7c3aed;
+
+  /* pink */
+  --palette-pink-500: #ec4899;
+
+  /* rose */
+  --palette-rose-500: #f43f5e;
+
+  /* rust */
+  --palette-rust-500: #c8391e;
+  --palette-rust-600: #a33824;
+
+  /* macos */
+  --palette-macos-red: #ff5f57;
+  --palette-macos-yellow: #febc2e;
+  --palette-macos-green: #28c840;
+
+  /* discord */
+  --palette-discord-500: #5865f2;
+
+  /* ----------------------------------------------------------------------
+     RGB channel primitives
+     Used for translucent colors: rgb(var(--palette-white-rgb) / 0.06)
+     ---------------------------------------------------------------------- */
+  --palette-white-rgb: 255 255 255;
+  --palette-black-rgb: 0 0 0;
+  --palette-neutral-500-rgb: 113 113 122;
+  --palette-neutral-800-rgb: 30 30 30;
+  --palette-neutral-820-rgb: 26 26 26;
+  --palette-neutral-875-rgb: 14 14 14;
+  --palette-neutral-950-rgb: 8 8 8;
+  --palette-green-400-rgb: 74 222 128;
+  --palette-green-450-rgb: 34 197 94;
+  --palette-green-500-rgb: 41 193 21;
+  --palette-green-600-rgb: 26 122 10;
+  --palette-forest-600-rgb: 45 110 40;
+  --palette-forest-800-rgb: 30 58 30;
+  --palette-red-300-rgb: 252 165 165;
+  --palette-red-400-rgb: 248 113 113;
+  --palette-red-500-rgb: 239 68 68;
+  --palette-orange-500-rgb: 249 115 22;
+  --palette-amber-400-rgb: 251 191 36;
+  --palette-blue-400-rgb: 96 165 250;
+  --palette-blue-500-rgb: 59 130 246;
+  --palette-purple-400-rgb: 167 139 250;
+  --palette-purple-500-rgb: 168 85 247;
+  --palette-yellow-500-rgb: 234 179 8;
+  --palette-violet-500-rgb: 139 92 246;
+  --palette-rose-500-rgb: 244 63 94;
+  --palette-sky-500-rgb: 14 165 233;
+  --palette-rust-500-rgb: 200 57 30;
+  --palette-discord-500-rgb: 88 101 242;
+
+  /* ----------------------------------------------------------------------
+     Default semantic tokens (dashboard / dark app)
+     ---------------------------------------------------------------------- */
+  --background: var(--palette-neutral-950);
+  --foreground: var(--palette-neutral-50);
+}
+
+/* Dashboard is the default dark application theme. */
+:root,
+.theme-dashboard {
+  --surface-app: var(--palette-neutral-950);
+  --surface-panel: var(--palette-neutral-850);
+  --surface-raised: var(--palette-neutral-800);
+  --surface-elevated: var(--palette-neutral-820);
+  --surface-hover: rgb(var(--palette-white-rgb) / 0.04);
+  --surface-active: rgb(var(--palette-white-rgb) / 0.08);
+
+  --text-primary: var(--palette-neutral-50);
+  --text-strong: var(--palette-white);
+  --text-secondary: var(--palette-neutral-200);
+  --text-tertiary: var(--palette-neutral-500);
+  --text-muted: var(--palette-neutral-600);
+  --text-subtle: var(--palette-neutral-700);
+  --text-inverse: var(--palette-neutral-950);
+
+  --border-subtle: rgb(var(--palette-white-rgb) / 0.06);
+  --border-default: rgb(var(--palette-white-rgb) / 0.08);
+  --border-strong: rgb(var(--palette-white-rgb) / 0.15);
+
+  --accent: var(--palette-green-500);
+  --accent-hover: var(--palette-green-600);
+  --accent-contrast: var(--palette-white);
+
+  --status-danger: var(--palette-red-500);
+  --status-danger-soft: var(--palette-red-400);
+  --status-success: var(--palette-green-400);
+  --status-warning: var(--palette-amber-500);
+  --status-info: var(--palette-blue-400);
+
+  --overlay: rgb(var(--palette-black-rgb) / 0.5);
+}
+
+/* Dark marketing surfaces (homepage, AI-powered hero). */
+.theme-marketing-dark {
+  --surface-app: var(--palette-black);
+  --surface-panel: var(--palette-neutral-900);
+  --surface-raised: var(--palette-neutral-810);
+  --surface-elevated: var(--palette-neutral-820);
+  --surface-hover: rgb(var(--palette-white-rgb) / 0.04);
+  --surface-active: rgb(var(--palette-white-rgb) / 0.08);
+
+  --text-primary: var(--palette-white);
+  --text-strong: var(--palette-white);
+  --text-secondary: var(--palette-neutral-400);
+  --text-tertiary: var(--palette-neutral-500);
+  --text-muted: var(--palette-neutral-600);
+  --text-subtle: var(--palette-neutral-700);
+  --text-inverse: var(--palette-neutral-950);
+
+  --border-subtle: rgb(var(--palette-white-rgb) / 0.06);
+  --border-default: rgb(var(--palette-white-rgb) / 0.08);
+  --border-strong: rgb(var(--palette-white-rgb) / 0.15);
+
+  --accent: var(--palette-green-500);
+  --accent-hover: var(--palette-green-600);
+  --accent-contrast: var(--palette-white);
+
+  --status-danger: var(--palette-red-500);
+  --status-danger-soft: var(--palette-red-400);
+  --status-success: var(--palette-green-400);
+  --status-warning: var(--palette-amber-500);
+  --status-info: var(--palette-blue-400);
+
+  --overlay: rgb(var(--palette-black-rgb) / 0.62);
+}
+
+/* Light marketing surfaces (contact, how-it-works, terms, navbar). */
+.theme-marketing-light {
+  --surface-app: var(--palette-cream-50);
+  --surface-panel: var(--palette-cream-150);
+  --surface-raised: var(--palette-white);
+  --surface-elevated: var(--palette-cream-200);
+  --surface-hover: var(--palette-cream-200);
+  --surface-active: var(--palette-cream-100);
+
+  --text-primary: var(--palette-forest-700);
+  --text-strong: var(--palette-forest-700);
+  --text-secondary: var(--palette-forest-500);
+  --text-tertiary: var(--palette-neutral-500);
+  --text-muted: var(--palette-forest-300);
+  --text-subtle: var(--palette-forest-400);
+  --text-inverse: var(--palette-cream-50);
+
+  --border-subtle: rgb(var(--palette-forest-800-rgb) / 0.1);
+  --border-default: rgb(var(--palette-forest-800-rgb) / 0.2);
+  --border-strong: rgb(var(--palette-forest-800-rgb) / 0.3);
+
+  --accent: var(--palette-forest-600);
+  --accent-hover: var(--palette-forest-650);
+  --accent-contrast: var(--palette-white);
+
+  --status-danger: var(--palette-red-500);
+  --status-danger-soft: var(--palette-rust-500);
+  --status-success: var(--palette-green-700);
+  --status-warning: var(--palette-amber-600);
+  --status-info: var(--palette-blue-600);
+
+  --overlay: rgb(var(--palette-black-rgb) / 0.12);
+}
+
+/* Authentication pages (cream + forest green). */
+.theme-auth {
+  --surface-app: var(--palette-cream-50);
+  --surface-panel: var(--palette-cream-100);
+  --surface-raised: var(--palette-cream-150);
+  --surface-elevated: var(--palette-cream-200);
+  --surface-hover: var(--palette-cream-200);
+  --surface-active: var(--palette-cream-100);
+
+  --text-primary: var(--palette-forest-700);
+  --text-strong: var(--palette-forest-700);
+  --text-secondary: var(--palette-forest-500);
+  --text-tertiary: var(--palette-neutral-500);
+  --text-muted: var(--palette-forest-300);
+  --text-subtle: var(--palette-forest-400);
+  --text-inverse: var(--palette-cream-50);
+
+  --border-subtle: rgb(var(--palette-forest-800-rgb) / 0.12);
+  --border-default: rgb(var(--palette-forest-800-rgb) / 0.18);
+  --border-strong: rgb(var(--palette-forest-800-rgb) / 0.22);
+
+  --accent: var(--palette-forest-600);
+  --accent-hover: var(--palette-forest-650);
+  --accent-contrast: var(--palette-white);
+
+  --status-danger: var(--palette-rust-500);
+  --status-danger-soft: var(--palette-rust-600);
+  --status-success: var(--palette-green-700);
+  --status-warning: var(--palette-amber-600);
+  --status-info: var(--palette-blue-600);
+
+  --overlay: rgb(var(--palette-black-rgb) / 0.12);
 }
 
 body {
@@ -15,6 +348,44 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------------------------------
+   Tailwind palette bridge
+   These legacy utility colors are kept at Tailwind v4's exact default values
+   so existing `text-gray-*`, `bg-green-*`, etc. classes do not change.
+   New code should prefer the semantic or primitive tokens above.
+   -------------------------------------------------------------------------- */
+@theme {
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-gray-50: oklch(98.5% 0.002 247.839);
+  --color-gray-100: oklch(96.7% 0.003 264.542);
+  --color-gray-200: oklch(92.8% 0.006 264.531);
+  --color-gray-300: oklch(87.2% 0.01 258.338);
+  --color-gray-400: oklch(70.7% 0.022 261.325);
+  --color-gray-500: oklch(55.1% 0.027 264.364);
+  --color-gray-600: oklch(44.6% 0.03 256.802);
+  --color-gray-700: oklch(37.3% 0.034 259.733);
+  --color-gray-800: oklch(27.8% 0.033 256.848);
+  --color-gray-900: oklch(21% 0.034 264.665);
+
+  --color-green-50: oklch(98.2% 0.018 155.826);
+  --color-green-100: oklch(96.2% 0.044 156.743);
+  --color-green-200: oklch(92.5% 0.084 155.995);
+  --color-green-600: oklch(62.7% 0.194 149.214);
+  --color-green-700: oklch(52.7% 0.154 150.069);
+  --color-green-800: oklch(44.8% 0.119 151.328);
+  --color-green-900: oklch(39.3% 0.095 152.535);
+
+  --color-blue-50: oklch(97% 0.014 254.604);
+  --color-blue-200: oklch(88.2% 0.059 254.128);
+  --color-blue-600: oklch(54.6% 0.245 262.881);
+  --color-blue-900: oklch(37.9% 0.146 265.522);
+
+  --color-purple-600: oklch(55.8% 0.288 302.321);
+  --color-zinc-400: oklch(70.5% 0.015 286.067);
 }
 
 /* Hide Recharts measurement elements */

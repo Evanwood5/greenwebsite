@@ -19,11 +19,11 @@ export default function SuccessSection() {
   const swiperRef = useRef<SwiperType | null>(null)
 
   return (
-    <section className="px-6 py-16 lg:py-20" style={{ background: '#0f2510' }}>
+    <section className="px-6 py-16 lg:py-20" style={{ background: 'var(--palette-forest-900)' }}>
       <div className="max-w-6xl mx-auto">
 
         <FadeIn className="text-center mb-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: '#29C115' }}>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: 'var(--palette-green-500)' }}>
             Students · Michigan
           </p>
           <h2
@@ -66,7 +66,7 @@ export default function SuccessSection() {
                       </div>
                       <div className="mt-2 text-center">
                         <div className="text-[13px] font-bold text-white">{s.name}</div>
-                        <div className="text-[12px] mt-0.5" style={{ color: '#29C115' }}>{s.company}</div>
+                        <div className="text-[12px] mt-0.5" style={{ color: 'var(--palette-green-500)' }}>{s.company}</div>
                       </div>
                     </div>
                   </SwiperSlide>

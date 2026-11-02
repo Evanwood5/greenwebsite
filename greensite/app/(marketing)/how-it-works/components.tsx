@@ -43,16 +43,16 @@ const FIELD_ICONS: Record<FieldId, ReactNode> = {
 export function TrackHeader() {
   return (
     <div className="mb-16">
-      <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: '#29C115' }}>
+      <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: 'var(--palette-green-500)' }}>
         What We Track
       </p>
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-        <h2 className="text-5xl font-extrabold" style={{ color: '#1a2e1a', letterSpacing: '-0.04em', lineHeight: 1.05 }}>
+        <h2 className="text-5xl font-extrabold" style={{ color: 'var(--palette-forest-700)', letterSpacing: '-0.04em', lineHeight: 1.05 }}>
           Four fields.
           <br />
           One platform.
         </h2>
-        <p className="text-[15px] max-w-xs leading-relaxed" style={{ color: '#5a7a5a' }}>
+        <p className="text-[15px] max-w-xs leading-relaxed" style={{ color: 'var(--palette-forest-400)' }}>
           Every subcategory below maps to a real filter in your dashboard.
         </p>
       </div>
@@ -64,7 +64,7 @@ export function FieldCard({ field, index }: { field: Field; index: number }) {
   return (
     <div
       className="rounded-2xl px-8 py-7"
-      style={{ background: '#ffffff', border: '1px solid rgba(30,58,30,0.07)' }}
+      style={{ background: 'var(--palette-white)', border: '1px solid rgb(var(--palette-forest-800-rgb) / 0.07)' }}
     >
       <div className="flex items-center gap-4 mb-4">
         <div
@@ -73,12 +73,12 @@ export function FieldCard({ field, index }: { field: Field; index: number }) {
         >
           {FIELD_ICONS[field.id]}
         </div>
-        <div className="text-[20px] font-extrabold" style={{ color: '#1a2e1a', letterSpacing: '-0.02em' }}>
+        <div className="text-[20px] font-extrabold" style={{ color: 'var(--palette-forest-700)', letterSpacing: '-0.02em' }}>
           {field.label}
         </div>
-        <div className="ml-auto text-[12px] font-bold" style={{ color: 'rgba(30,58,30,0.25)' }}>0{index + 1}</div>
+        <div className="ml-auto text-[12px] font-bold" style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.25)' }}>0{index + 1}</div>
       </div>
-      <p className="text-[13px] leading-relaxed mb-4" style={{ color: '#5a7a5a' }}>{field.description}</p>
+      <p className="text-[13px] leading-relaxed mb-4" style={{ color: 'var(--palette-forest-400)' }}>{field.description}</p>
       <div className="flex flex-wrap gap-1.5">
         {field.subs.map((s) => (
           <span
@@ -97,14 +97,14 @@ export function FieldCard({ field, index }: { field: Field; index: number }) {
 export function SiteFooter() {
   return (
     <footer
-      style={{ borderTop: '1px solid rgba(30,58,30,0.3)' }}
+      style={{ borderTop: '1px solid rgb(var(--palette-forest-800-rgb) / 0.3)' }}
       className="px-6 py-6"
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <p className="text-[13px] font-semibold" style={{ color: 'rgba(30,58,30,0.85)' }}>
+        <p className="text-[13px] font-semibold" style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.85)' }}>
           &copy; 2026 Greenify LLC
         </p>
-        <a href="/terms" className="text-[13px] font-semibold transition-opacity hover:opacity-70" style={{ color: 'rgba(30,58,30,0.85)' }}>
+        <a href="/terms" className="text-[13px] font-semibold transition-opacity hover:opacity-70" style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.85)' }}>
           Terms of Service
         </a>
       </div>

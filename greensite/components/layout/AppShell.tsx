@@ -8,8 +8,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/db/supabase'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
-  '/resume':   { bg: 'rgba(239,68,68,0.15)',   text: '#ef4444', border: 'rgba(239,68,68,0.35)',   shadow: '#161616' },
-  '/tracking': { bg: 'rgba(139,92,246,0.18)',  text: '#a78bfa', border: 'rgba(139,92,246,0.45)',  shadow: '#161616' },
+  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--palette-neutral-830)' },
+  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--palette-neutral-830)' },
 }
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -185,18 +185,18 @@ export default function AppShell({ children }: AppShellProps) {
   const sidebarWidth = collapsed ? 60 : 200
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#080808' }}>
+    <div className="theme-dashboard" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--surface-app)' }}>
 
       {/* Full-width top navbar */}
       <header style={{
         height: HEADER_HEIGHT,
-        background: 'rgba(14, 14, 14, 0.85)',
+        background: 'rgb(var(--palette-neutral-875-rgb) / 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         flexShrink: 0,
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid var(--border-subtle)',
         zIndex: 50,
         padding: '0 20px',
       }}>
@@ -206,7 +206,7 @@ export default function AppShell({ children }: AppShellProps) {
               position: 'absolute',
               width: '32px',
               height: '32px',
-              background: 'rgba(41, 193, 21, 0.15)',
+              background: 'rgb(var(--palette-green-500-rgb) / 0.15)',
               filter: 'blur(12px)',
               borderRadius: '50%',
               left: '-4px',
@@ -221,7 +221,7 @@ export default function AppShell({ children }: AppShellProps) {
               style={{ display: 'block' }}
             />
             <span style={{
-              color: 'white',
+              color: 'var(--text-strong)',
               fontWeight: 700,
               fontSize: '17px',
               letterSpacing: '-0.02em',
@@ -234,9 +234,9 @@ export default function AppShell({ children }: AppShellProps) {
 
           {!collapsed && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.1)' }} />
+              <div style={{ width: '1px', height: '16px', background: 'rgb(var(--palette-white-rgb) / 0.1)' }} />
               <span style={{
-                color: 'rgba(255,255,255,0.45)',
+                color: 'rgb(var(--palette-white-rgb) / 0.45)',
                 fontWeight: 500,
                 fontSize: '14px',
                 letterSpacing: '0.12em',
@@ -257,28 +257,28 @@ export default function AppShell({ children }: AppShellProps) {
               alignItems: 'center',
               gap: '8px',
               padding: '4px 8px 4px 12px',
-              background: profileMenuOpen ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: profileMenuOpen ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'rgb(var(--palette-white-rgb) / 0.03)',
+              border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
               borderRadius: '8px',
               cursor: 'pointer',
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
             onMouseOver={(e) => {
               if (!profileMenuOpen) {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+                e.currentTarget.style.background = 'rgb(var(--palette-white-rgb) / 0.07)'
+                e.currentTarget.style.borderColor = 'var(--border-strong)'
               }
             }}
             onMouseOut={(e) => {
               if (!profileMenuOpen) {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                e.currentTarget.style.background = 'var(--surface-hover)'
+                e.currentTarget.style.borderColor = 'var(--border-default)'
               }
             }}
           >
             {user?.email && (
               <span style={{
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgb(var(--palette-white-rgb) / 0.7)',
                 fontSize: '12px',
                 fontWeight: 500,
                 letterSpacing: '0.01em',
@@ -290,16 +290,16 @@ export default function AppShell({ children }: AppShellProps) {
               width: '26px',
               height: '26px',
               borderRadius: '6px',
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)',
+              background: 'var(--surface-active)',
+              border: '1px solid var(--border-strong)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'rgba(255,255,255,0.75)',
+              color: 'rgb(var(--palette-white-rgb) / 0.75)',
             }}>
               <UserIcon size={13} />
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.2)', marginRight: '2px' }}>
+            <div style={{ color: 'rgb(var(--palette-white-rgb) / 0.2)', marginRight: '2px' }}>
               <ChevronDownIcon size={11} />
             </div>
           </button>
@@ -309,19 +309,19 @@ export default function AppShell({ children }: AppShellProps) {
               position: 'absolute',
               top: '42px',
               right: 0,
-              background: 'rgba(26, 26, 26, 0.95)',
+              background: 'rgb(var(--palette-neutral-820-rgb) / 0.95)',
               backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
               borderRadius: '12px',
               overflow: 'hidden',
               minWidth: '180px',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
+              boxShadow: '0 12px 32px rgb(var(--palette-black-rgb) / 0.4)',
               zIndex: 100,
               animation: 'fadeIn 0.2s ease-out',
             }}>
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <p style={{ color: 'white', fontSize: '12px', fontWeight: 600, marginBottom: '2px' }}>{user?.email?.split('@')[0]}</p>
-                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
+                <p style={{ color: 'var(--text-strong)', fontSize: '12px', fontWeight: 600, marginBottom: '2px' }}>{user?.email?.split('@')[0]}</p>
+                <p style={{ color: 'rgb(var(--palette-white-rgb) / 0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
               </div>
               <Link
                 href="/settings"
@@ -331,11 +331,11 @@ export default function AppShell({ children }: AppShellProps) {
                   alignItems: 'center',
                   gap: '10px',
                   padding: '10px 16px',
-                  color: '#d4d4d8',
+                  color: 'var(--palette-neutral-300)',
                   fontSize: '13px',
                   textDecoration: 'none',
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-white-rgb) / 0.05)')}
                 onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <GearIcon size={14} />
@@ -351,12 +351,12 @@ export default function AppShell({ children }: AppShellProps) {
                   padding: '10px 16px',
                   background: 'transparent',
                   border: 'none',
-                  color: '#f87171',
+                  color: 'var(--palette-red-400)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   textAlign: 'left',
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(248,113,113,0.07)')}
+                onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-red-400-rgb) / 0.07)')}
                 onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -379,8 +379,8 @@ export default function AppShell({ children }: AppShellProps) {
           width: sidebarWidth,
           minWidth: sidebarWidth,
           height: '100%',
-          background: '#141414',
-          borderRight: '1px solid rgba(255,255,255,0.06)',
+          background: 'var(--surface-panel)',
+          borderRight: '1px solid var(--border-subtle)',
           display: 'flex',
           flexDirection: 'column',
           transition: 'width 200ms ease, min-width 200ms ease',
@@ -393,7 +393,7 @@ export default function AppShell({ children }: AppShellProps) {
               <div key={section.header} style={{ marginBottom: sIdx < navSections.length - 1 ? '8px' : 0 }}>
                 {!collapsed && (
                   <div style={{
-                    color: '#52525b',
+                    color: 'var(--text-muted)',
                     fontSize: '10px',
                     fontWeight: 600,
                     letterSpacing: '0.08em',
@@ -420,8 +420,8 @@ export default function AppShell({ children }: AppShellProps) {
                     padding: '8px 12px',
                     borderRadius: '4px',
                     marginBottom: '2px',
-                    background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                    color: isActive ? '#ffffff' : '#71717a',
+                    background: isActive ? 'var(--surface-active)' : 'transparent',
+                    color: isActive ? 'var(--text-strong)' : 'var(--text-tertiary)',
                     textDecoration: 'none',
                     fontSize: '13px',
                     fontWeight: isActive ? 500 : 400,
@@ -433,14 +433,14 @@ export default function AppShell({ children }: AppShellProps) {
                   }}
                   onMouseOver={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                      e.currentTarget.style.color = '#e4e4e7'
+                      e.currentTarget.style.background = 'var(--surface-hover)'
+                      e.currentTarget.style.color = 'var(--text-secondary)'
                     }
                   }}
                   onMouseOut={(e) => {
                     if (!isActive) {
                       e.currentTarget.style.background = 'transparent'
-                      e.currentTarget.style.color = '#71717a'
+                      e.currentTarget.style.color = 'var(--text-tertiary)'
                     }
                   }}
                 >
@@ -504,7 +504,7 @@ export default function AppShell({ children }: AppShellProps) {
             ))}
           </nav>
 
-          <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ padding: '10px 12px', borderTop: '1px solid rgb(var(--palette-white-rgb) / 0.05)' }}>
             <button
               onClick={() => setCollapsed(!collapsed)}
               style={{
@@ -516,14 +516,14 @@ export default function AppShell({ children }: AppShellProps) {
                 borderRadius: '7px',
                 background: 'transparent',
                 border: 'none',
-                color: 'rgba(255,255,255,0.35)',
+                color: 'rgb(var(--palette-white-rgb) / 0.35)',
                 fontSize: '13px',
                 fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'color 150ms',
               }}
-              onMouseOver={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
-              onMouseOut={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)' }}
+              onMouseOver={(e) => { e.currentTarget.style.color = 'rgb(var(--palette-white-rgb) / 0.7)' }}
+              onMouseOut={(e) => { e.currentTarget.style.color = 'rgb(var(--palette-white-rgb) / 0.35)' }}
             >
               {!collapsed && <span>Collapse</span>}
               {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}
@@ -532,7 +532,7 @@ export default function AppShell({ children }: AppShellProps) {
         </aside>
 
         {/* Main content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '20px 28px', background: '#141414' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: '20px 28px', background: 'var(--surface-panel)' }}>
           {children}
         </main>
 
