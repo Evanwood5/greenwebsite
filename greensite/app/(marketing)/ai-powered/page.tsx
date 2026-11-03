@@ -7,7 +7,7 @@ export default function AIPoweredPage() {
       <Navbar />
       <AiHero />
 
-      <section id="resume-matching" className="px-6 py-36" style={{ background: '#0f2510' }}>
+      <section id="resume-matching" className="px-6 py-36" style={{ background: 'var(--palette-forest-900)' }}>
         <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-16">
           <ResumeMatching />
           <ResumeCard />

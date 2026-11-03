@@ -176,12 +176,12 @@ export default function TrackingPage() {
 
         {/* Header */}
         <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a1a1aa', flexShrink: 0 }}>
+          <div style={{ width: '34px', height: '34px', borderRadius: '4px', background: 'rgb(var(--palette-white-rgb) / 0.05)', border: '1px solid rgb(var(--palette-white-rgb) / 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--palette-neutral-400)', flexShrink: 0 }}>
             <EyeIcon size={16} />
           </div>
           <div>
-            <h1 style={{ color: 'white', fontSize: '18px', fontWeight: 600, marginBottom: '1px', letterSpacing: '-0.02em' }}>Company Tracking</h1>
-            <p style={{ color: '#52525b', fontSize: '12px' }}>Follow specific companies and filter the roles you care about. New matching jobs are delivered daily.</p>
+            <h1 style={{ color: 'var(--palette-white)', fontSize: '18px', fontWeight: 600, marginBottom: '1px', letterSpacing: '-0.02em' }}>Company Tracking</h1>
+            <p style={{ color: 'var(--palette-neutral-600)', fontSize: '12px' }}>Follow specific companies and filter the roles you care about. New matching jobs are delivered daily.</p>
           </div>
         </div>
 

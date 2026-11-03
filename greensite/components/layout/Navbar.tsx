@@ -11,17 +11,17 @@ export default function Navbar() {
 
   return (
     <nav
-      className="sticky top-0 z-50 w-full px-6 py-3"
+      className="theme-marketing-light sticky top-0 z-50 w-full px-6 py-3"
       style={{
-        background: '#f0ece4',
-        borderBottom: '1px solid rgba(30,58,30,0.1)',
+        background: 'var(--surface-app)',
+        borderBottom: '1px solid var(--border-subtle)',
       }}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 cursor-pointer group">
           <Image src="/finally.png" alt="Greenify logo" width={26} height={26} />
-          <span className="text-[22px] font-bold tracking-tight" style={{ color: '#1a2e1a' }}>Greenify</span>
+          <span className="text-[22px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Greenify</span>
         </Link>
 
         {/* Center nav links with dropdowns */}
@@ -62,10 +62,10 @@ export default function Navbar() {
               <Link
                 href={nav.href}
                 className="flex items-center gap-1 px-4 py-2 text-[14px] font-semibold rounded-lg transition-all duration-200 cursor-pointer"
-                style={{ color: '#1a2e1a' }}
+                style={{ color: 'var(--text-primary)' }}
               >
                 {nav.label}
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1, opacity: 0.5 }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1, opacity: 0.5 }}>
                   <polyline points="6 9 12 15 18 9"/>
                 </svg>
               </Link>
@@ -76,10 +76,10 @@ export default function Navbar() {
                   style={{ minWidth: 220 }}
                 >
                   <div style={{
-                    background: '#ffffff',
-                    border: '1px solid rgba(30,58,30,0.1)',
+                    background: 'var(--surface-raised)',
+                    border: '1px solid var(--border-subtle)',
                     borderRadius: 14,
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+                    boxShadow: '0 12px 40px rgb(var(--palette-black-rgb) / 0.12)',
                     padding: '6px',
                     overflow: 'hidden',
                   }}>
@@ -89,11 +89,11 @@ export default function Navbar() {
                         href={item.href}
                         onClick={() => setOpenNav(null)}
                         style={{ display: 'block', borderRadius: 10, padding: '10px 14px', textDecoration: 'none' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#f5f5f0')}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-hover)')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#1a2e1a', marginBottom: 1 }}>{item.label}</div>
-                        <div style={{ fontSize: 11, color: '#7a9a7a' }}>{item.desc}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 1 }}>{item.label}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.desc}</div>
                       </Link>
                     ))}
                   </div>
@@ -110,9 +110,9 @@ export default function Navbar() {
               <Link
                 href="/#contact"
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 hover:bg-white/[0.08]"
-                style={{ background: 'rgba(30,58,30,0.06)', border: '1px solid rgba(30,58,30,0.2)' }}
+                style={{ background: 'rgb(var(--palette-forest-800-rgb) / 0.06)', border: '1px solid var(--border-default)' }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
               </Link>
@@ -120,9 +120,9 @@ export default function Navbar() {
               <Link
                 href="/settings"
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 hover:bg-white/[0.08] cursor-pointer"
-                style={{ background: 'rgba(30,58,30,0.06)', border: '1px solid rgba(30,58,30,0.2)' }}
+                style={{ background: 'rgb(var(--palette-forest-800-rgb) / 0.06)', border: '1px solid var(--border-default)' }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
                   <circle cx="12" cy="7" r="4"/>
                 </svg>
@@ -131,10 +131,10 @@ export default function Navbar() {
               <Link
                 href="/jobs"
                 className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white rounded transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
-                style={{ background: '#0f5c0f', border: '1px solid rgba(255,255,255,0.15)' }}
+                style={{ background: 'var(--palette-green-850)', border: '1px solid rgb(var(--palette-white-rgb) / 0.15)' }}
               >
                 Dashboard
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--palette-green-500)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 17L17 7M17 7H8M17 7v9"/>
                 </svg>
               </Link>
@@ -144,16 +144,16 @@ export default function Navbar() {
               <Link
                 href="/#contact"
                 className="flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 hover:bg-white/[0.08]"
-                style={{ background: 'rgba(30,58,30,0.06)', border: '1px solid rgba(30,58,30,0.2)' }}
+                style={{ background: 'rgb(var(--palette-forest-800-rgb) / 0.06)', border: '1px solid var(--border-default)' }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
               </Link>
               <Link
                 href="/auth"
                 className="px-4 py-2 text-[13px] font-semibold text-white rounded transition-all duration-200 cursor-pointer hover:brightness-110 active:scale-[0.97]"
-                style={{ background: '#1a8a0d' }}
+                style={{ background: 'var(--palette-green-550)' }}
               >
                 Sign In
               </Link>

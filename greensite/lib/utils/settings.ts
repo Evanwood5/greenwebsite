@@ -23,27 +23,27 @@ export const JOB_FIELDS: Record<string, string[]> = {
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  Tech: '#60a5fa',
-  Engineering: '#f97316',
-  Business: '#a78bfa',
-  Health: '#f43f5e',
+  Tech: 'var(--palette-blue-400)',
+  Engineering: 'var(--palette-orange-500)',
+  Business: 'var(--palette-purple-400)',
+  Health: 'var(--palette-rose-500)',
 }
 
 export const cardStyle: React.CSSProperties = {
-  background: '#1e1e1e',
+  background: 'var(--surface-raised)',
   borderRadius: '4px',
   padding: '16px',
-  border: '1px solid rgba(255,255,255,0.06)',
+  border: '1px solid var(--border-subtle)',
   marginBottom: '10px',
 }
 
 export const sectionHeadingStyle: React.CSSProperties = {
-  color: '#e4e4e7', fontSize: '13px', fontWeight: 600,
+  color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600,
   marginBottom: '2px', marginTop: '22px', letterSpacing: '-0.01em',
 }
 
 export const sectionSubStyle: React.CSSProperties = {
-  color: '#52525b', fontSize: '11px', marginBottom: '10px',
+  color: 'var(--text-muted)', fontSize: '11px', marginBottom: '10px',
 }
 
 export function displayLocation(loc: string): string {

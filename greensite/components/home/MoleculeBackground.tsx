@@ -41,6 +41,12 @@ export default function MoleculeBackground() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // Canvas cannot resolve CSS variables, so read the centralized token once.
+    const whiteRgb = getComputedStyle(document.documentElement)
+      .getPropertyValue('--palette-white-rgb')
+      .trim() || '255 255 255'
+    const [whiteR, whiteG, whiteB] = whiteRgb.split(/\s+/)
+
     let nodes: Node[] = []
 
     const buildNodes = () => {
@@ -91,7 +97,7 @@ export default function MoleculeBackground() {
 
         ctx.beginPath()
         ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255,255,255,${n.opacity})`
+        ctx.fillStyle = `rgba(${whiteR}, ${whiteG}, ${whiteB}, ${n.opacity})`
         ctx.fill()
       }
 

@@ -75,9 +75,9 @@ export default function DashboardPage() {
         </div>
 
         {loading ? (
-          <div style={{ color: '#52525b', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Loading...</div>
+          <div style={{ color: 'var(--palette-neutral-600)', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Loading...</div>
         ) : !data ? (
-          <div style={{ color: '#f87171', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Failed to load data</div>
+          <div style={{ color: 'var(--palette-red-400)', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Failed to load data</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
@@ -93,8 +93,8 @@ export default function DashboardPage() {
               />
             )}
 
-            <div style={{ background: '#1e1e1e', borderRadius: 4, padding: 14, border: '1px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52525b', marginBottom: 12 }}>
+            <div style={{ background: 'var(--palette-neutral-800)', borderRadius: 4, padding: 14, border: '1px solid rgb(var(--palette-white-rgb) / 0.06)' }}>
+              <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--palette-neutral-600)', marginBottom: 12 }}>
                 Job Posting Trends by Category
               </p>
               <div style={{ height: 360 }}>

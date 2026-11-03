@@ -13,7 +13,7 @@ export function ChevronIcon({ open }: { open: boolean }) {
       height="16"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#4a5e4a"
+      stroke="var(--palette-forest-500)"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -31,7 +31,7 @@ export function SearchIcon() {
       height="14"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#4a5e4a"
+      stroke="var(--palette-forest-500)"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -50,7 +50,7 @@ export function CheckIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#2d6e28"
+      stroke="var(--palette-forest-600)"
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -66,14 +66,14 @@ export function DecorativeBackground() {
     <>
       <div
         className="absolute right-0 top-0 bottom-0 hidden lg:block"
-        style={{ width: '360px', background: '#1e3a1e' }}
+        style={{ width: '360px', background: 'var(--palette-forest-800)' }}
         aria-hidden
       >
         <div
           style={{
             width: '100%',
             height: '100%',
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, rgb(var(--palette-white-rgb) / 0.18) 1px, transparent 1px)',
             backgroundSize: '24px 24px',
           }}
         />
@@ -89,7 +89,7 @@ export function AuthHeader({ mode, signUpPath }: { mode: Mode; signUpPath: SignU
     <div>
       <p
         style={{
-          color: '#2d6e28',
+          color: 'var(--palette-forest-600)',
           fontWeight: 700,
           fontSize: '11px',
           letterSpacing: '0.11em',
@@ -99,10 +99,10 @@ export function AuthHeader({ mode, signUpPath }: { mode: Mode; signUpPath: SignU
       >
         Greenify Access
       </p>
-      <h1 style={{ color: '#1a2e1a', fontSize: '32px', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '6px', minHeight: '35px' }}>
+      <h1 style={{ color: 'var(--palette-forest-700)', fontSize: '32px', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '6px', minHeight: '35px' }}>
         {isSignUp ? 'Create your account' : 'Welcome back'}
       </h1>
-      <p style={{ color: '#4a5e4a', fontSize: '14px', lineHeight: 1.6, marginBottom: '22px', minHeight: '42px' }}>
+      <p style={{ color: 'var(--palette-forest-500)', fontSize: '14px', lineHeight: 1.6, marginBottom: '22px', minHeight: '42px' }}>
         {isSignUp
           ? signUpPath === 'school'
             ? 'Use your school email for campus-aware matching and early opportunities.'
@@ -115,7 +115,7 @@ export function AuthHeader({ mode, signUpPath }: { mode: Mode; signUpPath: SignU
 
 export function ModeTabs({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', padding: '6px', borderRadius: '12px', background: 'rgba(30,58,30,0.08)', marginBottom: '20px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', padding: '6px', borderRadius: '12px', background: 'rgb(var(--palette-forest-800-rgb) / 0.08)', marginBottom: '20px' }}>
       {(['signin', 'signup'] as Mode[]).map((m) => {
         const active = mode === m
         return (
@@ -130,8 +130,8 @@ export function ModeTabs({ mode, onChange }: { mode: Mode; onChange: (m: Mode) =
               fontSize: '14px',
               fontWeight: 700,
               cursor: 'pointer',
-              background: active ? '#1e3a1e' : 'transparent',
-              color: active ? 'white' : '#355235',
+              background: active ? 'var(--palette-forest-800)' : 'transparent',
+              color: active ? 'var(--palette-white)' : 'var(--palette-forest-650)',
             }}
           >
             {m === 'signin' ? 'Sign In' : 'Sign Up'}
@@ -151,30 +151,30 @@ export function SignUpPathSelector({ path, onChange }: { path: SignUpPath; onCha
           type="button"
           onClick={() => onChange('school')}
           style={{
-            border: path === 'school' ? '2px solid #2d6e28' : '1px solid rgba(30,58,30,0.2)',
+            border: path === 'school' ? '2px solid var(--palette-forest-600)' : '1px solid rgb(var(--palette-forest-800-rgb) / 0.2)',
             borderRadius: '12px',
-            background: path === 'school' ? 'rgba(45,110,40,0.16)' : '#fffdf8',
-            color: '#1a2e1a',
+            background: path === 'school' ? 'rgb(var(--palette-forest-600-rgb) / 0.16)' : 'var(--palette-cream-150)',
+            color: 'var(--palette-forest-700)',
             textAlign: 'left',
             padding: '12px 14px',
             cursor: 'pointer',
             position: 'relative',
-            boxShadow: path === 'school' ? '0 2px 8px rgba(45,110,40,0.15)' : 'none',
+            boxShadow: path === 'school' ? '0 2px 8px rgb(var(--palette-forest-600-rgb) / 0.15)' : 'none',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <p style={{ fontSize: '14px', fontWeight: 800, margin: 0 }}>School Email</p>
-            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#2d6e28', color: 'white', padding: '2px 6px', borderRadius: '4px' }}>Recommended</span>
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--palette-forest-600)', color: 'var(--palette-white)', padding: '2px 6px', borderRadius: '4px' }}>Recommended</span>
           </div>
         </button>
         <button
           type="button"
           onClick={() => onChange('none')}
           style={{
-            border: path === 'none' ? '1px solid #2d6e28' : '1px solid rgba(30,58,30,0.2)',
+            border: path === 'none' ? '1px solid var(--palette-forest-600)' : '1px solid rgb(var(--palette-forest-800-rgb) / 0.2)',
             borderRadius: '12px',
-            background: path === 'none' ? 'rgba(45,110,40,0.12)' : '#fffdf8',
-            color: '#1a2e1a',
+            background: path === 'none' ? 'rgb(var(--palette-forest-600-rgb) / 0.12)' : 'var(--palette-cream-150)',
+            color: 'var(--palette-forest-700)',
             textAlign: 'left',
             padding: '12px 14px',
             cursor: 'pointer',
@@ -272,22 +272,22 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
             justifyContent: 'space-between',
             gap: '12px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            borderColor: open ? '#2d6e28' : 'rgba(30,58,30,0.22)',
+            borderColor: open ? 'var(--palette-forest-600)' : 'rgb(var(--palette-forest-800-rgb) / 0.22)',
             textAlign: 'left',
           }}
         >
           <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
             {selectedOrg ? (
               <>
-                <span style={{ color: '#1a2e1a', fontSize: '14px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ color: 'var(--palette-forest-700)', fontSize: '14px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {selectedOrg.org_name}
                 </span>
-                <span style={{ color: '#4a5e4a', fontSize: '12px' }}>
+                <span style={{ color: 'var(--palette-forest-500)', fontSize: '12px' }}>
                   @{selectedOrg.email_domain}
                 </span>
               </>
             ) : (
-              <span style={{ color: '#4a5e4a', fontSize: '14px' }}>
+              <span style={{ color: 'var(--palette-forest-500)', fontSize: '14px' }}>
                 Select your school
               </span>
             )}
@@ -303,10 +303,10 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
               top: 'calc(100% + 6px)',
               left: 0,
               right: 0,
-              background: '#fffdf8',
-              border: '1px solid rgba(30,58,30,0.22)',
+              background: 'var(--palette-cream-150)',
+              border: '1px solid rgb(var(--palette-forest-800-rgb) / 0.22)',
               borderRadius: '12px',
-              boxShadow: '0 16px 34px rgba(30,58,30,0.16)',
+              boxShadow: '0 16px 34px rgb(var(--palette-forest-800-rgb) / 0.16)',
               padding: '6px',
               zIndex: 120,
               display: 'flex',
@@ -328,9 +328,9 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                   width: '100%',
                   padding: '9px 12px 9px 34px',
                   borderRadius: '9px',
-                  border: '1px solid rgba(30,58,30,0.18)',
-                  background: '#ffffff',
-                  color: '#1a2e1a',
+                  border: '1px solid rgb(var(--palette-forest-800-rgb) / 0.18)',
+                  background: 'var(--palette-white)',
+                  color: 'var(--palette-forest-700)',
                   fontSize: '13px',
                   outline: 'none',
                   boxSizing: 'border-box',
@@ -345,7 +345,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
               }}
             >
               {filteredOrgs.length === 0 && (
-                <div style={{ padding: '12px', color: '#4a5e4a', fontSize: '13px', textAlign: 'center' }}>
+                <div style={{ padding: '12px', color: 'var(--palette-forest-500)', fontSize: '13px', textAlign: 'center' }}>
                   {loading ? 'Loading...' : 'No schools found'}
                 </div>
               )}
@@ -369,15 +369,15 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                       gap: '12px',
                       padding: '10px 12px',
                       borderRadius: '9px',
-                      background: active ? 'rgba(45,110,40,0.12)' : 'transparent',
+                      background: active ? 'rgb(var(--palette-forest-600-rgb) / 0.12)' : 'transparent',
                       border: 'none',
                       cursor: 'pointer',
                       textAlign: 'left',
-                      color: '#1a2e1a',
+                      color: 'var(--palette-forest-700)',
                       fontSize: '14px',
                     }}
                     onMouseEnter={(e) => {
-                      if (!active) e.currentTarget.style.background = 'rgba(30,58,30,0.06)'
+                      if (!active) e.currentTarget.style.background = 'rgb(var(--palette-forest-800-rgb) / 0.06)'
                     }}
                     onMouseLeave={(e) => {
                       if (!active) e.currentTarget.style.background = 'transparent'
@@ -387,7 +387,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                       <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {o.org_name}
                       </span>
-                      <span style={{ color: '#4a5e4a', fontSize: '12px' }}>
+                      <span style={{ color: 'var(--palette-forest-500)', fontSize: '12px' }}>
                         @{o.email_domain}
                       </span>
                     </span>
@@ -397,7 +397,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
               })}
             </div>
             {loadingMore && (
-              <div style={{ padding: '8px 12px 4px', color: '#4a5e4a', fontSize: '12px', textAlign: 'center' }}>
+              <div style={{ padding: '8px 12px 4px', color: 'var(--palette-forest-500)', fontSize: '12px', textAlign: 'center' }}>
                 Loading more schools...
               </div>
             )}
@@ -405,7 +405,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
         )}
       </div>
       {selectedOrg && (
-        <p style={{ color: '#4a5e4a', fontSize: '12px', marginTop: '6px' }}>
+        <p style={{ color: 'var(--palette-forest-500)', fontSize: '12px', marginTop: '6px' }}>
           Your email must end with @{selectedOrg.email_domain}  
         </p>  
       )}
@@ -438,7 +438,7 @@ export function FormField({ label, type, value, onChange, placeholder, autoCompl
         placeholder={placeholder}
         style={inputStyle}
       />
-      {hint && <p style={{ color: '#4a5e4a', fontSize: '12px', marginTop: '6px' }}>{hint}</p>}
+      {hint && <p style={{ color: 'var(--palette-forest-500)', fontSize: '12px', marginTop: '6px' }}>{hint}</p>}
     </div>
   )
 }
@@ -447,13 +447,13 @@ export function MessageBanner({ message, type }: { message: string; type: 'error
   return (
     <p
       style={{
-        color: type === 'success' ? '#1f6b1a' : '#a33824',
+        color: type === 'success' ? 'var(--palette-green-650)' : 'var(--palette-rust-600)',
         fontSize: '13px',
         marginBottom: '14px',
         textAlign: 'center',
         borderRadius: '10px',
         padding: '9px 10px',
-        background: type === 'success' ? 'rgba(45,110,40,0.1)' : 'rgba(200,57,30,0.1)',
+        background: type === 'success' ? 'rgb(var(--palette-forest-600-rgb) / 0.1)' : 'rgb(var(--palette-rust-500-rgb) / 0.1)',
       }}
     >
       {message}
@@ -470,8 +470,8 @@ export function SubmitButton({ loading, label }: { loading: boolean; label: stri
         width: '100%',
         padding: '13px',
         borderRadius: '12px',
-        background: '#1e3a1e',
-        color: 'white',
+        background: 'var(--palette-forest-800)',
+        color: 'var(--palette-white)',
         fontSize: '15px',
         fontWeight: 700,
         border: 'none',
@@ -487,12 +487,12 @@ export function SubmitButton({ loading, label }: { loading: boolean; label: stri
 export function AuthSwitcher({ mode, onSwitch }: { mode: Mode; onSwitch: (m: Mode) => void }) {
   const isSignUp = mode === 'signup'
   return (
-    <p style={{ color: '#4a5e4a', fontSize: '14px', textAlign: 'center' }}>
+    <p style={{ color: 'var(--palette-forest-500)', fontSize: '14px', textAlign: 'center' }}>
       {isSignUp ? 'Already have an account?' : "Need an account?"}{' '}
       <button
         type="button"
         onClick={() => onSwitch(isSignUp ? 'signin' : 'signup')}
-        style={{ background: 'none', border: 'none', color: '#1a8a0d', cursor: 'pointer', fontSize: '14px', fontWeight: 700, padding: 0 }}
+        style={{ background: 'none', border: 'none', color: 'var(--palette-green-550)', cursor: 'pointer', fontSize: '14px', fontWeight: 700, padding: 0 }}
       >
         {isSignUp ? 'Sign in' : 'Create one'}
       </button>

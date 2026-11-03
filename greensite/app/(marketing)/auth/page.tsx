@@ -226,7 +226,7 @@ export default function AuthPage() {
       : 'Sign In'
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f0ece4', display: 'flex', flexDirection: 'column' }}>
+    <div className="theme-auth" style={{ minHeight: '100vh', background: 'var(--surface-app)', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
       <main
         className="relative flex-1"
@@ -301,12 +301,12 @@ export default function AuthPage() {
             </form>
 
             {!isSignUp && (
-              <p style={{ color: '#4a5e4a', fontSize: '13px', textAlign: 'center', marginTop: '16px' }}>
+              <p style={{ color: 'var(--palette-forest-500)', fontSize: '13px', textAlign: 'center', marginTop: '16px' }}>
                 Forgot password?
               </p>
             )}
 
-            <div style={{ borderTop: '1px solid rgba(30,58,30,0.16)', margin: '20px 0 16px' }} />
+            <div style={{ borderTop: '1px solid rgb(var(--palette-forest-800-rgb) / 0.16)', margin: '20px 0 16px' }} />
 
             <AuthSwitcher mode={mode} onSwitch={switchMode} />
           </section>

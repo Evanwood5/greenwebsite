@@ -13,7 +13,7 @@ interface PreferencesFormProps {
 }
 
 const sectionLabel: React.CSSProperties = {
-    color: '#52525b',
+    color: 'var(--palette-neutral-600)',
     fontSize: '9px',
     fontWeight: 700,
     letterSpacing: '0.1em',
@@ -72,7 +72,7 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
 
             {/* Job Types */}
             <div>
-                <p style={sectionLabel}>Job Type <span style={{ color: '#3f3f46', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— select up to 2</span></p>
+                <p style={sectionLabel}>Job Type <span style={{ color: 'var(--palette-neutral-700)', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— select up to 2</span></p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                     {jobTypeOptions.map((option) => {
                         const selected = formData.jobTypes.includes(option.value);
@@ -84,9 +84,9 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                                 style={{
                                     padding: '9px 12px',
                                     borderRadius: '4px',
-                                    border: `1px solid ${selected ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)'}`,
-                                    background: selected ? 'rgba(255,255,255,0.08)' : 'transparent',
-                                    color: selected ? '#e4e4e7' : '#52525b',
+                                    border: `1px solid ${selected ? 'rgb(var(--palette-white-rgb) / 0.18)' : 'rgb(var(--palette-white-rgb) / 0.08)'}`,
+                                    background: selected ? 'rgb(var(--palette-white-rgb) / 0.08)' : 'transparent',
+                                    color: selected ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-600)',
                                     fontSize: '12px',
                                     fontWeight: selected ? 600 : 400,
                                     cursor: 'pointer',
@@ -113,7 +113,7 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
             {/* Experience Level */}
             {formData.jobTypes.includes('full-time') && (
                 <div>
-                    <p style={sectionLabel}>Experience Level <span style={{ color: '#3f3f46', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— full-time only</span></p>
+                    <p style={sectionLabel}>Experience Level <span style={{ color: 'var(--palette-neutral-700)', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— full-time only</span></p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         {[
                             { value: 'moderate', label: 'Moderate (0–2 years)' },
@@ -130,8 +130,8 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                                         gap: '10px',
                                         padding: '8px 10px',
                                         borderRadius: '4px',
-                                        border: `1px solid ${selected ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.06)'}`,
-                                        background: selected ? 'rgba(255,255,255,0.06)' : 'transparent',
+                                        border: `1px solid ${selected ? 'rgb(var(--palette-white-rgb) / 0.14)' : 'rgb(var(--palette-white-rgb) / 0.06)'}`,
+                                        background: selected ? 'rgb(var(--palette-white-rgb) / 0.06)' : 'transparent',
                                         cursor: 'pointer',
                                         transition: 'all 120ms',
                                     }}
@@ -142,9 +142,9 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                                         value={option.value}
                                         checked={selected}
                                         onChange={(e) => updateFormData('experienceLevel', e.target.value)}
-                                        style={{ accentColor: '#e4e4e7', width: '14px', height: '14px' }}
+                                        style={{ accentColor: 'var(--palette-neutral-200)', width: '14px', height: '14px' }}
                                     />
-                                    <span style={{ color: selected ? '#e4e4e7' : '#71717a', fontSize: '12px', fontWeight: selected ? 500 : 400 }}>
+                                    <span style={{ color: selected ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)', fontSize: '12px', fontWeight: selected ? 500 : 400 }}>
                                         {option.label}
                                     </span>
                                 </label>
@@ -156,13 +156,13 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
 
             {/* Location */}
             <div>
-                <p style={sectionLabel}>Location <span style={{ color: '#3f3f46', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— 30-mile radius per city</span></p>
+                <p style={sectionLabel}>Location <span style={{ color: 'var(--palette-neutral-700)', fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— 30-mile radius per city</span></p>
                 <div style={{
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    border: '1px solid rgb(var(--palette-white-rgb) / 0.08)',
                     borderRadius: '4px',
                     maxHeight: '220px',
                     overflowY: 'auto',
-                    background: '#141414',
+                    background: 'var(--palette-neutral-850)',
                 }}>
                     {/* All Michigan row */}
                     <label
@@ -172,8 +172,8 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                             gap: '10px',
                             padding: '7px 10px',
                             cursor: 'pointer',
-                            background: allMichiganChecked ? 'rgba(255,255,255,0.05)' : 'transparent',
-                            borderBottom: '1px solid rgba(255,255,255,0.06)',
+                            background: allMichiganChecked ? 'rgb(var(--palette-white-rgb) / 0.05)' : 'transparent',
+                            borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.06)',
                             transition: 'background 80ms',
                         }}
                     >
@@ -181,9 +181,9 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                             type="checkbox"
                             checked={allMichiganChecked}
                             onChange={() => handleCityToggle('')}
-                            style={{ accentColor: '#e4e4e7', width: '13px', height: '13px', flexShrink: 0 }}
+                            style={{ accentColor: 'var(--palette-neutral-200)', width: '13px', height: '13px', flexShrink: 0 }}
                         />
-                        <span style={{ color: allMichiganChecked ? '#e4e4e7' : '#71717a', fontSize: '12px', fontWeight: 600 }}>
+                        <span style={{ color: allMichiganChecked ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)', fontSize: '12px', fontWeight: 600 }}>
                             All Michigan (statewide)
                         </span>
                     </label>
@@ -198,8 +198,8 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                                     gap: '10px',
                                     padding: '7px 10px',
                                     cursor: 'pointer',
-                                    background: checked ? 'rgba(255,255,255,0.05)' : 'transparent',
-                                    borderBottom: i < michiganCities.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                                    background: checked ? 'rgb(var(--palette-white-rgb) / 0.05)' : 'transparent',
+                                    borderBottom: i < michiganCities.length - 1 ? '1px solid rgb(var(--palette-white-rgb) / 0.03)' : 'none',
                                     transition: 'background 80ms',
                                 }}
                             >
@@ -207,9 +207,9 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                                     type="checkbox"
                                     checked={checked}
                                     onChange={() => handleCityToggle(city)}
-                                    style={{ accentColor: '#e4e4e7', width: '13px', height: '13px', flexShrink: 0 }}
+                                    style={{ accentColor: 'var(--palette-neutral-200)', width: '13px', height: '13px', flexShrink: 0 }}
                                 />
-                                <span style={{ color: checked ? '#e4e4e7' : '#71717a', fontSize: '12px', fontWeight: 400 }}>
+                                <span style={{ color: checked ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)', fontSize: '12px', fontWeight: 400 }}>
                                     {city}
                                 </span>
                             </label>
@@ -217,7 +217,7 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                     })}
                 </div>
                 {selectedCities.length > 0 && (
-                    <p style={{ color: '#52525b', fontSize: '10px', marginTop: '6px' }}>
+                    <p style={{ color: 'var(--palette-neutral-600)', fontSize: '10px', marginTop: '6px' }}>
                         {`${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
                     </p>
                 )}
@@ -231,8 +231,8 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                     gap: '10px',
                     padding: '10px 12px',
                     borderRadius: '4px',
-                    border: `1px solid ${formData.includeRemote ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.06)'}`,
-                    background: formData.includeRemote ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    border: `1px solid ${formData.includeRemote ? 'rgb(var(--palette-white-rgb) / 0.14)' : 'rgb(var(--palette-white-rgb) / 0.06)'}`,
+                    background: formData.includeRemote ? 'rgb(var(--palette-white-rgb) / 0.05)' : 'transparent',
                     cursor: 'pointer',
                     transition: 'all 120ms',
                 }}>
@@ -240,11 +240,11 @@ export default function PreferencesForm({ formData, updateFormData }: Preference
                         type="checkbox"
                         checked={formData.includeRemote}
                         onChange={(e) => updateFormData('includeRemote', e.target.checked)}
-                        style={{ accentColor: '#e4e4e7', width: '14px', height: '14px', flexShrink: 0 }}
+                        style={{ accentColor: 'var(--palette-neutral-200)', width: '14px', height: '14px', flexShrink: 0 }}
                     />
                     <div>
-                        <p style={{ color: formData.includeRemote ? '#e4e4e7' : '#71717a', fontSize: '12px', fontWeight: 500 }}>Include remote jobs</p>
-                        <p style={{ color: '#52525b', fontSize: '11px' }}>Get matched with remote opportunities</p>
+                        <p style={{ color: formData.includeRemote ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)', fontSize: '12px', fontWeight: 500 }}>Include remote jobs</p>
+                        <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>Get matched with remote opportunities</p>
                     </div>
                 </label>
             </div>

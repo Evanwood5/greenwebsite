@@ -40,12 +40,12 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
           padding: '7px 10px',
           borderRadius: '4px',
           border: hasValue
-            ? '1px solid rgba(255,255,255,0.18)'
-            : `1px solid ${open ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
+            ? '1px solid rgb(var(--palette-white-rgb) / 0.18)'
+            : `1px solid ${open ? 'rgb(var(--palette-white-rgb) / 0.15)' : 'rgb(var(--palette-white-rgb) / 0.08)'}`,
           background: hasValue
-            ? 'rgba(255,255,255,0.07)'
-            : open ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
-          color: hasValue ? '#e4e4e7' : open ? '#e4e4e7' : '#52525b',
+            ? 'rgb(var(--palette-white-rgb) / 0.07)'
+            : open ? 'rgb(var(--palette-white-rgb) / 0.06)' : 'rgb(var(--palette-white-rgb) / 0.03)',
+          color: hasValue ? 'var(--palette-neutral-200)' : open ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-600)',
           fontSize: '12px',
           cursor: disabled ? 'not-allowed' : 'pointer',
           textAlign: 'left',
@@ -55,7 +55,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
           {selected.icon && (
-            <span style={{ flexShrink: 0, color: hasValue ? '#e4e4e7' : selected.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
+            <span style={{ flexShrink: 0, color: hasValue ? 'var(--palette-neutral-200)' : selected.iconColor ?? 'var(--palette-neutral-600)', display: 'flex', alignItems: 'center' }}>
               {selected.icon}
             </span>
           )}
@@ -64,7 +64,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
         <svg
           width="11" height="11" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={{ flexShrink: 0, color: hasValue ? '#a1a1aa' : '#52525b', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          style={{ flexShrink: 0, color: hasValue ? 'var(--palette-neutral-400)' : 'var(--palette-neutral-600)', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
@@ -76,10 +76,10 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
           top: 'calc(100% + 4px)',
           left: 0,
           right: 0,
-          background: '#1e1e1e',
-          border: '1px solid rgba(255,255,255,0.12)',
+          background: 'var(--palette-neutral-800)',
+          border: '1px solid rgb(var(--palette-white-rgb) / 0.12)',
           borderRadius: '4px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          boxShadow: '0 8px 24px rgb(var(--palette-black-rgb) / 0.5)',
           zIndex: 100,
           overflow: 'hidden',
           maxHeight: '200px',
@@ -99,17 +99,17 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
                   textAlign: 'left',
                   padding: '8px 10px',
                   fontSize: '12px',
-                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  color: isActive ? '#ffffff' : '#a1a1aa',
+                  background: isActive ? 'rgb(var(--palette-white-rgb) / 0.08)' : 'transparent',
+                  color: isActive ? 'var(--palette-white)' : 'var(--palette-neutral-400)',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'background 100ms',
                 }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)' }}
+                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgb(var(--palette-white-rgb) / 0.05)' }}
                 onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
               >
                 {opt.icon && (
-                  <span style={{ flexShrink: 0, color: opt.iconColor ?? '#52525b', display: 'flex', alignItems: 'center' }}>
+                  <span style={{ flexShrink: 0, color: opt.iconColor ?? 'var(--palette-neutral-600)', display: 'flex', alignItems: 'center' }}>
                     {opt.icon}
                   </span>
                 )}
@@ -125,15 +125,15 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
 
 export function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgba(255,255,255,0.08)' }}>
-      <p style={{ color: '#52525b', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>
+    <div style={{ background: 'rgb(var(--palette-white-rgb) / 0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)' }}>
+      <p style={{ color: 'var(--palette-neutral-600)', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>
       <p style={{ color, fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>{value}</p>
     </div>
   )
 }
 
 const sectionLabelStyle: React.CSSProperties = {
-  color: '#52525b',
+  color: 'var(--palette-neutral-600)',
   fontSize: '9px',
   fontWeight: 700,
   letterSpacing: '0.1em',
@@ -161,16 +161,16 @@ export function FilterPanel({
 
   return (
     <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
-      <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', padding: '14px' }}>
+      <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', padding: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e4e4e7', fontSize: '12px', fontWeight: 600 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--palette-neutral-200)', fontSize: '12px', fontWeight: 600 }}>
             <FilterIcon />
             Filters
           </span>
           {activeFilterCount > 0 && (
             <button
               onClick={onClear}
-              style={{ background: 'none', border: 'none', color: '#52525b', fontSize: '11px', cursor: 'pointer', padding: '0' }}
+              style={{ background: 'none', border: 'none', color: 'var(--palette-neutral-600)', fontSize: '11px', cursor: 'pointer', padding: '0' }}
             >
               Clear all
             </button>
@@ -181,7 +181,7 @@ export function FilterPanel({
           <svg
             width="12" height="12" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: '#52525b', pointerEvents: 'none' }}
+            style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: 'var(--palette-neutral-600)', pointerEvents: 'none' }}
           >
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -194,9 +194,9 @@ export function FilterPanel({
               width: '100%',
               padding: '8px 28px 8px 28px',
               borderRadius: '4px',
-              border: '1px solid rgba(255,255,255,0.14)',
-              background: '#141414',
-              color: '#e4e4e7',
+              border: '1px solid rgb(var(--palette-white-rgb) / 0.14)',
+              background: 'var(--palette-neutral-850)',
+              color: 'var(--palette-neutral-200)',
               fontSize: '12px',
               outline: 'none',
               boxSizing: 'border-box',
@@ -205,13 +205,13 @@ export function FilterPanel({
           {searchInput && (
             <button
               onClick={() => onSearchInputChange('')}
-              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px' }}
+              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--palette-neutral-600)', cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px' }}
             >
               ×
             </button>
           )}
         </div>
-        <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', marginBottom: '4px' }} />
+        <div style={{ height: '1px', background: 'rgb(var(--palette-white-rgb) / 0.06)', marginBottom: '4px' }} />
 
         <p style={sectionLabelStyle}>Category</p>
         <DropdownSelect
@@ -220,25 +220,25 @@ export function FilterPanel({
           options={[
             { label: 'All Categories', value: '' },
             {
-              label: 'Tech', value: 'Tech', iconColor: '#60a5fa',
+              label: 'Tech', value: 'Tech', iconColor: 'var(--palette-blue-400)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
             },
             {
-              label: 'Engineering', value: 'Engineering', iconColor: '#f97316',
+              label: 'Engineering', value: 'Engineering', iconColor: 'var(--palette-orange-500)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
             },
             {
-              label: 'Health', value: 'Health', iconColor: '#f43f5e',
+              label: 'Health', value: 'Health', iconColor: 'var(--palette-rose-500)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
             },
             {
-              label: 'Business', value: 'Business', iconColor: '#a78bfa',
+              label: 'Business', value: 'Business', iconColor: 'var(--palette-purple-400)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
             },
           ]}
         />
 
-        <p style={{ ...sectionLabelStyle, color: filters.category ? '#71717a' : '#3f3f46' }}>Sub-category</p>
+        <p style={{ ...sectionLabelStyle, color: filters.category ? 'var(--palette-neutral-500)' : 'var(--palette-neutral-700)' }}>Sub-category</p>
         <DropdownSelect
           value={filters.subCategory}
           onChange={(v) => onFilterChange('subCategory', v)}
@@ -299,9 +299,9 @@ export function FilterPanel({
 
 export function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: '#fca5a5', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div style={{ background: 'rgb(var(--palette-red-500-rgb) / 0.08)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: 'var(--palette-red-300)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
       {message}
-      <button onClick={onRetry} style={{ marginLeft: 'auto', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
+      <button onClick={onRetry} style={{ marginLeft: 'auto', color: 'var(--palette-red-400)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
         Try again
       </button>
     </div>
@@ -314,7 +314,7 @@ export function LoadMoreButton({ totalRemaining, loading, onLoadMore }: { totalR
       <button
         onClick={onLoadMore}
         disabled={loading}
-        style={{ padding: '8px 20px', background: 'rgba(255,255,255,0.05)', color: '#a1a1aa', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
+        style={{ padding: '8px 20px', background: 'rgb(var(--palette-white-rgb) / 0.05)', color: 'var(--palette-neutral-400)', border: '1px solid rgb(var(--palette-white-rgb) / 0.1)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
       >
         {loading ? 'Loading...' : `Load More (${totalRemaining} remaining)`}
       </button>
