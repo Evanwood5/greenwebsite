@@ -116,7 +116,7 @@ function Card({ t, className = '' }: { t: typeof testimonials[0]; className?: st
       >
         &ldquo;
       </div>
-      <p className="text-[14px] leading-relaxed flex-1" style={{ color: 'var(--palette-neutral-820)' }}>
+      <p className="text-[14px] leading-relaxed flex-1" style={{ color: 'var(--palette-neutral-800)' }}>
         {t.quote}
       </p>
     </div>

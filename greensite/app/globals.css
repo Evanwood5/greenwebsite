@@ -7,10 +7,11 @@ html {
 /* ==========================================================================
    Greenify color system
    --------------------------------------------------------------------------
-   Pass A: this file is the single source of truth for application colors.
-   Every primitive below preserves the exact value it replaced; no shades were
-   merged. Semantic tokens are layered on top and are scoped per product area
-   (dashboard, marketing dark, marketing light, auth) via existing wrappers.
+   Pass A centralized every literal color in this file without changing
+   appearance. Pass B then merged near-identical primitives that serve the same
+   purpose (see documentation/colors.md for the merge list). Semantic tokens are
+   layered on top and are scoped per product area (dashboard, marketing dark,
+   marketing light, auth) via existing wrappers.
 
    Rules:
    - Components should reference `var(--palette-*)` or the semantic tokens.
@@ -33,32 +34,20 @@ html {
 
   /* neutral */
   --palette-neutral-50: #fafafa;
-  --palette-neutral-55: #f9fafb;
   --palette-neutral-100: #f3f4f6;
-  --palette-neutral-150: #e5e7eb;
   --palette-neutral-200: #e4e4e7;
-  --palette-neutral-300: #d4d4d8;
   --palette-neutral-400: #a1a1aa;
   --palette-neutral-450: #9ca3af;
   --palette-neutral-475: #888888;
   --palette-neutral-500: #71717a;
-  --palette-neutral-525: #6b7280;
   --palette-neutral-600: #52525b;
   --palette-neutral-700: #3f3f46;
-  --palette-neutral-705: #3f3f3f;
-  --palette-neutral-710: #3a3a3a;
   --palette-neutral-715: #374151;
   --palette-neutral-720: #333333;
   --palette-neutral-750: #2a2a2a;
   --palette-neutral-800: #1e1e1e;
-  --palette-neutral-810: #1a1b1e;
-  --palette-neutral-820: #1a1a1a;
-  --palette-neutral-830: #161616;
   --palette-neutral-840: #111827;
   --palette-neutral-850: #141414;
-  --palette-neutral-860: #111111;
-  --palette-neutral-870: #0d0d0d;
-  --palette-neutral-875: #0e0e0e;
   --palette-neutral-900: #0a0a0a;
   --palette-neutral-950: #080808;
 
@@ -70,7 +59,6 @@ html {
 
   /* green */
   --palette-green-50: #f0fdf4;
-  --palette-green-55: #f0fdf0;
   --palette-green-200: #bbf7d0;
   --palette-green-400: #4ade80;
   --palette-green-450: #22c55e;
@@ -91,10 +79,7 @@ html {
   --palette-forest-700: #1a2e1a;
   --palette-forest-800: #1e3a1e;
   --palette-forest-900: #0f2510;
-  --palette-forest-925: #0a1208;
   --palette-forest-950: #050a05;
-  --palette-forest-980: #0a1f0a;
-  --palette-forest-990: #0a1f0d;
 
   /* red */
   --palette-red-50: #fee2e2;
@@ -173,8 +158,6 @@ html {
   --palette-black-rgb: 0 0 0;
   --palette-neutral-500-rgb: 113 113 122;
   --palette-neutral-800-rgb: 30 30 30;
-  --palette-neutral-820-rgb: 26 26 26;
-  --palette-neutral-875-rgb: 14 14 14;
   --palette-neutral-950-rgb: 8 8 8;
   --palette-green-400-rgb: 74 222 128;
   --palette-green-450-rgb: 34 197 94;
@@ -198,11 +181,6 @@ html {
   --palette-rust-500-rgb: 200 57 30;
   --palette-discord-500-rgb: 88 101 242;
 
-  /* ----------------------------------------------------------------------
-     Default semantic tokens (dashboard / dark app)
-     ---------------------------------------------------------------------- */
-  --background: var(--palette-neutral-950);
-  --foreground: var(--palette-neutral-50);
 }
 
 /* Dashboard is the default dark application theme. */
@@ -211,7 +189,7 @@ html {
   --surface-app: var(--palette-neutral-950);
   --surface-panel: var(--palette-neutral-850);
   --surface-raised: var(--palette-neutral-800);
-  --surface-elevated: var(--palette-neutral-820);
+  --surface-elevated: var(--palette-neutral-800);
   --surface-hover: rgb(var(--palette-white-rgb) / 0.04);
   --surface-active: rgb(var(--palette-white-rgb) / 0.08);
 
@@ -244,8 +222,8 @@ html {
 .theme-marketing-dark {
   --surface-app: var(--palette-black);
   --surface-panel: var(--palette-neutral-900);
-  --surface-raised: var(--palette-neutral-810);
-  --surface-elevated: var(--palette-neutral-820);
+  --surface-raised: var(--palette-neutral-800);
+  --surface-elevated: var(--palette-neutral-800);
   --surface-hover: rgb(var(--palette-white-rgb) / 0.04);
   --surface-active: rgb(var(--palette-white-rgb) / 0.08);
 
@@ -343,8 +321,8 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--surface-app);
+  color: var(--text-primary);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

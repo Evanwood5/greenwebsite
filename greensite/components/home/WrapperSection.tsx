@@ -142,7 +142,7 @@ export default function WrapperSection() {
   return (
     <section
       id="how-it-works"
-      style={{ background: 'var(--palette-forest-925)', borderRadius: '20px', scrollMarginTop: '72px', overflow: 'hidden' }}
+      style={{ background: 'var(--palette-forest-950)', borderRadius: '20px', scrollMarginTop: '72px', overflow: 'hidden' }}
       className="px-6 py-24"
     >
       <style>{`
@@ -233,7 +233,7 @@ export default function WrapperSection() {
         <FadeIn delay={300} className="flex justify-center mt-12">
           <div
             className="inline-flex items-center gap-3 px-5 py-3 rounded-xl"
-            style={{ background: 'var(--palette-forest-990)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.3)' }}
+            style={{ background: 'var(--palette-forest-900)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.3)' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--palette-green-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>

@@ -25,7 +25,7 @@ export interface SavedJob {
 export const STATUS_OPTIONS: JobStatus[] = ['Saved', 'Applied', 'Interview', 'Offer']
 
 export const STATUS_STYLE: Record<JobStatus, { color: string; background: string; border: string }> = {
-  Saved:     { color: 'var(--palette-neutral-450)', background: 'var(--palette-neutral-820)', border: 'var(--palette-neutral-715)' },
+  Saved:     { color: 'var(--palette-neutral-450)', background: 'var(--palette-neutral-800)', border: 'var(--palette-neutral-715)' },
   Applied:   { color: 'var(--palette-blue-400)', background: 'var(--palette-navy-800)', border: 'var(--palette-blue-700)' },
   Interview: { color: 'var(--palette-orange-400)', background: 'var(--palette-orange-950)', border: 'var(--palette-orange-700)' },
   Offer:     { color: 'var(--palette-green-400)', background: 'var(--palette-green-950)', border: 'var(--palette-green-700)' },

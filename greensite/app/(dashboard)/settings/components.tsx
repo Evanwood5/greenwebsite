@@ -135,7 +135,7 @@ export function PrefEditor({
             Required
           </span>
         </div>
-        <p style={{ color: 'var(--palette-neutral-525)', fontSize: '12px', marginBottom: '10px' }}>
+        <p style={{ color: 'var(--palette-neutral-500)', fontSize: '12px', marginBottom: '10px' }}>
           Select at least one category — subcategories help focus your matches further
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
@@ -172,7 +172,7 @@ export function PrefEditor({
                         <button key={sub} type="button" onClick={() => toggleSubcategory(sub)} style={{
                           padding: '5px 12px', borderRadius: '4px',
                           border: `1px solid ${selected ? 'rgb(var(--palette-white-rgb) / 0.18)' : 'rgb(var(--palette-white-rgb) / 0.06)'}`,
-                          background: selected ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'var(--palette-neutral-860)',
+                          background: selected ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'var(--palette-neutral-850)',
                           color: selected ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)',
                           fontSize: '11px', fontWeight: selected ? 600 : 400,
                           cursor: 'pointer',
@@ -268,7 +268,7 @@ export function PrefEditor({
           ))}
         </div>
         {selectedCities.length > 0 && (
-          <p style={{ color: 'var(--palette-neutral-525)', fontSize: '12px', marginTop: '6px' }}>
+          <p style={{ color: 'var(--palette-neutral-500)', fontSize: '12px', marginTop: '6px' }}>
             {`${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
           </p>
         )}
@@ -383,7 +383,7 @@ export function PreferenceCard({
       ) : pref.jobTypes.length > 0 ? (
         <PreferenceSummary pref={pref} />
       ) : (
-        <p style={{ color: 'var(--palette-neutral-525)', fontSize: '13px' }}>Not configured yet. Click Set Up to add your preferences.</p>
+        <p style={{ color: 'var(--palette-neutral-500)', fontSize: '13px' }}>Not configured yet. Click Set Up to add your preferences.</p>
       )}
     </div>
   )

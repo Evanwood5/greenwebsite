@@ -56,7 +56,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     ],
     dark: true,
     reverse: false,
-    background: 'var(--palette-forest-980)',
+    background: 'var(--palette-forest-900)',
   },
 ]
 

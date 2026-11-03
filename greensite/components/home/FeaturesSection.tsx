@@ -81,7 +81,7 @@ function CompanyTrackMockup() {
               +{c.newJobs} new
             </div>
           ) : (
-            <div style={{ fontSize: '9px', color: 'var(--palette-neutral-705)', flexShrink: 0 }}>No new</div>
+            <div style={{ fontSize: '9px', color: 'var(--palette-neutral-700)', flexShrink: 0 }}>No new</div>
           )}
         </div>
       ))}
@@ -97,7 +97,7 @@ function DashboardMockup() {
     { company: 'Linear', role: 'Frontend Engineer', color: 'var(--palette-amber-500)', isTop: false },
   ];
   return (
-    <div style={{ background: 'var(--palette-neutral-810)', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgb(var(--palette-black-rgb) / 0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ background: 'var(--palette-neutral-800)', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgb(var(--palette-black-rgb) / 0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ height: '6px', width: '60px', background: 'rgb(var(--palette-white-rgb) / 0.1)', borderRadius: '4px' }} />
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -172,7 +172,7 @@ function AnalyticsMockup() {
   };
 
   return (
-    <div style={{ background: 'var(--palette-neutral-810)', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgb(var(--palette-black-rgb) / 0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ background: 'var(--palette-neutral-800)', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgb(var(--palette-black-rgb) / 0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
         <div>
           <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--palette-neutral-200)' }}>Hiring Activity</div>
@@ -211,13 +211,13 @@ function AnalyticsMockup() {
         ))}
 
         {series.map((s) => (
-          <circle key={`d-${s.name}`} cx={toX(s.data.length - 1)} cy={toY(s.data[s.data.length - 1])} r="3.5" fill={s.color} stroke="var(--palette-neutral-870)" strokeWidth="2" />
+          <circle key={`d-${s.name}`} cx={toX(s.data.length - 1)} cy={toY(s.data[s.data.length - 1])} r="3.5" fill={s.color} stroke="var(--palette-neutral-900)" strokeWidth="2" />
         ))}
       </svg>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 8px 0 8px' }}>
         {labels.map((l) => (
-          <span key={l} style={{ fontSize: '9px', color: 'var(--palette-neutral-705)', fontWeight: 500 }}>{l}</span>
+          <span key={l} style={{ fontSize: '9px', color: 'var(--palette-neutral-700)', fontWeight: 500 }}>{l}</span>
         ))}
       </div>
     </div>
@@ -234,7 +234,7 @@ function ResumeMatchMockup() {
     { role: 'Product @ Figma', score: 71, isTop: false },
   ];
   return (
-    <div style={{ background: 'var(--palette-neutral-810)', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgb(var(--palette-black-rgb) / 0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div style={{ background: 'var(--palette-neutral-800)', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)', borderRadius: '16px', padding: '24px', boxShadow: '0 10px 40px rgb(var(--palette-black-rgb) / 0.5)', width: '100%', height: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <div style={{ display: 'flex', gap: '20px', marginBottom: '24px' }}>
         {/* Resume side */}
         <div style={{ flex: 1, background: 'rgb(var(--palette-white-rgb) / 0.03)', borderRadius: '10px', padding: '16px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

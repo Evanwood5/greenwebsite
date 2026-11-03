@@ -831,7 +831,7 @@ function CustomTooltip({
   if (!filtered.length) return null
   return (
     <div style={{
-      background: 'var(--palette-neutral-860)',
+      background: 'var(--palette-neutral-850)',
       border: '1px solid var(--palette-neutral-750)',
       borderRadius: 8,
       padding: '10px 14px',

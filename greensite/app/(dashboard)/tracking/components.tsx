@@ -601,7 +601,7 @@ export function TrackCompanyCard({
             <div style={{ marginTop: '12px' }}>
               <p style={{ ...sectionLabel, marginTop: 0, marginBottom: '8px' }}>
                 Subcategories
-                <span style={{ color: 'var(--palette-neutral-525)', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>— leave blank for all</span>
+                <span style={{ color: 'var(--palette-neutral-500)', fontWeight: 400, fontSize: '10px', marginLeft: '6px', textTransform: 'none', letterSpacing: 0 }}>— leave blank for all</span>
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                 {subcategoryList.map(sub => {

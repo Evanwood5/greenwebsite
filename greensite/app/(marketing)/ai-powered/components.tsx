@@ -67,7 +67,7 @@ function ExperienceRow({ experience }: { experience: Experience }) {
         <span className="text-[13px] font-semibold" style={{ color: 'var(--palette-navy-850)' }}>{experience.role}</span>
         <span className="text-[10px]" style={{ color: 'var(--palette-neutral-450)' }}>{experience.yr}</span>
       </div>
-      <div className="text-[11px]" style={{ color: 'var(--palette-neutral-525)' }}>{experience.co}</div>
+      <div className="text-[11px]" style={{ color: 'var(--palette-neutral-500)' }}>{experience.co}</div>
     </div>
   )
 }
@@ -80,7 +80,7 @@ export function ResumeCard() {
           <div className="rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0" style={{ width: 46, height: 46, background: 'var(--palette-black)' }}>JD</div>
           <div>
             <div className="text-[15px] font-bold" style={{ color: 'var(--palette-neutral-840)' }}>John Doe</div>
-            <div className="text-[12px]" style={{ color: 'var(--palette-neutral-525)' }}>Finance & Accounting · University of Michigan</div>
+            <div className="text-[12px]" style={{ color: 'var(--palette-neutral-500)' }}>Finance & Accounting · University of Michigan</div>
           </div>
         </div>
         <div className="mb-5">

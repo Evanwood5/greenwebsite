@@ -32,7 +32,7 @@ export default function GrandSection() {
         <Link
           href="/contact"
           className="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold rounded transition-all duration-200 active:scale-[0.97]"
-          style={{ background: 'var(--palette-white)', color: 'var(--palette-neutral-820)' }}
+          style={{ background: 'var(--palette-white)', color: 'var(--palette-neutral-800)' }}
         >
           Learn more
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

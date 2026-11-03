@@ -43,7 +43,7 @@ export function TerminalCard() {
         <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--palette-macos-red)' }} />
         <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--palette-macos-yellow)' }} />
         <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--palette-macos-green)' }} />
-        <span className="ml-2 text-[11px]" style={{ color: 'var(--palette-neutral-710)' }}>greenify-scraper</span>
+        <span className="ml-2 text-[11px]" style={{ color: 'var(--palette-neutral-700)' }}>greenify-scraper</span>
       </div>
 
       {lines.slice(0, visibleCount).map((line, i) => (
@@ -71,18 +71,18 @@ export function BeforeAfterCard() {
 
       {/* Indeed — stale */}
       <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--palette-white)', border: '2px solid var(--palette-red-500)', boxShadow: '0 0 32px rgb(var(--palette-red-500-rgb) / 0.12)' }}>
-        <div className="px-4 py-2 flex items-center gap-2" style={{ background: 'var(--palette-neutral-55)', borderBottom: '1px solid var(--palette-neutral-150)' }}>
-          <div className="text-[11px] font-bold" style={{ color: 'var(--palette-neutral-525)' }}>Major job boards</div>
+        <div className="px-4 py-2 flex items-center gap-2" style={{ background: 'var(--palette-neutral-50)', borderBottom: '1px solid var(--palette-neutral-200)' }}>
+          <div className="text-[11px] font-bold" style={{ color: 'var(--palette-neutral-500)' }}>Major job boards</div>
           <div className="ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: 'var(--palette-red-50)', color: 'var(--palette-red-800)' }}>
             Possibly outdated
           </div>
         </div>
         <div className="p-4">
           <div className="text-[14px] font-bold mb-1" style={{ color: 'var(--palette-neutral-715)' }}>Software Engineer</div>
-          <div className="text-[12px] mb-3" style={{ color: 'var(--palette-neutral-525)' }}>Top Michigan Employer · Detroit, MI</div>
+          <div className="text-[12px] mb-3" style={{ color: 'var(--palette-neutral-500)' }}>Top Michigan Employer · Detroit, MI</div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--palette-neutral-100)', color: 'var(--palette-neutral-525)' }}>Full-time</span>
-            <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--palette-neutral-100)', color: 'var(--palette-neutral-525)' }}>Hybrid</span>
+            <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--palette-neutral-100)', color: 'var(--palette-neutral-500)' }}>Full-time</span>
+            <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--palette-neutral-100)', color: 'var(--palette-neutral-500)' }}>Hybrid</span>
           </div>
           <div className="mt-3 text-[11px] font-semibold" style={{ color: 'var(--palette-neutral-450)' }}>
             Posted 3 weeks ago
@@ -99,7 +99,7 @@ export function BeforeAfterCard() {
 
       {/* Greenify — fresh */}
       <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--palette-white)', border: '2px solid var(--palette-green-500)', boxShadow: '0 0 32px rgb(var(--palette-green-500-rgb) / 0.15)' }}>
-        <div className="px-4 py-2 flex items-center gap-2" style={{ background: 'var(--palette-green-55)', borderBottom: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)' }}>
+        <div className="px-4 py-2 flex items-center gap-2" style={{ background: 'var(--palette-green-50)', borderBottom: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)' }}>
           <div className="text-[11px] font-bold" style={{ color: 'var(--palette-green-700)' }}>Greenify</div>
           <div className="ml-auto flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--palette-green-500)' }} />
@@ -108,7 +108,7 @@ export function BeforeAfterCard() {
         </div>
         <div className="p-4">
           <div className="text-[14px] font-bold mb-1" style={{ color: 'var(--palette-neutral-840)' }}>Software Engineer</div>
-          <div className="text-[12px] mb-3" style={{ color: 'var(--palette-neutral-525)' }}>Top Michigan Employer · Detroit, MI</div>
+          <div className="text-[12px] mb-3" style={{ color: 'var(--palette-neutral-500)' }}>Top Michigan Employer · Detroit, MI</div>
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--palette-green-50)', color: 'var(--palette-green-700)', border: '1px solid var(--palette-green-200)' }}>Full-time</span>
             <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--palette-green-50)', color: 'var(--palette-green-700)', border: '1px solid var(--palette-green-200)' }}>Hybrid</span>

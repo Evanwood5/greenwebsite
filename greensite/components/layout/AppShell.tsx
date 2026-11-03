@@ -8,8 +8,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/db/supabase'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
-  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--palette-neutral-830)' },
-  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--palette-neutral-830)' },
+  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--palette-neutral-850)' },
+  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--palette-neutral-850)' },
 }
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -190,7 +190,7 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Full-width top navbar */}
       <header style={{
         height: HEADER_HEIGHT,
-        background: 'rgb(var(--palette-neutral-875-rgb) / 0.85)',
+        background: 'rgb(var(--palette-neutral-950-rgb) / 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
@@ -309,7 +309,7 @@ export default function AppShell({ children }: AppShellProps) {
               position: 'absolute',
               top: '42px',
               right: 0,
-              background: 'rgb(var(--palette-neutral-820-rgb) / 0.95)',
+              background: 'rgb(var(--palette-neutral-800-rgb) / 0.95)',
               backdropFilter: 'blur(16px)',
               border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
               borderRadius: '12px',
@@ -331,7 +331,7 @@ export default function AppShell({ children }: AppShellProps) {
                   alignItems: 'center',
                   gap: '10px',
                   padding: '10px 16px',
-                  color: 'var(--palette-neutral-300)',
+                  color: 'var(--palette-neutral-200)',
                   fontSize: '13px',
                   textDecoration: 'none',
                 }}

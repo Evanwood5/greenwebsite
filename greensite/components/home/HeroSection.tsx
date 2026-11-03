@@ -39,7 +39,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--palette-forest-700)', marginBottom: 2 }}>Software Engineer</div>
-                <div style={{ fontSize: 11, color: 'var(--palette-neutral-525)' }}>Ford Motor Co · Dearborn, MI</div>
+                <div style={{ fontSize: 11, color: 'var(--palette-neutral-500)' }}>Ford Motor Co · Dearborn, MI</div>
               </div>
               <div style={{ background: 'rgb(var(--palette-green-600-rgb) / 0.1)', border: '1px solid rgb(var(--palette-green-600-rgb) / 0.35)', borderRadius: 8, padding: '3px 8px', textAlign: 'center' }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--palette-green-600)', lineHeight: 1 }}>91%</div>
@@ -53,7 +53,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
             </div>
             <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--palette-green-600)', animation: 'pulseGreen 2s ease-in-out infinite' }} />
-              <span style={{ fontSize: 10, color: 'var(--palette-neutral-525)' }}>Posted 2 hours ago</span>
+              <span style={{ fontSize: 10, color: 'var(--palette-neutral-500)' }}>Posted 2 hours ago</span>
             </div>
           </div>
 
@@ -68,7 +68,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--palette-forest-700)', marginBottom: 2 }}>Financial Analyst</div>
-                <div style={{ fontSize: 11, color: 'var(--palette-neutral-525)' }}>Comerica Bank · Detroit, MI</div>
+                <div style={{ fontSize: 11, color: 'var(--palette-neutral-500)' }}>Comerica Bank · Detroit, MI</div>
               </div>
               <div style={{ background: 'rgb(var(--palette-green-600-rgb) / 0.1)', border: '1px solid rgb(var(--palette-green-600-rgb) / 0.35)', borderRadius: 8, padding: '3px 8px', textAlign: 'center' }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--palette-green-600)', lineHeight: 1 }}>87%</div>
@@ -82,7 +82,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
             </div>
             <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--palette-green-600)', animation: 'pulseGreen 2.4s ease-in-out infinite' }} />
-              <span style={{ fontSize: 10, color: 'var(--palette-neutral-525)' }}>Posted 5 hours ago</span>
+              <span style={{ fontSize: 10, color: 'var(--palette-neutral-500)' }}>Posted 5 hours ago</span>
             </div>
           </div>
 
@@ -97,7 +97,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--palette-forest-700)', marginBottom: 2 }}>Mechanical Engineer</div>
-                <div style={{ fontSize: 11, color: 'var(--palette-neutral-525)' }}>Stellantis · Auburn Hills, MI</div>
+                <div style={{ fontSize: 11, color: 'var(--palette-neutral-500)' }}>Stellantis · Auburn Hills, MI</div>
               </div>
               <div style={{ background: 'rgb(var(--palette-green-600-rgb) / 0.1)', border: '1px solid rgb(var(--palette-green-600-rgb) / 0.35)', borderRadius: 8, padding: '3px 8px', textAlign: 'center' }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--palette-green-600)', lineHeight: 1 }}>78%</div>
@@ -111,7 +111,7 @@ export default function HeroSection({ user }: HeroSectionProps) {
             </div>
             <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--palette-green-600)', animation: 'pulseGreen 1.8s ease-in-out infinite' }} />
-              <span style={{ fontSize: 10, color: 'var(--palette-neutral-525)' }}>Posted 1 day ago</span>
+              <span style={{ fontSize: 10, color: 'var(--palette-neutral-500)' }}>Posted 1 day ago</span>
             </div>
           </div>
 

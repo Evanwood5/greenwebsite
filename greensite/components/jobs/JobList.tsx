@@ -168,7 +168,7 @@ export function DarkJobCard({
 
   return (
     <div style={{
-      background: 'var(--palette-neutral-870)',
+      background: 'var(--palette-neutral-900)',
       borderRadius: '10px',
       padding: '14px',
       border: '1px solid rgb(var(--palette-white-rgb) / 0.35)',
@@ -540,7 +540,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
           <col style={{ width: '100px' }} />
         </colgroup>
         <thead>
-          <tr style={{ background: 'var(--palette-neutral-860)' }}>
+          <tr style={{ background: 'var(--palette-neutral-850)' }}>
             <th style={{ ...thStyle, width: '36px' }}></th>
             <th style={thStyle}>Position</th>
             <th style={thStyle}>Level</th>
