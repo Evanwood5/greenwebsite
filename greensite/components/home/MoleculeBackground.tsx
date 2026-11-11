@@ -42,9 +42,12 @@ export default function MoleculeBackground() {
     if (!ctx) return
 
     // Canvas cannot resolve CSS variables, so read the centralized token once.
+    // If the token is unavailable, skip drawing rather than falling back to a
+    // hardcoded color that could drift from globals.css.
     const whiteRgb = getComputedStyle(document.documentElement)
       .getPropertyValue('--palette-white-rgb')
-      .trim() || '255 255 255'
+      .trim()
+    if (!whiteRgb) return
     const [whiteR, whiteG, whiteB] = whiteRgb.split(/\s+/)
 
     let nodes: Node[] = []

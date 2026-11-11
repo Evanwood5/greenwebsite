@@ -1,6 +1,6 @@
 # Color System
 
-`app/globals.css` is the single source of truth for application colors. Components
+`globals.css` at the project root is the single source of truth for application colors. Components
 must not contain literal hex, `rgb()`, or `hsl()` values. Run `npm run colors:check`
 to enforce this.
 
@@ -151,9 +151,22 @@ Pre-existing issues, reported separately and intentionally left unchanged:
 npm run colors:check
 ```
 
+The audit discovers source files automatically from the project root, so new
+folders such as `styles/` or `hooks/` are covered without changing the script.
+It skips generated output, vendor code, static assets, documentation, and the
+audit script itself. `globals.css` is the only file allowed to contain literal
+color values.
+
 The audit fails on:
 
-- literal hex / `rgb()` / `hsl()` colors outside `app/globals.css`
-- obvious named CSS colors used as color values
+- literal hex colors, including percent-encoded SVG colors (`%23ff0000`)
+- literal `rgb()` / `hsl()` / `hwb()` / `lab()` / `lch()` / `oklab()` /
+  `oklch()` / `color()` / `device-cmyk()` values
+- any CSS named color used as a value, including inside gradients, shadows,
+  borders, SVG attributes, and custom properties
+- arbitrary Tailwind named colors such as `bg-[red]`
 - referenced custom properties that are not defined in `globals.css`
 - Tailwind palette utilities missing from the `@theme` bridge
+
+`transparent`, `currentColor`, `inherit`, `initial`, `unset`, `revert`, and
+`none` remain valid keywords and are not flagged.
