@@ -62,8 +62,8 @@ export function FieldSelector({ value, onChange }: { value: Field; onChange: (fi
         style={{
           display: "inline-flex",
           alignItems: "center",
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "rgb(var(--palette-white-rgb) / 0.03)",
+          border: "1px solid rgb(var(--palette-white-rgb) / 0.08)",
           borderRadius: 4,
           padding: 3,
           gap: 2,
@@ -81,9 +81,9 @@ export function FieldSelector({ value, onChange }: { value: Field; onChange: (fi
                 gap: 6,
                 padding: "6px 14px",
                 borderRadius: 4,
-                border: isActive ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
-                background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
-                color: isActive ? "#ffffff" : "#71717a",
+                border: isActive ? "1px solid rgb(var(--palette-white-rgb) / 0.1)" : "1px solid transparent",
+                background: isActive ? "rgb(var(--palette-white-rgb) / 0.08)" : "transparent",
+                color: isActive ? "var(--palette-white)" : "var(--palette-neutral-500)",
                 fontSize: 12,
                 fontWeight: isActive ? 600 : 400,
                 cursor: "pointer",
@@ -94,13 +94,13 @@ export function FieldSelector({ value, onChange }: { value: Field; onChange: (fi
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "#a1a1aa";
-                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                  e.currentTarget.style.color = "var(--palette-neutral-400)";
+                  e.currentTarget.style.background = "rgb(var(--palette-white-rgb) / 0.04)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "#71717a";
+                  e.currentTarget.style.color = "var(--palette-neutral-500)";
                   e.currentTarget.style.background = "transparent";
                 }
               }}
@@ -144,7 +144,7 @@ export function LocationFilter({
         style={{
           fontSize: 12,
           fontWeight: 600,
-          color: "#71717a",
+          color: "var(--palette-neutral-500)",
           letterSpacing: "0.01em",
           whiteSpace: "nowrap",
         }}
@@ -161,11 +161,11 @@ export function LocationFilter({
             justifyContent: "space-between",
             padding: "7px 10px",
             borderRadius: "4px",
-            border: `1px solid ${open ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.08)"}`,
+            border: `1px solid ${open ? "rgb(var(--palette-white-rgb) / 0.15)" : "rgb(var(--palette-white-rgb) / 0.08)"}`,
             background: open
-              ? "rgba(255,255,255,0.06)"
-              : "rgba(255,255,255,0.03)",
-            color: "#e4e4e7",
+              ? "rgb(var(--palette-white-rgb) / 0.06)"
+              : "rgb(var(--palette-white-rgb) / 0.03)",
+            color: "var(--palette-neutral-200)",
             fontSize: "12px",
             cursor: "pointer",
             textAlign: "left",
@@ -193,7 +193,7 @@ export function LocationFilter({
             strokeLinejoin="round"
             style={{
               flexShrink: 0,
-              color: "#a1a1aa",
+              color: "var(--palette-neutral-400)",
               transition: "transform 150ms",
               transform: open ? "rotate(180deg)" : "rotate(0deg)",
             }}
@@ -209,10 +209,10 @@ export function LocationFilter({
             top: "calc(100% + 4px)",
             left: 0,
             right: 0,
-            background: "#1e1e1e",
-            border: "1px solid rgba(255,255,255,0.12)",
+            background: "var(--palette-neutral-800)",
+            border: "1px solid rgb(var(--palette-white-rgb) / 0.12)",
             borderRadius: "4px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+            boxShadow: "0 8px 24px rgb(var(--palette-black-rgb) / 0.5)",
             zIndex: 100,
             overflow: "hidden",
             maxHeight: "200px",
@@ -237,9 +237,9 @@ export function LocationFilter({
                   padding: "8px 10px",
                   fontSize: "12px",
                   background: isActive
-                    ? "rgba(255,255,255,0.08)"
+                    ? "rgb(var(--palette-white-rgb) / 0.08)"
                     : "transparent",
-                  color: isActive ? "#ffffff" : "#a1a1aa",
+                  color: isActive ? "var(--palette-white)" : "var(--palette-neutral-400)",
                   border: "none",
                   cursor: "pointer",
                   transition: "background 100ms",
@@ -247,7 +247,7 @@ export function LocationFilter({
                 onMouseEnter={(e) => {
                   if (!isActive)
                     e.currentTarget.style.background =
-                      "rgba(255,255,255,0.05)";
+                      "rgb(var(--palette-white-rgb) / 0.05)";
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) e.currentTarget.style.background = "transparent";
@@ -291,7 +291,7 @@ export function TimeframeFilter({
         style={{
           fontSize: 12,
           fontWeight: 600,
-          color: "#71717a",
+          color: "var(--palette-neutral-500)",
           letterSpacing: "0.01em",
           whiteSpace: "nowrap",
         }}
@@ -308,11 +308,11 @@ export function TimeframeFilter({
             justifyContent: "space-between",
             padding: "7px 10px",
             borderRadius: "4px",
-            border: `1px solid ${open ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.08)"}`,
+            border: `1px solid ${open ? "rgb(var(--palette-white-rgb) / 0.15)" : "rgb(var(--palette-white-rgb) / 0.08)"}`,
             background: open
-              ? "rgba(255,255,255,0.06)"
-              : "rgba(255,255,255,0.03)",
-            color: "#e4e4e7",
+              ? "rgb(var(--palette-white-rgb) / 0.06)"
+              : "rgb(var(--palette-white-rgb) / 0.03)",
+            color: "var(--palette-neutral-200)",
             fontSize: "12px",
             cursor: "pointer",
             textAlign: "left",
@@ -340,7 +340,7 @@ export function TimeframeFilter({
             strokeLinejoin="round"
             style={{
               flexShrink: 0,
-              color: "#a1a1aa",
+              color: "var(--palette-neutral-400)",
               transition: "transform 150ms",
               transform: open ? "rotate(180deg)" : "rotate(0deg)",
             }}
@@ -356,10 +356,10 @@ export function TimeframeFilter({
             top: "calc(100% + 4px)",
             left: 0,
             right: 0,
-            background: "#1e1e1e",
-            border: "1px solid rgba(255,255,255,0.12)",
+            background: "var(--palette-neutral-800)",
+            border: "1px solid rgb(var(--palette-white-rgb) / 0.12)",
             borderRadius: "4px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+            boxShadow: "0 8px 24px rgb(var(--palette-black-rgb) / 0.5)",
             zIndex: 100,
             overflow: "hidden",
             maxHeight: "200px",
@@ -384,9 +384,9 @@ export function TimeframeFilter({
                   padding: "8px 10px",
                   fontSize: "12px",
                   background: isActive
-                    ? "rgba(255,255,255,0.08)"
+                    ? "rgb(var(--palette-white-rgb) / 0.08)"
                     : "transparent",
-                  color: isActive ? "#ffffff" : "#a1a1aa",
+                  color: isActive ? "var(--palette-white)" : "var(--palette-neutral-400)",
                   border: "none",
                   cursor: "pointer",
                   transition: "background 100ms",
@@ -394,7 +394,7 @@ export function TimeframeFilter({
                 onMouseEnter={(e) => {
                   if (!isActive)
                     e.currentTarget.style.background =
-                      "rgba(255,255,255,0.05)";
+                      "rgb(var(--palette-white-rgb) / 0.05)";
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) e.currentTarget.style.background = "transparent";
@@ -481,7 +481,7 @@ function Modal({ open, onClose, title, children }: {
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.6)',
+        background: 'rgb(var(--palette-black-rgb) / 0.6)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -495,16 +495,16 @@ function Modal({ open, onClose, title, children }: {
         aria-modal="true"
         aria-label={title}
         style={{
-          background: '#1e1e1e',
-          border: '1px solid rgba(255,255,255,0.14)',
+          background: 'var(--palette-neutral-800)',
+          border: '1px solid rgb(var(--palette-white-rgb) / 0.14)',
           borderRadius: 4,
           width: '100%',
           maxWidth: 560,
           maxHeight: '70vh',
           display: 'flex',
           flexDirection: 'column',
-          color: '#e4e4e7',
-          boxShadow: '0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08)',
+          color: 'var(--palette-neutral-200)',
+          boxShadow: '0 24px 64px rgb(var(--palette-black-rgb) / 0.55), inset 0 1px 0 rgb(var(--palette-white-rgb) / 0.08)',
         }}
       >
         <div
@@ -514,11 +514,11 @@ function Modal({ open, onClose, title, children }: {
             justifyContent: 'space-between',
             gap: 16,
             padding: 16,
-            borderBottom: '1px solid rgba(255,255,255,0.09)',
+            borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.09)',
             flexShrink: 0,
           }}
         >
-          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52525b' }}>
+          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--palette-neutral-600)' }}>
             {title}
           </p>
           <button
@@ -527,15 +527,15 @@ function Modal({ open, onClose, title, children }: {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#a1a1aa',
+              color: 'var(--palette-neutral-400)',
               fontSize: 20,
               lineHeight: 1,
               cursor: 'pointer',
               padding: 0,
               flexShrink: 0,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#e4e4e7')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#a1a1aa')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--palette-neutral-200)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--palette-neutral-400)')}
           >
             ×
           </button>
@@ -575,7 +575,7 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
               justifyContent: "space-between",
               alignItems: "center",
               padding: "7px 0",
-              borderBottom: showDivider ? "1px solid rgba(255,255,255,0.05)" : "none",
+              borderBottom: showDivider ? "1px solid rgb(var(--palette-white-rgb) / 0.05)" : "none",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -583,14 +583,14 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
                 style={{
                   width: 28,
                   height: 28,
-                  background: "rgba(255,255,255,0.07)",
+                  background: "rgb(var(--palette-white-rgb) / 0.07)",
                   borderRadius: 4,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: 10,
                   fontWeight: 700,
-                  color: "white",
+                  color: "var(--palette-white)",
                 }}
               >
                 {displayName.substring(0, 2).toUpperCase()}
@@ -614,7 +614,7 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
               }}>
                 {company.jobCount}
               </div>
-              <div style={{ fontSize: 11, color: "#52525b", fontWeight: 500 }}>
+              <div style={{ fontSize: 11, color: "var(--palette-neutral-600)", fontWeight: 500 }}>
                 {percentage}%
               </div>
             </div>
@@ -627,10 +627,10 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
   return (
     <div
       style={{
-        background: "#1e1e1e",
-        borderRadius: 4, border: "1px solid rgba(255,255,255,0.06)",
+        background: "var(--palette-neutral-800)",
+        borderRadius: 4, border: "1px solid rgb(var(--palette-white-rgb) / 0.06)",
         padding: 16,
-        color: "#e4e4e7",
+        color: "var(--palette-neutral-200)",
         height: "100%",
       }}
     >
@@ -640,25 +640,25 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
         alignItems: "center",
         marginBottom: 12,
       }}>
-        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
+        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--palette-neutral-600)" }}>
           {title}
         </p>
         {canExpand && (
           <button
             onClick={() => setModalOpen(true)}
             style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgb(var(--palette-white-rgb) / 0.06)",
+              border: "1px solid rgb(var(--palette-white-rgb) / 0.12)",
               borderRadius: 4,
-              color: "#a1a1aa",
+              color: "var(--palette-neutral-400)",
               fontSize: 11,
               fontWeight: 600,
               cursor: "pointer",
               padding: "4px 10px",
               transition: "background 150ms",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgb(var(--palette-white-rgb) / 0.14)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgb(var(--palette-white-rgb) / 0.06)")}
           >
             View More
           </button>
@@ -709,7 +709,7 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
             <div style={{
               width: 100,
               fontSize: 12,
-              color: "#e4e4e7",
+              color: "var(--palette-neutral-200)",
               textAlign: "right",
             }}>
               {displayName}
@@ -726,7 +726,7 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
                 style={{
                   width: `${barWidth}%`,
                   height: "100%",
-                  background: "rgba(255,255,255,0.14)",
+                  background: "rgb(var(--palette-white-rgb) / 0.14)",
                   borderRadius: 2,
                   transition: "width 0.3s ease",
                 }}
@@ -737,7 +737,7 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
                 right: 8,
                 fontSize: 13,
                 fontWeight: 600,
-                color: "white",
+                color: "var(--palette-white)",
               }}>
                 {city.jobCount}
               </div>
@@ -751,10 +751,10 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
   return (
     <div
       style={{
-        background: "#1e1e1e",
-        borderRadius: 4, border: "1px solid rgba(255,255,255,0.06)",
+        background: "var(--palette-neutral-800)",
+        borderRadius: 4, border: "1px solid rgb(var(--palette-white-rgb) / 0.06)",
         padding: 16,
-        color: "#e4e4e7",
+        color: "var(--palette-neutral-200)",
         height: "100%",
       }}
     >
@@ -764,25 +764,25 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
         alignItems: "center",
         marginBottom: 14,
       }}>
-        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#52525b" }}>
+        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--palette-neutral-600)" }}>
           {title}
         </p>
         {canExpand && (
           <button
             onClick={() => setModalOpen(true)}
             style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgb(var(--palette-white-rgb) / 0.06)",
+              border: "1px solid rgb(var(--palette-white-rgb) / 0.12)",
               borderRadius: 4,
-              color: "#a1a1aa",
+              color: "var(--palette-neutral-400)",
               fontSize: 11,
               fontWeight: 600,
               cursor: "pointer",
               padding: "4px 10px",
               transition: "background 150ms",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgb(var(--palette-white-rgb) / 0.14)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "rgb(var(--palette-white-rgb) / 0.06)")}
           >
             View More
           </button>
@@ -799,16 +799,16 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
 }
 
 const COLORS = [
-  "#29C115",
-  "#f59e0b",
-  "#3b82f6",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
-  "#f97316",
-  "#14b8a6",
-  "#a855f7",
+  "var(--palette-green-500)",
+  "var(--palette-amber-500)",
+  "var(--palette-blue-500)",
+  "var(--palette-red-500)",
+  "var(--palette-violet-500)",
+  "var(--palette-pink-500)",
+  "var(--palette-cyan-500)",
+  "var(--palette-orange-500)",
+  "var(--palette-teal-500)",
+  "var(--palette-purple-500)",
 ];
 
 interface TooltipEntry {
@@ -831,18 +831,18 @@ function CustomTooltip({
   if (!filtered.length) return null
   return (
     <div style={{
-      background: '#111111',
-      border: '1px solid #2a2a2a',
+      background: 'var(--palette-neutral-850)',
+      border: '1px solid var(--palette-neutral-750)',
       borderRadius: 8,
       padding: '10px 14px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.95)',
+      boxShadow: '0 8px 32px rgb(var(--palette-black-rgb) / 0.95)',
       pointerEvents: 'none',
       minWidth: 180,
     }}>
-      <p style={{ color: '#888', fontSize: 11, marginBottom: 8, fontWeight: 600 }}>{label}</p>
+      <p style={{ color: 'var(--palette-neutral-475)', fontSize: 11, marginBottom: 8, fontWeight: 600 }}>{label}</p>
       {filtered.map((entry) => (
         <p key={String(entry.name)} style={{ color: entry.color, fontSize: 12, margin: '3px 0' }}>
-          {entry.name}: <span style={{ color: 'white', fontWeight: 600 }}>{entry.value}</span>
+          {entry.name}: <span style={{ color: 'var(--palette-white)', fontWeight: 600 }}>{entry.value}</span>
         </p>
       ))}
     </div>
@@ -866,15 +866,15 @@ export function SubcategoryTrendChart({
     return (
       <div style={{
         height: "100%",
-        background: "#1e1e1e",
+        background: "var(--palette-neutral-800)",
         borderRadius: 16,
         padding: 16,
-        color: "white",
+        color: "var(--palette-white)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        border: "1px solid rgba(255,255,255,0.18)",
-        boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset",
+        border: "1px solid rgb(var(--palette-white-rgb) / 0.18)",
+        boxShadow: "0 0 0 1px rgb(var(--palette-white-rgb) / 0.04) inset",
       }}>
         Loading trends...
       </div>
@@ -882,15 +882,15 @@ export function SubcategoryTrendChart({
   }
 
   return (
-    <div style={{ height: "100%", background: "#1e1e1e", borderRadius: 16, padding: 16, color: "white" }}>
+    <div style={{ height: "100%", background: "var(--palette-neutral-800)", borderRadius: 16, padding: 16, color: "var(--palette-white)" }}>
       <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>{title}</h3>
 
       <ResponsiveContainer width="100%" height="85%">
         <LineChart data={trendData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-          <XAxis dataKey="date" stroke="#888" tick={{ fill: '#888', fontSize: 11 }} interval={4} />
-          <YAxis stroke="#888" tick={{ fill: '#888' }} />
-          <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.15)', strokeWidth: 1 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--palette-neutral-720)" />
+          <XAxis dataKey="date" stroke="var(--palette-neutral-475)" tick={{ fill: 'var(--palette-neutral-475)', fontSize: 11 }} interval={4} />
+          <YAxis stroke="var(--palette-neutral-475)" tick={{ fill: 'var(--palette-neutral-475)' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgb(var(--palette-white-rgb) / 0.15)', strokeWidth: 1 }} />
           <Legend wrapperStyle={{ paddingTop: '10px' }} iconType="line" />
           {subcategories.map((subcategory, index) => (
             <Line

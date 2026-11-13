@@ -3,13 +3,13 @@ import FadeIn from "@/components/ui/FadeIn";
 
 export default function AIMatchingSection({ user }: { user?: any }) {
   return (
-    <section id="ai-matching" className="relative overflow-hidden px-6 py-40 lg:py-52" style={{ background: '#c8391e' }}>
+    <section id="ai-matching" className="relative overflow-hidden px-6 py-40 lg:py-52" style={{ background: 'var(--palette-rust-500)' }}>
 
       {/* Dark green triangle — bottom right */}
       <div
         className="absolute bottom-0 right-0 w-[420px] h-[320px] hidden lg:block"
         style={{
-          background: '#1a2e1a',
+          background: 'var(--palette-forest-700)',
           clipPath: 'polygon(100% 0, 100% 100%, 0 100%)',
         }}
       />
@@ -29,7 +29,7 @@ export default function AIMatchingSection({ user }: { user?: any }) {
           </h2>
 
           {/* Subheadline with left border */}
-          <div className="mb-10 pl-4" style={{ borderLeft: '3px solid rgba(255,255,255,0.4)' }}>
+          <div className="mb-10 pl-4" style={{ borderLeft: '3px solid rgb(var(--palette-white-rgb) / 0.4)' }}>
             <p className="text-xl text-white/80 leading-relaxed">
               Let AI find your best opportunities.
             </p>
@@ -44,7 +44,7 @@ export default function AIMatchingSection({ user }: { user?: any }) {
               'Job fit scoring',
             ].map((item) => (
               <li key={item} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'rgba(255,255,255,0.6)' }} />
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'rgb(var(--palette-white-rgb) / 0.6)' }} />
                 <span className="text-[17px] text-white/80">{item}</span>
               </li>
             ))}
@@ -54,7 +54,7 @@ export default function AIMatchingSection({ user }: { user?: any }) {
           <Link
             href="/ai-powered"
             className="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-bold rounded transition-all duration-200 hover:bg-white/90 active:scale-[0.97]"
-            style={{ background: '#ffffff', color: '#c8391e' }}
+            style={{ background: 'var(--palette-white)', color: 'var(--palette-rust-500)' }}
           >
             Set up your AI
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -72,12 +72,12 @@ export default function AIMatchingSection({ user }: { user?: any }) {
               <div style={{ position: 'relative', width: 260, height: 260 }}>
                 {/* Outer faint ring */}
                 <svg width="260" height="260" style={{ position: 'absolute', top: 0, left: 0 }}>
-                  <circle cx="130" cy="130" r="118" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
+                  <circle cx="130" cy="130" r="118" fill="none" stroke="rgb(var(--palette-white-rgb) / 0.12)" strokeWidth="2" />
                   {/* Progress arc ~94% = 338deg */}
                   <circle
                     cx="130" cy="130" r="118"
                     fill="none"
-                    stroke="rgba(255,255,255,0.55)"
+                    stroke="rgb(var(--palette-white-rgb) / 0.55)"
                     strokeWidth="3"
                     strokeDasharray="741 800"
                     strokeDashoffset="0"
@@ -87,8 +87,8 @@ export default function AIMatchingSection({ user }: { user?: any }) {
                 </svg>
                 {/* Inner content */}
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ fontSize: 88, fontWeight: 900, color: '#ffffff', lineHeight: 1, letterSpacing: '-0.04em' }}>94<span style={{ fontSize: 48 }}>%</span></div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.12em', marginTop: 6, textTransform: 'uppercase' }}>Match Score</div>
+                  <div style={{ fontSize: 88, fontWeight: 900, color: 'var(--palette-white)', lineHeight: 1, letterSpacing: '-0.04em' }}>94<span style={{ fontSize: 48 }}>%</span></div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'rgb(var(--palette-white-rgb) / 0.6)', letterSpacing: '0.12em', marginTop: 6, textTransform: 'uppercase' }}>Match Score</div>
                 </div>
               </div>
 
@@ -102,9 +102,9 @@ export default function AIMatchingSection({ user }: { user?: any }) {
                       fontWeight: 600,
                       borderRadius: 99,
                       padding: '7px 16px',
-                      background: i < 4 ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)',
-                      color: i < 4 ? '#ffffff' : 'rgba(255,255,255,0.4)',
-                      border: i < 4 ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                      background: i < 4 ? 'rgb(var(--palette-white-rgb) / 0.18)' : 'rgb(var(--palette-white-rgb) / 0.07)',
+                      color: i < 4 ? 'var(--palette-white)' : 'rgb(var(--palette-white-rgb) / 0.4)',
+                      border: i < 4 ? '1px solid rgb(var(--palette-white-rgb) / 0.3)' : '1px solid rgb(var(--palette-white-rgb) / 0.1)',
                     }}
                   >
                     {i < 4 && <span style={{ marginRight: 6, fontSize: 11 }}>✓</span>}{skill}
@@ -114,8 +114,8 @@ export default function AIMatchingSection({ user }: { user?: any }) {
 
               {/* Job label */}
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>Financial Analyst — Comerica Bank</div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>Detroit, MI · matched against your resume</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'rgb(var(--palette-white-rgb) / 0.9)' }}>Financial Analyst — Comerica Bank</div>
+                <div style={{ fontSize: 13, color: 'rgb(var(--palette-white-rgb) / 0.45)', marginTop: 4 }}>Detroit, MI · matched against your resume</div>
               </div>
 
             </div>

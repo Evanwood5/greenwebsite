@@ -28,7 +28,7 @@ function ExternalLinkIcon() {
 
 function BriefcaseIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#29C115" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--palette-green-500)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="7" width="20" height="14" rx="2" />
       <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
     </svg>
@@ -37,7 +37,7 @@ function BriefcaseIcon() {
 
 function PinIcon() {
   return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#52525b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
       <circle cx="12" cy="10" r="3" />
     </svg>
@@ -46,7 +46,7 @@ function PinIcon() {
 
 function ClockIcon() {
   return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#52525b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
     </svg>
@@ -77,12 +77,12 @@ function postedAgo(dateStr: string): string {
 
 function JobTypeBadge({ type }: { type: string }) {
   const styles: Record<string, React.CSSProperties> = {
-    'Full Time':  { background: 'rgba(96,165,250,0.08)',  color: '#60a5fa', border: '1px solid rgba(96,165,250,0.2)' },
-    'Part Time':  { background: 'rgba(249,115,22,0.08)',  color: '#f97316', border: '1px solid rgba(249,115,22,0.2)' },
-    'Contract':   { background: 'rgba(167,139,250,0.08)', color: '#a78bfa', border: '1px solid rgba(167,139,250,0.2)' },
-    'Internship': { background: 'rgba(251,191,36,0.08)',  color: '#fbbf24', border: '1px solid rgba(251,191,36,0.2)' },
+    'Full Time':  { background: 'rgb(var(--palette-blue-400-rgb) / 0.08)',  color: 'var(--palette-blue-400)', border: '1px solid rgb(var(--palette-blue-400-rgb) / 0.2)' },
+    'Part Time':  { background: 'rgb(var(--palette-orange-500-rgb) / 0.08)',  color: 'var(--palette-orange-500)', border: '1px solid rgb(var(--palette-orange-500-rgb) / 0.2)' },
+    'Contract':   { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--palette-purple-400)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' },
+    'Internship': { background: 'rgb(var(--palette-amber-400-rgb) / 0.08)',  color: 'var(--palette-amber-400)', border: '1px solid rgb(var(--palette-amber-400-rgb) / 0.2)' },
   }
-  const s = styles[type] ?? { background: 'rgba(41,193,21,0.06)', color: '#29C115', border: '1px solid rgba(41,193,21,0.15)' }
+  const s = styles[type] ?? { background: 'rgb(var(--palette-green-500-rgb) / 0.06)', color: 'var(--palette-green-500)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)' }
   return (
     <span style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '4px', fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap', ...s }}>
       {type}
@@ -94,17 +94,17 @@ function LevelBadge({ level }: { level: string }) {
   const normalized = level.toLowerCase()
   let style: React.CSSProperties
   if (normalized.includes('entry') || normalized.includes('junior')) {
-    style = { background: 'rgba(41,193,21,0.08)', color: '#29C115', border: '1px solid rgba(41,193,21,0.2)' }
+    style = { background: 'rgb(var(--palette-green-500-rgb) / 0.08)', color: 'var(--palette-green-500)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.2)' }
   } else if (normalized.includes('moderate')) {
-    style = { background: 'rgba(252,165,165,0.06)', color: '#FCA5A5', border: '1px solid rgba(252,165,165,0.14)' }
+    style = { background: 'rgb(var(--palette-red-300-rgb) / 0.06)', color: 'var(--palette-red-300)', border: '1px solid rgb(var(--palette-red-300-rgb) / 0.14)' }
   } else if (normalized.includes('advanced')) {
-    style = { background: 'rgba(239,68,68,0.08)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.18)' }
+    style = { background: 'rgb(var(--palette-red-500-rgb) / 0.08)', color: 'var(--palette-red-500)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.18)' }
   } else if (normalized.includes('mid') || normalized.includes('associate')) {
-    style = { background: 'rgba(96,165,250,0.08)', color: '#60a5fa', border: '1px solid rgba(96,165,250,0.2)' }
+    style = { background: 'rgb(var(--palette-blue-400-rgb) / 0.08)', color: 'var(--palette-blue-400)', border: '1px solid rgb(var(--palette-blue-400-rgb) / 0.2)' }
   } else if (normalized.includes('senior') || normalized.includes('lead') || normalized.includes('principal')) {
-    style = { background: 'rgba(167,139,250,0.08)', color: '#a78bfa', border: '1px solid rgba(167,139,250,0.2)' }
+    style = { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--palette-purple-400)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' }
   } else {
-    style = { background: 'rgba(113,113,122,0.1)', color: '#71717a', border: '1px solid rgba(113,113,122,0.2)' }
+    style = { background: 'rgb(var(--palette-neutral-500-rgb) / 0.1)', color: 'var(--palette-neutral-500)', border: '1px solid rgb(var(--palette-neutral-500-rgb) / 0.2)' }
   }
   return (
     <span style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '4px', fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap', ...style }}>
@@ -168,11 +168,11 @@ export function DarkJobCard({
 
   return (
     <div style={{
-      background: '#0d0d0d',
+      background: 'var(--palette-neutral-900)',
       borderRadius: '10px',
       padding: '14px',
-      border: '1px solid rgba(255,255,255,0.35)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 20px rgba(255,255,255,0.06)',
+      border: '1px solid rgb(var(--palette-white-rgb) / 0.35)',
+      boxShadow: 'inset 0 1px 0 rgb(var(--palette-white-rgb) / 0.18), 0 0 20px rgb(var(--palette-white-rgb) / 0.06)',
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
@@ -181,34 +181,34 @@ export function DarkJobCard({
       {matchScore !== undefined && (
         <div style={{
           position: 'absolute', top: '12px', right: '12px',
-          background: 'rgba(41,193,21,0.08)', color: '#29C115',
+          background: 'rgb(var(--palette-green-500-rgb) / 0.08)', color: 'var(--palette-green-500)',
           fontSize: '10px', fontWeight: 600, padding: '2px 7px',
-          borderRadius: '4px', border: '1px solid rgba(41,193,21,0.15)',
+          borderRadius: '4px', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)',
         }}>
           {matchScore}% Match
         </div>
       )}
 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '7px', background: meta.bg, color: meta.color, border: `1px solid ${meta.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ width: '32px', height: '32px', borderRadius: '7px', background: meta.bg, color: meta.color, border: `1px solid color-mix(in srgb, ${meta.color} 18.8235%, transparent)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           {meta.icon}
         </div>
         <div style={{ flex: 1, minWidth: 0, paddingRight: matchScore !== undefined ? '72px' : '0' }}>
-          <h3 style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 600, marginBottom: '2px', lineHeight: '1.35', letterSpacing: '-0.01em' }}>
+          <h3 style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 600, marginBottom: '2px', lineHeight: '1.35', letterSpacing: '-0.01em' }}>
             {job.job_title || 'Untitled Position'}
           </h3>
-          <p style={{ color: '#71717a', fontSize: '11px' }}>{job.company_name || 'Company not listed'}</p>
+          <p style={{ color: 'var(--palette-neutral-500)', fontSize: '11px' }}>{job.company_name || 'Company not listed'}</p>
         </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <PinIcon />
-          <span style={{ color: '#52525b', fontSize: '11px' }}>{location}</span>
+          <span style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>{location}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <ClockIcon />
-          <span style={{ color: '#52525b', fontSize: '11px' }}>Posted {postedAgo(job.created_at)}</span>
+          <span style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>Posted {postedAgo(job.created_at)}</span>
         </div>
       </div>
 
@@ -219,24 +219,24 @@ export function DarkJobCard({
           <span style={{
             display: 'inline-block', padding: '2px 7px', borderRadius: '4px',
             fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap',
-            background: 'rgba(255,255,255,0.05)',
-            color: '#71717a',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgb(var(--palette-white-rgb) / 0.05)',
+            color: 'var(--palette-neutral-500)',
+            border: '1px solid rgb(var(--palette-white-rgb) / 0.08)',
           }}>
             {subCategory}
           </span>
         )}
       </div>
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
+      <div style={{ borderTop: '1px solid rgb(var(--palette-white-rgb) / 0.06)' }} />
 
       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
         {job.job_href ? (
-          <a href={job.job_href} target="_blank" rel="noopener noreferrer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '7px 10px', background: '#29C115', color: 'white', borderRadius: '6px', fontWeight: 500, fontSize: '12px', textDecoration: 'none' }}>
+          <a href={job.job_href} target="_blank" rel="noopener noreferrer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '7px 10px', background: 'var(--palette-green-500)', color: 'var(--palette-white)', borderRadius: '6px', fontWeight: 500, fontSize: '12px', textDecoration: 'none' }}>
             <ExternalLinkIcon /> Apply
           </a>
         ) : (
-          <span style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '7px 10px', background: 'rgba(255,255,255,0.03)', color: '#52525b', borderRadius: '6px', fontSize: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <span style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '7px 10px', background: 'rgb(var(--palette-white-rgb) / 0.03)', color: 'var(--palette-neutral-600)', borderRadius: '6px', fontSize: '12px', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)' }}>
             No link
           </span>
         )}
@@ -249,11 +249,11 @@ export function DarkJobCard({
           <button
             onClick={onDelete}
             aria-label="Unsave job"
-            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(239,68,68,0.1)', color: '#ef4444', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.25)', cursor: 'pointer', flexShrink: 0 }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.2)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgb(var(--palette-red-500-rgb) / 0.1)', color: 'var(--palette-red-500)', borderRadius: '6px', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.25)', cursor: 'pointer', flexShrink: 0 }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-red-500-rgb) / 0.2)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-red-500-rgb) / 0.1)')}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--palette-red-500)" stroke="var(--palette-red-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
             </svg>
           </button>
@@ -267,16 +267,16 @@ export function DarkJobCard({
             aria-label={saved ? 'Unsave job' : 'Save job'}
             style={{
               width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: saved ? 'rgba(239,68,68,0.18)' : 'rgba(239,68,68,0.08)',
-              color: '#ef4444', borderRadius: '6px',
-              border: `1px solid ${saved ? 'rgba(239,68,68,0.4)' : 'rgba(239,68,68,0.22)'}`,
+              background: saved ? 'rgb(var(--palette-red-500-rgb) / 0.18)' : 'rgb(var(--palette-red-500-rgb) / 0.08)',
+              color: 'var(--palette-red-500)', borderRadius: '6px',
+              border: `1px solid ${saved ? 'rgb(var(--palette-red-500-rgb) / 0.4)' : 'rgb(var(--palette-red-500-rgb) / 0.22)'}`,
               cursor: saving ? 'wait' : 'pointer', flexShrink: 0,
               transition: 'background 150ms, border-color 150ms',
             }}
-            onMouseEnter={(e) => { if (!saving) e.currentTarget.style.background = 'rgba(239,68,68,0.25)' }}
-            onMouseLeave={(e) => { if (!saving) e.currentTarget.style.background = saved ? 'rgba(239,68,68,0.18)' : 'rgba(239,68,68,0.08)' }}
+            onMouseEnter={(e) => { if (!saving) e.currentTarget.style.background = 'rgb(var(--palette-red-500-rgb) / 0.25)' }}
+            onMouseLeave={(e) => { if (!saving) e.currentTarget.style.background = saved ? 'rgb(var(--palette-red-500-rgb) / 0.18)' : 'rgb(var(--palette-red-500-rgb) / 0.08)' }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill={saved ? '#ef4444' : 'none'} stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill={saved ? 'var(--palette-red-500)' : 'none'} stroke="var(--palette-red-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
             </svg>
           </button>
@@ -299,8 +299,8 @@ function inferCategory(title: string | null): JobCategory {
 
 const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string; bg: string }> = {
   tech: {
-    color: '#60a5fa',
-    bg: 'rgba(96,165,250,0.08)',
+    color: 'var(--palette-blue-400)',
+    bg: 'rgb(var(--palette-blue-400-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
@@ -308,8 +308,8 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
     ),
   },
   engineering: {
-    color: '#f97316',
-    bg: 'rgba(249,115,22,0.08)',
+    color: 'var(--palette-orange-500)',
+    bg: 'rgb(var(--palette-orange-500-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3"/>
@@ -318,8 +318,8 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
     ),
   },
   business: {
-    color: '#a78bfa',
-    bg: 'rgba(167,139,250,0.08)',
+    color: 'var(--palette-purple-400)',
+    bg: 'rgb(var(--palette-purple-400-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
@@ -327,8 +327,8 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
     ),
   },
   health: {
-    color: '#f43f5e',
-    bg: 'rgba(244,63,94,0.08)',
+    color: 'var(--palette-rose-500)',
+    bg: 'rgb(var(--palette-rose-500-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -336,8 +336,8 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
     ),
   },
   other: {
-    color: '#71717a',
-    bg: 'rgba(113,113,122,0.08)',
+    color: 'var(--palette-neutral-500)',
+    bg: 'rgb(var(--palette-neutral-500-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
@@ -372,7 +372,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
   const cellStyle: React.CSSProperties = {
     padding: '10px 10px',
     fontSize: '13px',
-    color: '#a1a1aa',
+    color: 'var(--palette-neutral-400)',
     verticalAlign: 'middle',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -382,7 +382,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
     <tr
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ background: hovered ? 'rgba(255,255,255,0.06)' : (index ?? 0) % 2 === 1 ? 'rgba(255,255,255,0.025)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: hovered ? 'rgb(var(--palette-white-rgb) / 0.06)' : (index ?? 0) % 2 === 1 ? 'rgb(var(--palette-white-rgb) / 0.025)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgb(var(--palette-white-rgb) / 0.06)' }}
     >
       {/* Category icon — from DB fieldCategoryMap, fall back to title inference */}
       <td style={{ ...cellStyle, width: '36px', paddingRight: '4px' }}>
@@ -400,10 +400,10 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
 
       {/* Title + company */}
       <td style={{ ...cellStyle, whiteSpace: 'normal', overflow: 'hidden' }}>
-        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#e4e4e7', fontWeight: 500, fontSize: '13px' }} title={job.job_title ?? ''}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--palette-neutral-200)', fontWeight: 500, fontSize: '13px' }} title={job.job_title ?? ''}>
           {job.job_title || 'Untitled Position'}
         </div>
-        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#52525b', fontSize: '11px', marginTop: '2px' }}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--palette-neutral-600)', fontSize: '11px', marginTop: '2px' }}>
           {job.company_name || ''}
         </div>
       </td>
@@ -412,30 +412,30 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
       <td style={{ ...cellStyle, width: '95px' }}>
         {job.experience_level
           ? <LevelBadge level={job.experience_level} />
-          : <span style={{ color: '#3f3f46', fontSize: '11px' }}>—</span>}
+          : <span style={{ color: 'var(--palette-neutral-700)', fontSize: '11px' }}>—</span>}
       </td>
 
       {/* Sub-category */}
-      <td style={{ ...cellStyle, width: '120px', color: '#52525b', fontSize: '11px' }}>
+      <td style={{ ...cellStyle, width: '120px', color: 'var(--palette-neutral-600)', fontSize: '11px' }}>
         {job.job_field_id != null && fieldSubCategoryMap?.[job.job_field_id]
           ? <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', whiteSpace: 'nowrap' }}>{fieldSubCategoryMap[job.job_field_id]}</span>
-          : <span style={{ color: '#3f3f46' }}>—</span>}
+          : <span style={{ color: 'var(--palette-neutral-700)' }}>—</span>}
       </td>
 
       {/* Type */}
       <td style={{ ...cellStyle, width: '100px' }}>
         {job.job_type
           ? <JobTypeBadge type={job.job_type} />
-          : <span style={{ color: '#3f3f46', fontSize: '11px' }}>—</span>}
+          : <span style={{ color: 'var(--palette-neutral-700)', fontSize: '11px' }}>—</span>}
       </td>
 
       {/* Location */}
-      <td style={{ ...cellStyle, width: '115px', color: '#71717a', fontSize: '12px' }}>
+      <td style={{ ...cellStyle, width: '115px', color: 'var(--palette-neutral-500)', fontSize: '12px' }}>
         {location}
       </td>
 
       {/* Posted */}
-      <td style={{ ...cellStyle, width: '62px', color: '#52525b', fontSize: '12px' }}>
+      <td style={{ ...cellStyle, width: '62px', color: 'var(--palette-neutral-600)', fontSize: '12px' }}>
         {postedAgo(job.created_at)}
       </td>
 
@@ -449,15 +449,15 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
             style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               width: '28px', height: '28px',
-              background: saved ? 'rgba(239,68,68,0.15)' : 'rgba(239,68,68,0.08)',
-              color: '#ef4444', borderRadius: '5px',
-              border: saved ? '1px solid rgba(239,68,68,0.35)' : '1px solid rgba(239,68,68,0.2)',
+              background: saved ? 'rgb(var(--palette-red-500-rgb) / 0.15)' : 'rgb(var(--palette-red-500-rgb) / 0.08)',
+              color: 'var(--palette-red-500)', borderRadius: '5px',
+              border: saved ? '1px solid rgb(var(--palette-red-500-rgb) / 0.35)' : '1px solid rgb(var(--palette-red-500-rgb) / 0.2)',
               cursor: 'pointer', transition: 'background 150ms, border-color 150ms', flexShrink: 0,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239,68,68,0.22)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = saved ? 'rgba(239,68,68,0.15)' : 'rgba(239,68,68,0.08)')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-red-500-rgb) / 0.22)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = saved ? 'rgb(var(--palette-red-500-rgb) / 0.15)' : 'rgb(var(--palette-red-500-rgb) / 0.08)')}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill={saved ? '#ef4444' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill={saved ? 'var(--palette-red-500)' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
             </svg>
           </button>
@@ -474,18 +474,18 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
               aria-label="Apply for job"
               style={{
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                width: '28px', height: '28px', background: 'rgba(41,193,21,0.1)',
-                color: '#29C115', borderRadius: '5px',
-                textDecoration: 'none', border: '1px solid rgba(41,193,21,0.2)',
+                width: '28px', height: '28px', background: 'rgb(var(--palette-green-500-rgb) / 0.1)',
+                color: 'var(--palette-green-500)', borderRadius: '5px',
+                textDecoration: 'none', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.2)',
                 transition: 'background 150ms', flexShrink: 0,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(41,193,21,0.18)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(41,193,21,0.1)')}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-green-500-rgb) / 0.18)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-green-500-rgb) / 0.1)')}
             >
               <ExternalLinkIcon />
             </a>
           ) : (
-            <span style={{ color: '#3f3f46', fontSize: '12px' }}>—</span>
+            <span style={{ color: 'var(--palette-neutral-700)', fontSize: '12px' }}>—</span>
           )}
         </div>
       </td>
@@ -497,9 +497,9 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
   const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
-      <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', overflow: 'hidden' }}>
         {[...Array(8)].map((_, i) => (
-          <div key={i} style={{ height: '44px', borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)' }} />
+          <div key={i} style={{ height: '44px', borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.04)', background: i % 2 === 0 ? 'transparent' : 'rgb(var(--palette-white-rgb) / 0.01)' }} />
         ))}
       </div>
     )
@@ -507,8 +507,8 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
 
   if (jobs.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px 0', color: '#52525b' }}>
-        <p style={{ fontSize: '14px', marginBottom: '4px', color: '#71717a' }}>No jobs found</p>
+      <div style={{ textAlign: 'center', padding: '50px 0', color: 'var(--palette-neutral-600)' }}>
+        <p style={{ fontSize: '14px', marginBottom: '4px', color: 'var(--palette-neutral-500)' }}>No jobs found</p>
         <p style={{ fontSize: '12px' }}>Try adjusting your filters or check back later</p>
       </div>
     )
@@ -518,16 +518,16 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
     padding: '8px 10px',
     fontSize: '10px',
     fontWeight: 700,
-    color: '#71717a',
+    color: 'var(--palette-neutral-500)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     textAlign: 'left',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
     whiteSpace: 'nowrap',
   }
 
   return (
-    <div style={{ background: '#1e1e1e', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: '44px' }} />
@@ -540,7 +540,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
           <col style={{ width: '100px' }} />
         </colgroup>
         <thead>
-          <tr style={{ background: '#111111' }}>
+          <tr style={{ background: 'var(--palette-neutral-850)' }}>
             <th style={{ ...thStyle, width: '36px' }}></th>
             <th style={thStyle}>Position</th>
             <th style={thStyle}>Level</th>

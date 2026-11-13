@@ -8,13 +8,13 @@ import LinkedInButton from '@/components/ui/LinkedInButton'
 export function StatCard({ label, count, color }: { label: string; count: number; color: string }) {
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(255,255,255,0.08)',
+      background: 'rgb(var(--palette-white-rgb) / 0.03)',
+      border: '1px solid rgb(var(--palette-white-rgb) / 0.08)',
       borderRadius: '4px',
       padding: '12px 14px',
       minWidth: 0,
     }}>
-      <p style={{ color: '#52525b', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
+      <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
         {label}
       </p>
       <p style={{ color, fontSize: '24px', fontWeight: 700, lineHeight: 1 }}>{count}</p>
@@ -92,7 +92,7 @@ export function NotesCell({ savedJobId, initial }: { savedJobId: number; initial
     }
   }
 
-  const borderColor = saved ? 'rgba(74,222,128,0.3)' : 'rgba(255,255,255,0.08)'
+  const borderColor = saved ? 'rgb(var(--palette-green-400-rgb) / 0.3)' : 'rgb(var(--palette-white-rgb) / 0.08)'
 
   return (
     <textarea
@@ -103,10 +103,10 @@ export function NotesCell({ savedJobId, initial }: { savedJobId: number; initial
       placeholder="Add a note... (Enter to save)"
       rows={2}
       style={{
-        background: '#141414',
+        background: 'var(--palette-neutral-850)',
         border: `1px solid ${borderColor}`,
         borderRadius: '4px',
-        color: '#a1a1aa',
+        color: 'var(--palette-neutral-400)',
         fontSize: '12px',
         padding: '6px 8px',
         width: '100%',
@@ -133,17 +133,17 @@ export function JobsTable({
 
   
   return (
-    <div style={{ background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--palette-neutral-800)', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', borderRadius: '4px', overflow: 'hidden' }}>
       {/* Column headers */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '2fr 110px 130px 1.2fr 80px',
         gap: '12px',
         padding: '10px 16px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.06)',
       }}>
         {['Job', 'Saved', 'Status', 'Notes', ''].map(h => (
-          <span key={h} style={{ color: '#52525b', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{h}</span>
+          <span key={h} style={{ color: 'var(--palette-neutral-600)', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{h}</span>
         ))}
       </div>
 
@@ -157,7 +157,7 @@ export function JobsTable({
             gap: '12px',
             padding: '12px 16px',
             alignItems: 'start',
-            borderBottom: i < jobs.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+            borderBottom: i < jobs.length - 1 ? '1px solid rgb(var(--palette-white-rgb) / 0.05)' : 'none',
           }}
         >
           {/* Job title + company */}
@@ -166,17 +166,17 @@ export function JobsTable({
               href={job.job_href ?? '#'}
               target="_blank"
               rel="noreferrer"
-              style={{ color: '#e4e4e7', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 500, textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
             >
               {job.job_title ?? 'Untitled'}
             </a>
-            <span style={{ color: '#52525b', fontSize: '11px' }}>
+            <span style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>
               {[job.company_name, job.locations?.length ? job.locations.join(', ') : null, job.is_remote ? 'Remote' : null].filter(Boolean).join(' · ')}
             </span>
           </div>
 
           {/* Date saved */}
-          <span style={{ color: '#52525b', fontSize: '12px', paddingTop: '4px' }}>{formatDate(job.saved_at)}</span>
+          <span style={{ color: 'var(--palette-neutral-600)', fontSize: '12px', paddingTop: '4px' }}>{formatDate(job.saved_at)}</span>
 
           {/* Status dropdown */}
           <div style={{ paddingTop: '2px' }}>
@@ -192,7 +192,7 @@ export function JobsTable({
             <button
               onClick={() => onDelete(job.saved_job_id)}
               title="Remove"
-              style={{ background: 'none', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', color: '#52525b', fontSize: '14px', cursor: 'pointer', padding: '2px 7px', lineHeight: 1 }}
+              style={{ background: 'none', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)', borderRadius: '4px', color: 'var(--palette-neutral-600)', fontSize: '14px', cursor: 'pointer', padding: '2px 7px', lineHeight: 1 }}
             >
               ×
             </button>

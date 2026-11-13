@@ -183,16 +183,16 @@ export default function JobsPage() {
   }
 
   const statCards = [
-    { label: 'Past 30 Days', value: loading ? '...' : newThisMonthCount.toLocaleString(), color: '#4ade80' },
-    { label: 'Past 7 Days',  value: loading ? '...' : newThisWeekCount.toLocaleString(),  color: '#93c5fd' },
-    { label: 'Saved Jobs',   value: savedJobIds.size.toString(),                          color: '#fb923c' },
-    { label: 'Tracking',     value: '0',                                                  color: '#c4b5fd' },
+    { label: 'Past 30 Days', value: loading ? '...' : newThisMonthCount.toLocaleString(), color: 'var(--palette-green-400)' },
+    { label: 'Past 7 Days',  value: loading ? '...' : newThisWeekCount.toLocaleString(),  color: 'var(--palette-blue-300)' },
+    { label: 'Saved Jobs',   value: savedJobIds.size.toString(),                          color: 'var(--palette-orange-400)' },
+    { label: 'Tracking',     value: '0',                                                  color: 'var(--palette-purple-300)' },
   ]
 
   if (authLoading) {
     return (
       <AppShell>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', color: '#9ca3af' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', color: 'var(--palette-neutral-450)' }}>
           Loading...
         </div>
       </AppShell>
