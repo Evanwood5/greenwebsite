@@ -1,7 +1,7 @@
 import {TrackingFilters} from '@/lib/types/tracking'
 
 export const sectionLabel: React.CSSProperties = {
-  color: '#52525b',
+  color: 'var(--text-muted)',
   fontSize: '9px',
   fontWeight: 700,
   letterSpacing: '0.1em',

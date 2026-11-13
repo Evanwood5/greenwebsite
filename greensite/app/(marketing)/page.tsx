@@ -20,7 +20,7 @@ export default function Home() {
         minHeight: '100vh',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#080808',
+        background: 'var(--palette-neutral-950)',
         flexDirection: 'column',
         gap: '24px',
       }}>
@@ -29,19 +29,19 @@ export default function Home() {
             position: 'absolute',
             inset: 0,
             borderRadius: '50%',
-            border: '1px solid rgba(255,255,255,0.08)',
+            border: '1px solid rgb(var(--palette-white-rgb) / 0.08)',
           }} />
           <div style={{
             position: 'absolute',
             inset: 0,
             borderRadius: '50%',
             border: '2px solid transparent',
-            borderTopColor: 'rgba(255,255,255,0.7)',
+            borderTopColor: 'rgb(var(--palette-white-rgb) / 0.7)',
             animation: 'spin 0.8s linear infinite',
           }} />
         </div>
         <span style={{
-          color: 'rgba(255,255,255,0.3)',
+          color: 'rgb(var(--palette-white-rgb) / 0.3)',
           fontSize: '12px',
           fontWeight: 500,
           letterSpacing: '0.12em',
@@ -56,7 +56,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#000000' }}>
+    <div className="theme-marketing-dark min-h-screen" style={{ background: 'var(--surface-app)' }}>
       <Navbar />
       <HeroSection user={user} />
       <DetroitHeroSection />

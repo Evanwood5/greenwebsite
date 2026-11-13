@@ -5,7 +5,7 @@ import { FeatureSection, Hero, MichiganMap, SiteFooter, ToolsSection } from './c
 
 export default function WhyUsPage() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#f0ece4' }}>
+    <div className="theme-marketing-light min-h-screen flex flex-col" style={{ background: 'var(--surface-app)' }}>
       <Navbar />
       <Hero />
       <FeatureSection data={FEATURE_SECTIONS[0]} visual={<BeforeAfterCard />} />

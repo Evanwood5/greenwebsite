@@ -200,14 +200,14 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
           onChange={(e) => setSearchInput(e.target.value)}
           disabled={loading}
           className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-gray-800/50 focus:outline-none focus:border-gray-600 disabled:opacity-50"
-          style={{ backgroundColor: '#1e1e1e' }}
+          style={{ backgroundColor: 'var(--palette-neutral-800)' }}
         />
       </div>
 
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-gray-800/50 hover:border-gray-700/50 transition-colors"
-        style={{ backgroundColor: '#1e1e1e' }}
+        style={{ backgroundColor: 'var(--palette-neutral-800)' }}
       >
         <div className="flex items-center gap-2">
           <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,9 +220,9 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
             <span
               className="text-[10px] px-2 py-0.5 rounded-full border font-medium"
               style={{
-                backgroundColor: 'rgba(41, 193, 21, 0.1)',
-                color: '#29C115',
-                borderColor: 'rgba(41, 193, 21, 0.2)',
+                backgroundColor: 'rgb(var(--palette-green-500-rgb) / 0.1)',
+                color: 'var(--palette-green-500)',
+                borderColor: 'rgb(var(--palette-green-500-rgb) / 0.2)',
               }}
             >
               {activeCount} active
@@ -240,7 +240,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
       {isExpanded && (
         <div
           className="border border-t-0 border-gray-800/50 rounded-b-lg p-4"
-          style={{ backgroundColor: '#1e1e1e' }}
+          style={{ backgroundColor: 'var(--palette-neutral-800)' }}
         >
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
 
@@ -255,7 +255,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                       checked={selectedJobTypes.includes(type)}
                       onChange={() => toggleJobType(type)}
                       className="w-3.5 h-3.5 rounded border-gray-700"
-                      style={{ accentColor: '#29C115' }}
+                      style={{ accentColor: 'var(--palette-green-500)' }}
                     />
                     <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
                       {type}
@@ -276,7 +276,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                       checked={selectedField === field}
                       onChange={() => handleFieldSelect(field)}
                       className="w-3.5 h-3.5 rounded border-gray-700"
-                      style={{ accentColor: '#29C115' }}
+                      style={{ accentColor: 'var(--palette-green-500)' }}
                     />
                     <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
                       {field}
@@ -298,7 +298,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                         checked={selectedSubFields.includes(sub)}
                         onChange={() => toggleSubField(sub)}
                         className="w-3.5 h-3.5 rounded border-gray-700"
-                        style={{ accentColor: '#29C115' }}
+                        style={{ accentColor: 'var(--palette-green-500)' }}
                       />
                       <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
                         {sub}
@@ -327,7 +327,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                       checked={isRemote === opt.value}
                       onChange={() => handleLocationChange(opt.value)}
                       className="w-3.5 h-3.5 border-gray-700"
-                      style={{ accentColor: '#29C115' }}
+                      style={{ accentColor: 'var(--palette-green-500)' }}
                     />
                     <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
                       {opt.label}
@@ -346,10 +346,10 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                 value={citySearch}
                 onChange={(e) => setCitySearch(e.target.value)}
                 className="w-full px-2 py-1 mb-2 rounded text-xs text-white placeholder-gray-600 border border-gray-700/50 focus:outline-none focus:border-gray-500"
-                style={{ backgroundColor: '#2a2a2a' }}
+                style={{ backgroundColor: 'var(--palette-neutral-750)' }}
               />
               {selectedCity && (
-                <div className="mb-2 text-xs" style={{ color: '#29C115' }}>
+                <div className="mb-2 text-xs" style={{ color: 'var(--palette-green-500)' }}>
                   ✓ {selectedCity}
                 </div>
               )}
@@ -362,7 +362,7 @@ export default function FilterPanel({ onFiltersChange, loading }: FilterPanelPro
                       checked={selectedCity === city}
                       onChange={() => handleCitySelect(city)}
                       className="w-3.5 h-3.5 border-gray-700"
-                      style={{ accentColor: '#29C115' }}
+                      style={{ accentColor: 'var(--palette-green-500)' }}
                     />
                     <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
                       {city}

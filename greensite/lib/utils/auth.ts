@@ -4,24 +4,24 @@ export const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '12px 14px',
   borderRadius: '12px',
-  border: '1px solid rgba(30,58,30,0.22)',
-  background: '#fffdf8',
-  color: '#1a2e1a',
+  border: '1px solid var(--border-strong)',
+  background: 'var(--surface-raised)',
+  color: 'var(--text-primary)',
   fontSize: '14px',
   outline: 'none',
   boxSizing: 'border-box',
 }
 
 export const panelCardStyle: React.CSSProperties = {
-  background: '#f7f3ea',
-  border: '1px solid rgba(30,58,30,0.18)',
+  background: 'var(--surface-panel)',
+  border: '1px solid var(--border-default)',
   borderRadius: '20px',
-  boxShadow: '0 30px 70px rgba(30,58,30,0.08)',
+  boxShadow: '0 30px 70px rgb(var(--palette-forest-800-rgb) / 0.08)',
 }
 
 export const labelStyle: React.CSSProperties = {
   display: 'block',
-  color: '#1a2e1a',
+  color: 'var(--text-primary)',
   fontSize: '13px',
   fontWeight: 700,
   marginBottom: '8px',
