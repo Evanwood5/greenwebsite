@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {Preference} from '@/lib/types/settings'
-import { JOB_FIELDS, displayLocation } from '@/lib/utils/settings'
+import { displayLocation } from '@/lib/utils/settings'
+import { fetchSubfields, fetchCategories } from '@/lib/services/fields'
 import { MatchedJob } from '@/lib/types/matches'
 import { DarkJobCard } from '@/components/jobs/JobList'
 
@@ -110,6 +111,18 @@ function PrefEditor({ pref, onChange, michiganCities }: {
   michiganCities: string[]
 }) {
   const jobTypeOptions = ['full-time', 'internship', 'part-time']
+  const [categories, setCategories] = useState<string[]>([])
+  const [allSubfields, setAllSubfields] = useState<Record<string, string[]>>({})
+  useEffect(() => {
+    fetchCategories().then(async (cats) => {
+      const filtered = cats.filter(c => c !== 'Other')
+      setCategories(filtered)
+      const entries = await Promise.all(
+        filtered.map(async cat => [cat, await fetchSubfields(cat)] as [string, string[]])
+      )
+      setAllSubfields(Object.fromEntries(entries))
+    }).catch(() => {})
+  }, [])
   const selectedCities = pref.location ? pref.location.split(',').filter(Boolean) : []
 
   function toggleJobType(type: string) {
@@ -123,7 +136,7 @@ function PrefEditor({ pref, onChange, michiganCities }: {
 
   function toggleCategory(cat: string) {
     if (pref.jobCategories.includes(cat)) {
-      const subsToRemove = JOB_FIELDS[cat] ?? []
+      const subsToRemove = allSubfields[cat] ?? []
       onChange({ ...pref, jobCategories: pref.jobCategories.filter(c => c !== cat), jobSubcategories: pref.jobSubcategories.filter(s => !subsToRemove.includes(s)) })
     } else {
       onChange({ ...pref, jobCategories: [...pref.jobCategories, cat] })
@@ -172,7 +185,7 @@ function PrefEditor({ pref, onChange, michiganCities }: {
           <span style={{ fontSize: '9px', fontWeight: 600, padding: '1px 5px', borderRadius: '3px', background: 'rgb(var(--palette-red-500-rgb) / 0.12)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.25)' }}>required</span>
         </div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
-          {Object.keys(JOB_FIELDS).map(cat => (
+          {categories.map(cat => (
             <button key={cat} type="button" onClick={() => toggleCategory(cat)} style={chipBtn(pref.jobCategories.includes(cat))}>
               {pref.jobCategories.includes(cat) && '✓ '}{cat}
             </button>
@@ -184,7 +197,7 @@ function PrefEditor({ pref, onChange, michiganCities }: {
               <div key={cat}>
                 <p style={{ ...sectionLabel, marginBottom: '6px' }}>{cat}</p>
                 <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                  {JOB_FIELDS[cat].map(sub => (
+                  {(allSubfields[cat] ?? []).map(sub => (
                     <button key={sub} type="button" onClick={() => toggleSubcategory(sub)} style={chipBtn(pref.jobSubcategories.includes(sub))}>
                       {pref.jobSubcategories.includes(sub) && '✓ '}{sub}
                     </button>
