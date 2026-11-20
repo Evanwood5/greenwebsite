@@ -1,7 +1,4 @@
 
-
-
-
 export const JOB_FIELDS: Record<string, string[]> = {
   Tech: [
     'Software Engineering', 'Data Science / AI', 'IT / Sysadmin',
@@ -20,6 +17,9 @@ export const JOB_FIELDS: Record<string, string[]> = {
     'Clinical / Nursing', 'Allied Health', 'Pharmacy', 'Healthcare Administration',
     'Research / Lab', 'Public Health', 'Medical Technology',
   ],
+  Science: [
+    'Chemistry', 'Biology / Life Sciences', 'Physics', 'Environmental Science', 'Food Science',
+  ],
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {
@@ -27,6 +27,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Engineering: 'var(--palette-orange-500)',
   Business: 'var(--palette-purple-400)',
   Health: 'var(--palette-rose-500)',
+  Science: 'var(--palette-teal-500)',
 }
 
 export const cardStyle: React.CSSProperties = {

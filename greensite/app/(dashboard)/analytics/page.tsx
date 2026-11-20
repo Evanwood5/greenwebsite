@@ -14,7 +14,7 @@ import {
 } from './components'
 
 export default function DashboardPage() {
-  const [field, setField] = useState<'tech' | 'engineering' | 'business' | 'health'>('tech')
+  const [field, setField] = useState<'tech' | 'engineering' | 'business' | 'health' | 'science'>('tech')
   const [location, setLocation] = useState('')
   const [timeframe, setTimeframe] = useState('1year')
   const [data, setData] = useState<AnalyticsData | null>(null)

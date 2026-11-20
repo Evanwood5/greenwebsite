@@ -53,6 +53,15 @@ const FIELDS: { id: Field; label: string; icon: React.ReactNode }[] = [
       </svg>
     ),
   },
+  {
+    id: 'science',
+    label: 'Science',
+    icon: (
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 2h6M10 2v4l-4 7a4 4 0 004 4h4a4 4 0 004-4l-4-7V2"/>
+      </svg>
+    ),
+  },
 ]
 
 export function FieldSelector({ value, onChange }: { value: Field; onChange: (field: Field) => void }) {
