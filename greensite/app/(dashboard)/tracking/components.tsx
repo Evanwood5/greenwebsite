@@ -474,6 +474,7 @@ const CATEGORY_OPTIONS: DropdownOption[] = [
   { label: 'Engineering', value: 'Engineering' },
   { label: 'Health', value: 'Health' },
   { label: 'Business', value: 'Business' },
+  { label: 'Science', value: 'Science' },
 ]
 
 const LEVEL_OPTIONS: DropdownOption[] = [

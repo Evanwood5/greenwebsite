@@ -1,6 +1,6 @@
 import { Database } from '@/lib/supabase'
 
-export type Field = 'tech' | 'engineering' | 'business' | 'health'
+export type Field = 'tech' | 'engineering' | 'business' | 'health' | 'science'
 
 export type SubcategoryTrendRow = 
   Pick<Database['public']['Tables']['job_postings_ingest']['Row'], 'created_at'> & {

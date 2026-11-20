@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { JOB_FIELDS } from '@/lib/utils/settings'
 import { FilterOptions } from '@/lib/types/jobs'
+import { fetchSubfields } from '@/lib/services/fields'
 
 function FilterIcon() {
   return (
@@ -159,6 +159,12 @@ export function FilterPanel({
 }) {
   const activeFilterCount = [filters.category, filters.subCategory, filters.level, filters.jobType, filters.isRemote, filters.location, filters.searchTerm].filter(Boolean).length
 
+  const [subfields, setSubfields] = useState<string[]>([])
+  useEffect(() => {
+    if (!filters.category) { setSubfields([]); return }
+    fetchSubfields(filters.category).then(setSubfields).catch(() => setSubfields([]))
+  }, [filters.category])
+
   return (
     <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
       <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', padding: '14px' }}>
@@ -235,6 +241,10 @@ export function FilterPanel({
               label: 'Business', value: 'Business', iconColor: 'var(--palette-purple-400)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
             },
+            {
+              label: 'Science', value: 'Science', iconColor: 'var(--palette-teal-500)',
+              icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 2h6M10 2v4l-4 7a4 4 0 004 4h4a4 4 0 004-4l-4-7V2"/></svg>,
+            },
           ]}
         />
 
@@ -245,7 +255,7 @@ export function FilterPanel({
           disabled={!filters.category}
           options={[
             { label: filters.category ? 'All Sub-categories' : 'Select a category first', value: '' },
-            ...(filters.category ? (JOB_FIELDS[filters.category] ?? []).map(s => ({ label: s, value: s })) : []),
+            ...subfields.map(s => ({ label: s, value: s })),
           ]}
         />
 
