@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
-import { JOB_FIELDS } from '@/lib/utils/settings'
+import { fetchSubfields } from '@/lib/services/fields'
 import {
   listTrackedCompanies,
   createTrackedCompany,
@@ -116,7 +116,11 @@ export default function TrackingPage() {
   const cityOptions: DropdownOption[] = companyCities.length > 0
     ? [{ label: 'All Cities', value: '' }, ...companyCities.map(c => ({ label: c, value: c }))]
     : allCityOptions
-  const subcategoryList = filters.category ? (JOB_FIELDS[filters.category] ?? []) : []
+  const [subcategoryList, setSubcategoryList] = useState<string[]>([])
+  useEffect(() => {
+    if (!filters.category) { setSubcategoryList([]); return }
+    fetchSubfields(filters.category).then(setSubcategoryList).catch(() => setSubcategoryList([]))
+  }, [filters.category])
 
   const handleCompanyChange = (v: string) => { setCompany(v); setCompanyValid(false); setError('') }
   const handleCompanySelect = (v: string) => { setCompany(v); setCompanyValid(true); setError('') }

@@ -1,34 +1,3 @@
-
-
-
-
-export const JOB_FIELDS: Record<string, string[]> = {
-  Tech: [
-    'Software Engineering', 'Data Science / AI', 'IT / Sysadmin',
-    'Cybersecurity', 'Cloud / DevOps', 'QA / Testing', 'UI / UX', 'Hardware / Embedded',
-  ],
-  Engineering: [
-    'Mechanical', 'Electrical', 'Civil / Structural', 'Chemical', 'Industrial',
-    'Aerospace', 'Materials', 'Environmental', 'Automotive', 'Manufacturing', 'Trades',
-  ],
-  Business: [
-    'Finance / Accounting', 'Banking / Finance', 'Marketing / Sales',
-    'Operations / Logistics', 'HR / Recruiting', 'Business Analytics',
-    'Consulting / Strategy', 'Project Management',
-  ],
-  Health: [
-    'Clinical / Nursing', 'Allied Health', 'Pharmacy', 'Healthcare Administration',
-    'Research / Lab', 'Public Health', 'Medical Technology',
-  ],
-}
-
-export const CATEGORY_COLORS: Record<string, string> = {
-  Tech: 'var(--palette-blue-400)',
-  Engineering: 'var(--palette-orange-500)',
-  Business: 'var(--palette-purple-400)',
-  Health: 'var(--palette-rose-500)',
-}
-
 export const cardStyle: React.CSSProperties = {
   background: 'var(--surface-raised)',
   borderRadius: '4px',

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Preference } from '@/lib/types/settings'
-import { JOB_FIELDS, cardStyle, displayLocation } from '@/lib/utils/settings'
+import { cardStyle, displayLocation } from '@/lib/utils/settings'
+import { fetchSubfields, fetchCategories } from '@/lib/services/fields'
 
 function CheckCircleIcon({ color = 'var(--palette-neutral-600)' }: { color?: string }) {
   return (
@@ -53,6 +54,20 @@ export function PrefEditor({
   const jobTypeOptions = ['full-time', 'internship', 'part-time']
   const selectedCities = pref.location ? pref.location.split(',').filter(Boolean) : []
 
+  const [categories, setCategories] = useState<string[]>([])
+  const [allSubfields, setAllSubfields] = useState<Record<string, string[]>>({})
+
+  useEffect(() => {
+    fetchCategories().then(async (cats) => {
+      const filtered = cats.filter(c => c !== 'Other')
+      setCategories(filtered)
+      const entries = await Promise.all(
+        filtered.map(async cat => [cat, await fetchSubfields(cat)] as [string, string[]])
+      )
+      setAllSubfields(Object.fromEntries(entries))
+    }).catch(() => {})
+  }, [])
+
   function toggleJobType(type: string) {
     if (pref.jobTypes.includes(type)) {
       onChange({ ...pref, jobTypes: pref.jobTypes.filter(t => t !== type) })
@@ -64,7 +79,7 @@ export function PrefEditor({
 
   function toggleCategory(cat: string) {
     if (pref.jobCategories.includes(cat)) {
-      const subsToRemove = JOB_FIELDS[cat] ?? []
+      const subsToRemove = allSubfields[cat] ?? []
       onChange({
         ...pref,
         jobCategories: pref.jobCategories.filter(c => c !== cat),
@@ -139,7 +154,7 @@ export function PrefEditor({
           Select at least one category — subcategories help focus your matches further
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
-          {Object.keys(JOB_FIELDS).map(cat => {
+          {categories.map(cat => {
             const selected = pref.jobCategories.includes(cat)
             return (
               <button key={cat} type="button" onClick={() => toggleCategory(cat)} style={{
@@ -166,7 +181,7 @@ export function PrefEditor({
                     {cat} — Sub-categories
                   </p>
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                    {JOB_FIELDS[cat].map(sub => {
+                    {(allSubfields[cat] ?? []).map(sub => {
                       const selected = pref.jobSubcategories.includes(sub)
                       return (
                         <button key={sub} type="button" onClick={() => toggleSubcategory(sub)} style={{
