@@ -482,8 +482,10 @@ function Modal({ open, onClose, title, children }: {
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
+    // Portaled to <body>, outside AppShell, so re-apply the dashboard theme scope.
     <div
       ref={backdropRef}
+      className="theme-dashboard"
       onClick={(e) => {
         if (e.target === backdropRef.current) onClose();
       }}
