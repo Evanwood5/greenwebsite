@@ -6,6 +6,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/db/supabase'
+import { TermsGate } from './TermsGate'
+import { needsTermsAcceptance } from '@/lib/utils/terms'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
   '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--palette-neutral-850)' },
@@ -138,11 +140,26 @@ export default function AppShell({ children }: AppShellProps) {
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
+  const [showTermsGate, setShowTermsGate] = useState(false)
   const profileMenuRef = useRef<HTMLDivElement>(null)
   const [badges, setBadges] = useState<Record<string, number>>({
     '/resume': 0,
     '/tracking': 0,
   })
+
+  useEffect(() => {
+    if (!user?.id) return
+    supabase
+      .from('profiles')
+      .select('terms_accepted_at')
+      .eq('user_id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (needsTermsAcceptance(data?.terms_accepted_at ?? null)) {
+          setShowTermsGate(true)
+        }
+      })
+  }, [user?.id])
 
   useEffect(() => {
     if (!user?.id) return
@@ -186,6 +203,9 @@ export default function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="theme-dashboard" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--surface-app)' }}>
+      {showTermsGate && user?.id && (
+        <TermsGate userId={user.id} onAccepted={() => setShowTermsGate(false)} />
+      )}
 
       {/* Full-width top navbar */}
       <header style={{

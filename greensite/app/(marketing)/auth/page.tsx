@@ -189,12 +189,12 @@ export default function AuthPage() {
     ? 'you@example.com'
     : 'you@example.com'
 
-  const signUpReady = !isSignUp || (
+  const signUpReady = isSignUp ? (
     email.length > 0 &&
     password.length >= 8 &&
     confirmPassword.length > 0 &&
     termsAccepted
-  )
+  ) : (email.length > 0 && password.length > 0)
 
   const submitLabel = loading
     ? isSignUp ? 'Creating account...' : 'Signing in...'
