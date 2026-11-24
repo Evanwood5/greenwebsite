@@ -40,12 +40,12 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
           padding: '7px 10px',
           borderRadius: '4px',
           border: hasValue
-            ? '1px solid rgb(var(--palette-white-rgb) / 0.18)'
-            : `1px solid ${open ? 'rgb(var(--palette-white-rgb) / 0.15)' : 'rgb(var(--palette-white-rgb) / 0.08)'}`,
+            ? '1px solid rgb(var(--ink-rgb) / 0.18)'
+            : `1px solid ${open ? 'rgb(var(--ink-rgb) / 0.15)' : 'rgb(var(--ink-rgb) / 0.08)'}`,
           background: hasValue
-            ? 'rgb(var(--palette-white-rgb) / 0.07)'
-            : open ? 'rgb(var(--palette-white-rgb) / 0.06)' : 'rgb(var(--palette-white-rgb) / 0.03)',
-          color: hasValue ? 'var(--palette-neutral-200)' : open ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-600)',
+            ? 'rgb(var(--ink-rgb) / 0.07)'
+            : open ? 'rgb(var(--ink-rgb) / 0.06)' : 'rgb(var(--ink-rgb) / 0.03)',
+          color: hasValue ? 'var(--text-secondary)' : open ? 'var(--text-secondary)' : 'var(--text-muted)',
           fontSize: '12px',
           cursor: disabled ? 'not-allowed' : 'pointer',
           textAlign: 'left',
@@ -55,7 +55,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
           {selected.icon && (
-            <span style={{ flexShrink: 0, color: hasValue ? 'var(--palette-neutral-200)' : selected.iconColor ?? 'var(--palette-neutral-600)', display: 'flex', alignItems: 'center' }}>
+            <span style={{ flexShrink: 0, color: hasValue ? 'var(--text-secondary)' : selected.iconColor ?? 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
               {selected.icon}
             </span>
           )}
@@ -64,7 +64,7 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
         <svg
           width="11" height="11" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          style={{ flexShrink: 0, color: hasValue ? 'var(--palette-neutral-400)' : 'var(--palette-neutral-600)', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          style={{ flexShrink: 0, color: hasValue ? 'var(--text-soft)' : 'var(--text-muted)', transition: 'transform 150ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
@@ -76,10 +76,10 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
           top: 'calc(100% + 4px)',
           left: 0,
           right: 0,
-          background: 'var(--palette-neutral-800)',
-          border: '1px solid rgb(var(--palette-white-rgb) / 0.12)',
+          background: 'var(--surface-raised)',
+          border: '1px solid rgb(var(--ink-rgb) / 0.12)',
           borderRadius: '4px',
-          boxShadow: '0 8px 24px rgb(var(--palette-black-rgb) / 0.5)',
+          boxShadow: '0 8px 24px rgb(var(--shadow-rgb) / 0.5)',
           zIndex: 100,
           overflow: 'hidden',
           maxHeight: '200px',
@@ -99,17 +99,17 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
                   textAlign: 'left',
                   padding: '8px 10px',
                   fontSize: '12px',
-                  background: isActive ? 'rgb(var(--palette-white-rgb) / 0.08)' : 'transparent',
-                  color: isActive ? 'var(--palette-white)' : 'var(--palette-neutral-400)',
+                  background: isActive ? 'rgb(var(--ink-rgb) / 0.08)' : 'transparent',
+                  color: isActive ? 'var(--text-strong)' : 'var(--text-soft)',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'background 100ms',
                 }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgb(var(--palette-white-rgb) / 0.05)' }}
+                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgb(var(--ink-rgb) / 0.05)' }}
                 onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
               >
                 {opt.icon && (
-                  <span style={{ flexShrink: 0, color: opt.iconColor ?? 'var(--palette-neutral-600)', display: 'flex', alignItems: 'center' }}>
+                  <span style={{ flexShrink: 0, color: opt.iconColor ?? 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
                     {opt.icon}
                   </span>
                 )}
@@ -125,15 +125,15 @@ function DropdownSelect({ value, onChange, options, disabled }: { value: string;
 
 export function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: 'rgb(var(--palette-white-rgb) / 0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)' }}>
-      <p style={{ color: 'var(--palette-neutral-600)', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>
+    <div style={{ background: 'rgb(var(--ink-rgb) / 0.03)', borderRadius: '4px', padding: '12px 14px', border: '1px solid rgb(var(--ink-rgb) / 0.08)' }}>
+      <p style={{ color: 'var(--text-muted)', fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>
       <p style={{ color, fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>{value}</p>
     </div>
   )
 }
 
 const sectionLabelStyle: React.CSSProperties = {
-  color: 'var(--palette-neutral-600)',
+  color: 'var(--text-muted)',
   fontSize: '9px',
   fontWeight: 700,
   letterSpacing: '0.1em',
@@ -167,16 +167,16 @@ export function FilterPanel({
 
   return (
     <div style={{ width: '180px', flexShrink: 0, position: 'sticky', top: '0' }}>
-      <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', padding: '14px' }}>
+      <div style={{ background: 'var(--surface-raised)', borderRadius: '4px', border: '1px solid rgb(var(--ink-rgb) / 0.06)', padding: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--palette-neutral-200)', fontSize: '12px', fontWeight: 600 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600 }}>
             <FilterIcon />
             Filters
           </span>
           {activeFilterCount > 0 && (
             <button
               onClick={onClear}
-              style={{ background: 'none', border: 'none', color: 'var(--palette-neutral-600)', fontSize: '11px', cursor: 'pointer', padding: '0' }}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '11px', cursor: 'pointer', padding: '0' }}
             >
               Clear all
             </button>
@@ -187,7 +187,7 @@ export function FilterPanel({
           <svg
             width="12" height="12" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: 'var(--palette-neutral-600)', pointerEvents: 'none' }}
+            style={{ position: 'absolute', left: '9px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }}
           >
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -200,9 +200,9 @@ export function FilterPanel({
               width: '100%',
               padding: '8px 28px 8px 28px',
               borderRadius: '4px',
-              border: '1px solid rgb(var(--palette-white-rgb) / 0.14)',
-              background: 'var(--palette-neutral-850)',
-              color: 'var(--palette-neutral-200)',
+              border: '1px solid rgb(var(--ink-rgb) / 0.14)',
+              background: 'var(--surface-panel)',
+              color: 'var(--text-secondary)',
               fontSize: '12px',
               outline: 'none',
               boxSizing: 'border-box',
@@ -211,13 +211,13 @@ export function FilterPanel({
           {searchInput && (
             <button
               onClick={() => onSearchInputChange('')}
-              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--palette-neutral-600)', cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px' }}
+              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0', lineHeight: 1, fontSize: '14px' }}
             >
               ×
             </button>
           )}
         </div>
-        <div style={{ height: '1px', background: 'rgb(var(--palette-white-rgb) / 0.06)', marginBottom: '4px' }} />
+        <div style={{ height: '1px', background: 'rgb(var(--ink-rgb) / 0.06)', marginBottom: '4px' }} />
 
         <p style={sectionLabelStyle}>Category</p>
         <DropdownSelect
@@ -248,7 +248,7 @@ export function FilterPanel({
           ]}
         />
 
-        <p style={{ ...sectionLabelStyle, color: filters.category ? 'var(--palette-neutral-500)' : 'var(--palette-neutral-700)' }}>Sub-category</p>
+        <p style={{ ...sectionLabelStyle, color: filters.category ? 'var(--text-tertiary)' : 'var(--text-subtle)' }}>Sub-category</p>
         <DropdownSelect
           value={filters.subCategory}
           onChange={(v) => onFilterChange('subCategory', v)}
@@ -324,7 +324,7 @@ export function LoadMoreButton({ totalRemaining, loading, onLoadMore }: { totalR
       <button
         onClick={onLoadMore}
         disabled={loading}
-        style={{ padding: '8px 20px', background: 'rgb(var(--palette-white-rgb) / 0.05)', color: 'var(--palette-neutral-400)', border: '1px solid rgb(var(--palette-white-rgb) / 0.1)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
+        style={{ padding: '8px 20px', background: 'rgb(var(--ink-rgb) / 0.05)', color: 'var(--text-soft)', border: '1px solid rgb(var(--ink-rgb) / 0.1)', borderRadius: '4px', fontWeight: 500, fontSize: '12px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
       >
         {loading ? 'Loading...' : `Load More (${totalRemaining} remaining)`}
       </button>

@@ -10,8 +10,8 @@ import { TermsGate } from './TermsGate'
 import { needsTermsAcceptance } from '@/lib/utils/terms'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
-  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--palette-neutral-850)' },
-  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--palette-neutral-850)' },
+  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--surface-panel)' },
+  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--surface-panel)' },
 }
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -210,7 +210,7 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Full-width top navbar */}
       <header style={{
         height: HEADER_HEIGHT,
-        background: 'rgb(var(--palette-neutral-950-rgb) / 0.85)',
+        background: 'rgb(var(--surface-app-rgb) / 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
@@ -254,9 +254,9 @@ export default function AppShell({ children }: AppShellProps) {
 
           {!collapsed && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '1px', height: '16px', background: 'rgb(var(--palette-white-rgb) / 0.1)' }} />
+              <div style={{ width: '1px', height: '16px', background: 'rgb(var(--ink-rgb) / 0.1)' }} />
               <span style={{
-                color: 'rgb(var(--palette-white-rgb) / 0.45)',
+                color: 'rgb(var(--ink-rgb) / 0.45)',
                 fontWeight: 500,
                 fontSize: '14px',
                 letterSpacing: '0.12em',
@@ -277,15 +277,15 @@ export default function AppShell({ children }: AppShellProps) {
               alignItems: 'center',
               gap: '8px',
               padding: '4px 8px 4px 12px',
-              background: profileMenuOpen ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'rgb(var(--palette-white-rgb) / 0.03)',
-              border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
+              background: profileMenuOpen ? 'rgb(var(--ink-rgb) / 0.07)' : 'rgb(var(--ink-rgb) / 0.03)',
+              border: '1px solid rgb(var(--ink-rgb) / 0.1)',
               borderRadius: '8px',
               cursor: 'pointer',
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
             onMouseOver={(e) => {
               if (!profileMenuOpen) {
-                e.currentTarget.style.background = 'rgb(var(--palette-white-rgb) / 0.07)'
+                e.currentTarget.style.background = 'rgb(var(--ink-rgb) / 0.07)'
                 e.currentTarget.style.borderColor = 'var(--border-strong)'
               }
             }}
@@ -298,7 +298,7 @@ export default function AppShell({ children }: AppShellProps) {
           >
             {user?.email && (
               <span style={{
-                color: 'rgb(var(--palette-white-rgb) / 0.7)',
+                color: 'rgb(var(--ink-rgb) / 0.7)',
                 fontSize: '12px',
                 fontWeight: 500,
                 letterSpacing: '0.01em',
@@ -315,11 +315,11 @@ export default function AppShell({ children }: AppShellProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'rgb(var(--palette-white-rgb) / 0.75)',
+              color: 'rgb(var(--ink-rgb) / 0.75)',
             }}>
               <UserIcon size={13} />
             </div>
-            <div style={{ color: 'rgb(var(--palette-white-rgb) / 0.2)', marginRight: '2px' }}>
+            <div style={{ color: 'rgb(var(--ink-rgb) / 0.2)', marginRight: '2px' }}>
               <ChevronDownIcon size={11} />
             </div>
           </button>
@@ -329,19 +329,19 @@ export default function AppShell({ children }: AppShellProps) {
               position: 'absolute',
               top: '42px',
               right: 0,
-              background: 'rgb(var(--palette-neutral-800-rgb) / 0.95)',
+              background: 'rgb(var(--surface-raised-rgb) / 0.95)',
               backdropFilter: 'blur(16px)',
-              border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
+              border: '1px solid rgb(var(--ink-rgb) / 0.1)',
               borderRadius: '12px',
               overflow: 'hidden',
               minWidth: '180px',
-              boxShadow: '0 12px 32px rgb(var(--palette-black-rgb) / 0.4)',
+              boxShadow: '0 12px 32px rgb(var(--shadow-rgb) / 0.4)',
               zIndex: 100,
               animation: 'fadeIn 0.2s ease-out',
             }}>
               <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
                 <p style={{ color: 'var(--text-strong)', fontSize: '12px', fontWeight: 600, marginBottom: '2px' }}>{user?.email?.split('@')[0]}</p>
-                <p style={{ color: 'rgb(var(--palette-white-rgb) / 0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
+                <p style={{ color: 'rgb(var(--ink-rgb) / 0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
               </div>
               <Link
                 href="/settings"
@@ -351,11 +351,11 @@ export default function AppShell({ children }: AppShellProps) {
                   alignItems: 'center',
                   gap: '10px',
                   padding: '10px 16px',
-                  color: 'var(--palette-neutral-200)',
+                  color: 'var(--text-secondary)',
                   fontSize: '13px',
                   textDecoration: 'none',
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-white-rgb) / 0.05)')}
+                onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--ink-rgb) / 0.05)')}
                 onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <GearIcon size={14} />
@@ -524,7 +524,7 @@ export default function AppShell({ children }: AppShellProps) {
             ))}
           </nav>
 
-          <div style={{ padding: '10px 12px', borderTop: '1px solid rgb(var(--palette-white-rgb) / 0.05)' }}>
+          <div style={{ padding: '10px 12px', borderTop: '1px solid rgb(var(--ink-rgb) / 0.05)' }}>
             <button
               onClick={() => setCollapsed(!collapsed)}
               style={{
@@ -536,14 +536,14 @@ export default function AppShell({ children }: AppShellProps) {
                 borderRadius: '7px',
                 background: 'transparent',
                 border: 'none',
-                color: 'rgb(var(--palette-white-rgb) / 0.35)',
+                color: 'rgb(var(--ink-rgb) / 0.35)',
                 fontSize: '13px',
                 fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'color 150ms',
               }}
-              onMouseOver={(e) => { e.currentTarget.style.color = 'rgb(var(--palette-white-rgb) / 0.7)' }}
-              onMouseOut={(e) => { e.currentTarget.style.color = 'rgb(var(--palette-white-rgb) / 0.35)' }}
+              onMouseOver={(e) => { e.currentTarget.style.color = 'rgb(var(--ink-rgb) / 0.7)' }}
+              onMouseOut={(e) => { e.currentTarget.style.color = 'rgb(var(--ink-rgb) / 0.35)' }}
             >
               {!collapsed && <span>Collapse</span>}
               {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}

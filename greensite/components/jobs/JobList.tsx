@@ -37,7 +37,7 @@ function BriefcaseIcon() {
 
 function PinIcon() {
   return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
       <circle cx="12" cy="10" r="3" />
     </svg>
@@ -46,7 +46,7 @@ function PinIcon() {
 
 function ClockIcon() {
   return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
     </svg>
@@ -104,7 +104,7 @@ function LevelBadge({ level }: { level: string }) {
   } else if (normalized.includes('senior') || normalized.includes('lead') || normalized.includes('principal')) {
     style = { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--palette-purple-400)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' }
   } else {
-    style = { background: 'rgb(var(--palette-neutral-500-rgb) / 0.1)', color: 'var(--palette-neutral-500)', border: '1px solid rgb(var(--palette-neutral-500-rgb) / 0.2)' }
+    style = { background: 'rgb(var(--palette-neutral-500-rgb) / 0.1)', color: 'var(--text-tertiary)', border: '1px solid rgb(var(--palette-neutral-500-rgb) / 0.2)' }
   }
   return (
     <span style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '4px', fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap', ...style }}>
@@ -168,11 +168,11 @@ export function DarkJobCard({
 
   return (
     <div style={{
-      background: 'var(--palette-neutral-900)',
+      background: 'var(--surface-card)',
       borderRadius: '10px',
       padding: '14px',
-      border: '1px solid rgb(var(--palette-white-rgb) / 0.35)',
-      boxShadow: 'inset 0 1px 0 rgb(var(--palette-white-rgb) / 0.18), 0 0 20px rgb(var(--palette-white-rgb) / 0.06)',
+      border: '1px solid rgb(var(--ink-rgb) / 0.35)',
+      boxShadow: 'inset 0 1px 0 rgb(var(--ink-rgb) / 0.18), 0 0 20px rgb(var(--ink-rgb) / 0.06)',
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
@@ -194,21 +194,21 @@ export function DarkJobCard({
           {meta.icon}
         </div>
         <div style={{ flex: 1, minWidth: 0, paddingRight: matchScore !== undefined ? '72px' : '0' }}>
-          <h3 style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 600, marginBottom: '2px', lineHeight: '1.35', letterSpacing: '-0.01em' }}>
+          <h3 style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600, marginBottom: '2px', lineHeight: '1.35', letterSpacing: '-0.01em' }}>
             {job.job_title || 'Untitled Position'}
           </h3>
-          <p style={{ color: 'var(--palette-neutral-500)', fontSize: '11px' }}>{job.company_name || 'Company not listed'}</p>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '11px' }}>{job.company_name || 'Company not listed'}</p>
         </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <PinIcon />
-          <span style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>{location}</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{location}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <ClockIcon />
-          <span style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>Posted {postedAgo(job.created_at)}</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Posted {postedAgo(job.created_at)}</span>
         </div>
       </div>
 
@@ -219,24 +219,24 @@ export function DarkJobCard({
           <span style={{
             display: 'inline-block', padding: '2px 7px', borderRadius: '4px',
             fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap',
-            background: 'rgb(var(--palette-white-rgb) / 0.05)',
-            color: 'var(--palette-neutral-500)',
-            border: '1px solid rgb(var(--palette-white-rgb) / 0.08)',
+            background: 'rgb(var(--ink-rgb) / 0.05)',
+            color: 'var(--text-tertiary)',
+            border: '1px solid rgb(var(--ink-rgb) / 0.08)',
           }}>
             {subCategory}
           </span>
         )}
       </div>
 
-      <div style={{ borderTop: '1px solid rgb(var(--palette-white-rgb) / 0.06)' }} />
+      <div style={{ borderTop: '1px solid rgb(var(--ink-rgb) / 0.06)' }} />
 
       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
         {job.job_href ? (
-          <a href={job.job_href} target="_blank" rel="noopener noreferrer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '7px 10px', background: 'var(--palette-green-500)', color: 'var(--palette-white)', borderRadius: '6px', fontWeight: 500, fontSize: '12px', textDecoration: 'none' }}>
+          <a href={job.job_href} target="_blank" rel="noopener noreferrer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '7px 10px', background: 'var(--palette-green-500)', color: 'var(--accent-contrast)', borderRadius: '6px', fontWeight: 500, fontSize: '12px', textDecoration: 'none' }}>
             <ExternalLinkIcon /> Apply
           </a>
         ) : (
-          <span style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '7px 10px', background: 'rgb(var(--palette-white-rgb) / 0.03)', color: 'var(--palette-neutral-600)', borderRadius: '6px', fontSize: '12px', border: '1px solid rgb(var(--palette-white-rgb) / 0.05)' }}>
+          <span style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '7px 10px', background: 'rgb(var(--ink-rgb) / 0.03)', color: 'var(--text-muted)', borderRadius: '6px', fontSize: '12px', border: '1px solid rgb(var(--ink-rgb) / 0.05)' }}>
             No link
           </span>
         )}
@@ -336,7 +336,7 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
     ),
   },
   other: {
-    color: 'var(--palette-neutral-500)',
+    color: 'var(--text-tertiary)',
     bg: 'rgb(var(--palette-neutral-500-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -372,7 +372,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
   const cellStyle: React.CSSProperties = {
     padding: '10px 10px',
     fontSize: '13px',
-    color: 'var(--palette-neutral-400)',
+    color: 'var(--text-soft)',
     verticalAlign: 'middle',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -382,7 +382,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
     <tr
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ background: hovered ? 'rgb(var(--palette-white-rgb) / 0.06)' : (index ?? 0) % 2 === 1 ? 'rgb(var(--palette-white-rgb) / 0.025)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgb(var(--palette-white-rgb) / 0.06)' }}
+      style={{ background: hovered ? 'rgb(var(--ink-rgb) / 0.06)' : (index ?? 0) % 2 === 1 ? 'rgb(var(--ink-rgb) / 0.025)' : 'transparent', transition: 'background 120ms', cursor: 'default', borderBottom: isLast ? 'none' : '1px solid rgb(var(--ink-rgb) / 0.06)' }}
     >
       {/* Category icon — from DB fieldCategoryMap, fall back to title inference */}
       <td style={{ ...cellStyle, width: '36px', paddingRight: '4px' }}>
@@ -400,10 +400,10 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
 
       {/* Title + company */}
       <td style={{ ...cellStyle, whiteSpace: 'normal', overflow: 'hidden' }}>
-        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--palette-neutral-200)', fontWeight: 500, fontSize: '13px' }} title={job.job_title ?? ''}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-secondary)', fontWeight: 500, fontSize: '13px' }} title={job.job_title ?? ''}>
           {job.job_title || 'Untitled Position'}
         </div>
-        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--palette-neutral-600)', fontSize: '11px', marginTop: '2px' }}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>
           {job.company_name || ''}
         </div>
       </td>
@@ -412,30 +412,30 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
       <td style={{ ...cellStyle, width: '95px' }}>
         {job.experience_level
           ? <LevelBadge level={job.experience_level} />
-          : <span style={{ color: 'var(--palette-neutral-700)', fontSize: '11px' }}>—</span>}
+          : <span style={{ color: 'var(--text-subtle)', fontSize: '11px' }}>—</span>}
       </td>
 
       {/* Sub-category */}
-      <td style={{ ...cellStyle, width: '120px', color: 'var(--palette-neutral-600)', fontSize: '11px' }}>
+      <td style={{ ...cellStyle, width: '120px', color: 'var(--text-muted)', fontSize: '11px' }}>
         {job.job_field_id != null && fieldSubCategoryMap?.[job.job_field_id]
           ? <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', whiteSpace: 'nowrap' }}>{fieldSubCategoryMap[job.job_field_id]}</span>
-          : <span style={{ color: 'var(--palette-neutral-700)' }}>—</span>}
+          : <span style={{ color: 'var(--text-subtle)' }}>—</span>}
       </td>
 
       {/* Type */}
       <td style={{ ...cellStyle, width: '100px' }}>
         {job.job_type
           ? <JobTypeBadge type={job.job_type} />
-          : <span style={{ color: 'var(--palette-neutral-700)', fontSize: '11px' }}>—</span>}
+          : <span style={{ color: 'var(--text-subtle)', fontSize: '11px' }}>—</span>}
       </td>
 
       {/* Location */}
-      <td style={{ ...cellStyle, width: '115px', color: 'var(--palette-neutral-500)', fontSize: '12px' }}>
+      <td style={{ ...cellStyle, width: '115px', color: 'var(--text-tertiary)', fontSize: '12px' }}>
         {location}
       </td>
 
       {/* Posted */}
-      <td style={{ ...cellStyle, width: '62px', color: 'var(--palette-neutral-600)', fontSize: '12px' }}>
+      <td style={{ ...cellStyle, width: '62px', color: 'var(--text-muted)', fontSize: '12px' }}>
         {postedAgo(job.created_at)}
       </td>
 
@@ -485,7 +485,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
               <ExternalLinkIcon />
             </a>
           ) : (
-            <span style={{ color: 'var(--palette-neutral-700)', fontSize: '12px' }}>—</span>
+            <span style={{ color: 'var(--text-subtle)', fontSize: '12px' }}>—</span>
           )}
         </div>
       </td>
@@ -497,9 +497,9 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
   const savedSet = new Set(savedJobIds ?? [])
   if (loading) {
     return (
-      <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--surface-raised)', borderRadius: '4px', border: '1px solid rgb(var(--ink-rgb) / 0.06)', overflow: 'hidden' }}>
         {[...Array(8)].map((_, i) => (
-          <div key={i} style={{ height: '44px', borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.04)', background: i % 2 === 0 ? 'transparent' : 'rgb(var(--palette-white-rgb) / 0.01)' }} />
+          <div key={i} style={{ height: '44px', borderBottom: '1px solid rgb(var(--ink-rgb) / 0.04)', background: i % 2 === 0 ? 'transparent' : 'rgb(var(--ink-rgb) / 0.01)' }} />
         ))}
       </div>
     )
@@ -507,8 +507,8 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
 
   if (jobs.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px 0', color: 'var(--palette-neutral-600)' }}>
-        <p style={{ fontSize: '14px', marginBottom: '4px', color: 'var(--palette-neutral-500)' }}>No jobs found</p>
+      <div style={{ textAlign: 'center', padding: '50px 0', color: 'var(--text-muted)' }}>
+        <p style={{ fontSize: '14px', marginBottom: '4px', color: 'var(--text-tertiary)' }}>No jobs found</p>
         <p style={{ fontSize: '12px' }}>Try adjusting your filters or check back later</p>
       </div>
     )
@@ -518,16 +518,16 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
     padding: '8px 10px',
     fontSize: '10px',
     fontWeight: 700,
-    color: 'var(--palette-neutral-500)',
+    color: 'var(--text-tertiary)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     textAlign: 'left',
-    borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
+    borderBottom: '1px solid rgb(var(--ink-rgb) / 0.1)',
     whiteSpace: 'nowrap',
   }
 
   return (
-    <div style={{ background: 'var(--palette-neutral-800)', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--surface-raised)', borderRadius: '4px', border: '1px solid rgb(var(--ink-rgb) / 0.06)', overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <colgroup>
           <col style={{ width: '44px' }} />
@@ -540,7 +540,7 @@ export default function JobList({ jobs, loading, fieldCategoryMap, fieldSubCateg
           <col style={{ width: '100px' }} />
         </colgroup>
         <thead>
-          <tr style={{ background: 'var(--palette-neutral-850)' }}>
+          <tr style={{ background: 'var(--surface-panel)' }}>
             <th style={{ ...thStyle, width: '36px' }}></th>
             <th style={thStyle}>Position</th>
             <th style={thStyle}>Level</th>

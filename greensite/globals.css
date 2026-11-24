@@ -216,6 +216,18 @@ html {
   --status-info: var(--palette-blue-400);
 
   --overlay: rgb(var(--palette-black-rgb) / 0.5);
+
+  /* Dashboard-only roles. These let the dashboard switch between dark and
+     light mode by redefining variables instead of editing components. */
+  --ink-rgb: var(--palette-white-rgb);              /* translucent foreground: borders, hovers, fills */
+  --shadow-rgb: var(--palette-black-rgb);           /* box-shadow color */
+  --surface-app-rgb: var(--palette-neutral-950-rgb);
+  --surface-raised-rgb: var(--palette-neutral-800-rgb);
+  --surface-card: var(--palette-neutral-900);
+  --text-soft: var(--palette-neutral-400);
+  --chart-axis: var(--palette-neutral-475);
+  --chart-grid: var(--palette-neutral-720);
+  --chart-tooltip-border: var(--palette-neutral-750);
 }
 
 /* Dark marketing surfaces (homepage, AI-powered hero). */

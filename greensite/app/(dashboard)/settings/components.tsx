@@ -5,7 +5,7 @@ import { Preference } from '@/lib/types/settings'
 import { cardStyle, displayLocation } from '@/lib/utils/settings'
 import { fetchSubfields, fetchCategories } from '@/lib/services/fields'
 
-function CheckCircleIcon({ color = 'var(--palette-neutral-600)' }: { color?: string }) {
+function CheckCircleIcon({ color = 'var(--text-muted)' }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
@@ -115,7 +115,7 @@ export function PrefEditor({
 
       {/* Job Types */}
       <div>
-        <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--palette-neutral-600)', marginBottom: '10px' }}>
+        <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '10px' }}>
           Job Type (select up to 2)
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -124,9 +124,9 @@ export function PrefEditor({
             return (
               <button key={type} type="button" onClick={() => toggleJobType(type)} style={{
                 padding: '8px 16px', borderRadius: '4px',
-                border: '1px solid rgb(var(--palette-white-rgb) / 0.08)',
-                background: selected ? 'rgb(var(--palette-white-rgb) / 0.08)' : 'var(--palette-neutral-850)',
-                color: selected ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)',
+                border: '1px solid rgb(var(--ink-rgb) / 0.08)',
+                background: selected ? 'rgb(var(--ink-rgb) / 0.08)' : 'var(--surface-panel)',
+                color: selected ? 'var(--text-secondary)' : 'var(--text-tertiary)',
                 fontSize: '13px', fontWeight: selected ? 600 : 400,
                 cursor: 'pointer', textTransform: 'capitalize',
               }}>
@@ -140,7 +140,7 @@ export function PrefEditor({
       {/* Job Categories — required */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-          <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--palette-neutral-600)' }}>
+          <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>
             Job Categories
           </p>
           <span style={{
@@ -150,7 +150,7 @@ export function PrefEditor({
             Required
           </span>
         </div>
-        <p style={{ color: 'var(--palette-neutral-500)', fontSize: '12px', marginBottom: '10px' }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginBottom: '10px' }}>
           Select at least one category — subcategories help focus your matches further
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
@@ -159,9 +159,9 @@ export function PrefEditor({
             return (
               <button key={cat} type="button" onClick={() => toggleCategory(cat)} style={{
                 padding: '8px 16px', borderRadius: '4px',
-                border: `1px solid ${selected ? 'rgb(var(--palette-white-rgb) / 0.18)' : 'rgb(var(--palette-white-rgb) / 0.08)'}`,
-                background: selected ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'var(--palette-neutral-850)',
-                color: selected ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)',
+                border: `1px solid ${selected ? 'rgb(var(--ink-rgb) / 0.18)' : 'rgb(var(--ink-rgb) / 0.08)'}`,
+                background: selected ? 'rgb(var(--ink-rgb) / 0.07)' : 'var(--surface-panel)',
+                color: selected ? 'var(--text-secondary)' : 'var(--text-tertiary)',
                 fontSize: '13px', fontWeight: selected ? 600 : 400,
                 cursor: 'pointer',
               }}>
@@ -177,7 +177,7 @@ export function PrefEditor({
             {pref.jobCategories.map(cat => {
               return (
                 <div key={cat}>
-                  <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--palette-neutral-600)', marginBottom: '8px' }}>
+                  <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '8px' }}>
                     {cat} — Sub-categories
                   </p>
                   <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -186,9 +186,9 @@ export function PrefEditor({
                       return (
                         <button key={sub} type="button" onClick={() => toggleSubcategory(sub)} style={{
                           padding: '5px 12px', borderRadius: '4px',
-                          border: `1px solid ${selected ? 'rgb(var(--palette-white-rgb) / 0.18)' : 'rgb(var(--palette-white-rgb) / 0.06)'}`,
-                          background: selected ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'var(--palette-neutral-850)',
-                          color: selected ? 'var(--palette-neutral-200)' : 'var(--palette-neutral-500)',
+                          border: `1px solid ${selected ? 'rgb(var(--ink-rgb) / 0.18)' : 'rgb(var(--ink-rgb) / 0.06)'}`,
+                          background: selected ? 'rgb(var(--ink-rgb) / 0.07)' : 'var(--surface-panel)',
+                          color: selected ? 'var(--text-secondary)' : 'var(--text-tertiary)',
                           fontSize: '11px', fontWeight: selected ? 600 : 400,
                           cursor: 'pointer',
                         }}>
@@ -200,7 +200,7 @@ export function PrefEditor({
                 </div>
               )
             })}
-            <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
               Leave subcategories unselected to match all within a category
             </p>
           </div>
@@ -226,19 +226,19 @@ export function PrefEditor({
       {/* Experience Level */}
       {pref.jobTypes.includes('full-time') && (
         <div>
-          <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--palette-neutral-600)', marginBottom: '10px' }}>
+          <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '10px' }}>
             Experience Level
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {EXPERIENCE_OPTIONS.map(opt => (
-              <label key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '4px', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)', background: 'var(--palette-neutral-850)', cursor: 'pointer' }}>
+              <label key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '4px', border: '1px solid rgb(var(--ink-rgb) / 0.08)', background: 'var(--surface-panel)', cursor: 'pointer' }}>
                 <input
                   type="radio" name={`exp-${opt.value}`} value={opt.value}
                   checked={pref.experienceLevel === opt.value}
                   onChange={() => onChange({ ...pref, experienceLevel: opt.value })}
-                  style={{ accentColor: 'var(--palette-neutral-200)', width: '15px', height: '15px' }}
+                  style={{ accentColor: 'var(--text-secondary)', width: '15px', height: '15px' }}
                 />
-                <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px' }}>{opt.label}</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{opt.label}</span>
               </label>
             ))}
           </div>
@@ -247,25 +247,25 @@ export function PrefEditor({
 
       {/* Location */}
       <div>
-        <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--palette-neutral-600)', marginBottom: '6px' }}>
+        <p style={{ fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '6px' }}>
           Location
         </p>
-        <p style={{ color: 'var(--palette-neutral-600)', fontSize: '12px', marginBottom: '8px' }}>Each city includes a 30-mile radius</p>
-        <div style={{ background: 'var(--palette-neutral-850)', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)', borderRadius: '4px', padding: '12px', maxHeight: '220px', overflowY: 'auto' }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '8px' }}>Each city includes a 30-mile radius</p>
+        <div style={{ background: 'var(--surface-panel)', border: '1px solid rgb(var(--ink-rgb) / 0.08)', borderRadius: '4px', padding: '12px', maxHeight: '220px', overflowY: 'auto' }}>
           <label style={{
             display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 4px',
             borderRadius: '4px', cursor: 'pointer',
-            background: 'rgb(var(--palette-white-rgb) / 0.04)',
-            borderBottom: '1px solid rgb(var(--palette-white-rgb) / 0.06)',
+            background: 'rgb(var(--ink-rgb) / 0.04)',
+            borderBottom: '1px solid rgb(var(--ink-rgb) / 0.06)',
             marginBottom: '6px',
           }}>
             <input
               type="checkbox"
               checked={selectedCities.length === 0}
               onChange={() => toggleCity('')}
-              style={{ accentColor: 'var(--palette-neutral-200)', width: '14px', height: '14px', flexShrink: 0 }}
+              style={{ accentColor: 'var(--text-secondary)', width: '14px', height: '14px', flexShrink: 0 }}
             />
-            <span style={{ fontSize: '13px', color: 'var(--palette-neutral-200)', fontWeight: 600 }}>All Michigan</span>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>All Michigan</span>
           </label>
           {michiganCities.map(city => (
             <label key={city} style={{
@@ -276,29 +276,29 @@ export function PrefEditor({
                 type="checkbox"
                 checked={selectedCities.includes(city)}
                 onChange={() => toggleCity(city)}
-                style={{ accentColor: 'var(--palette-neutral-200)', width: '14px', height: '14px', flexShrink: 0 }}
+                style={{ accentColor: 'var(--text-secondary)', width: '14px', height: '14px', flexShrink: 0 }}
               />
-              <span style={{ fontSize: '13px', color: 'var(--palette-neutral-400)', fontWeight: 400 }}>{city}</span>
+              <span style={{ fontSize: '13px', color: 'var(--text-soft)', fontWeight: 400 }}>{city}</span>
             </label>
           ))}
         </div>
         {selectedCities.length > 0 && (
-          <p style={{ color: 'var(--palette-neutral-500)', fontSize: '12px', marginTop: '6px' }}>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginTop: '6px' }}>
             {`${selectedCities.length} ${selectedCities.length === 1 ? 'city' : 'cities'} selected`}
           </p>
         )}
       </div>
 
       {/* Remote */}
-      <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', background: 'var(--palette-neutral-850)', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)', borderRadius: '4px', cursor: 'pointer' }}>
+      <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', background: 'var(--surface-panel)', border: '1px solid rgb(var(--ink-rgb) / 0.08)', borderRadius: '4px', cursor: 'pointer' }}>
         <input
           type="checkbox" checked={pref.includeRemote}
           onChange={e => onChange({ ...pref, includeRemote: e.target.checked })}
-          style={{ accentColor: 'var(--palette-neutral-200)', width: '16px', height: '16px', flexShrink: 0 }}
+          style={{ accentColor: 'var(--text-secondary)', width: '16px', height: '16px', flexShrink: 0 }}
         />
         <div>
-          <p style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 500 }}>Include remote jobs</p>
-          <p style={{ color: 'var(--palette-neutral-600)', fontSize: '12px' }}>Get matched with remote opportunities</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>Include remote jobs</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Get matched with remote opportunities</p>
         </div>
       </label>
     </div>
@@ -340,17 +340,17 @@ export function PreferenceCard({
     <div style={cardStyle}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isEditing ? '16px' : '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgb(var(--palette-white-rgb) / 0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-500)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgb(var(--ink-rgb) / 0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
           </div>
           <div>
-            <p style={{ color: 'var(--palette-neutral-200)', fontSize: '14px', fontWeight: 600 }}>{label}</p>
-            <p style={{ color: 'var(--palette-neutral-600)', fontSize: '12px' }}>{sub}</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600 }}>{label}</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{sub}</p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           {!isEditing && (
-            <button onClick={onEdit} style={{ padding: '6px 14px', background: 'rgb(var(--palette-white-rgb) / 0.07)', color: 'var(--palette-neutral-200)', border: '1px solid rgb(var(--palette-white-rgb) / 0.12)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={onEdit} style={{ padding: '6px 14px', background: 'rgb(var(--ink-rgb) / 0.07)', color: 'var(--text-secondary)', border: '1px solid rgb(var(--ink-rgb) / 0.12)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
               {pref.jobTypes.length > 0 ? 'Edit' : 'Set Up'}
             </button>
           )}
@@ -371,9 +371,9 @@ export function PreferenceCard({
               disabled={saving || !!saveDisabledReason}
               title={saveDisabledReason ?? ''}
               style={{
-                padding: '9px 20px', background: saveDisabledReason ? 'transparent' : 'rgb(var(--palette-white-rgb) / 0.07)',
-                color: saveDisabledReason ? 'var(--palette-neutral-600)' : 'var(--palette-neutral-200)',
-                border: saveDisabledReason ? '1px solid rgb(var(--palette-white-rgb) / 0.06)' : '1px solid rgb(var(--palette-white-rgb) / 0.14)',
+                padding: '9px 20px', background: saveDisabledReason ? 'transparent' : 'rgb(var(--ink-rgb) / 0.07)',
+                color: saveDisabledReason ? 'var(--text-muted)' : 'var(--text-secondary)',
+                border: saveDisabledReason ? '1px solid rgb(var(--ink-rgb) / 0.06)' : '1px solid rgb(var(--ink-rgb) / 0.14)',
                 borderRadius: '4px', fontWeight: 600, fontSize: '13px',
                 cursor: saveDisabledReason ? 'not-allowed' : 'pointer',
               }}
@@ -381,7 +381,7 @@ export function PreferenceCard({
               {saving ? 'Saving...' : 'Save'}
             </button>
             <button onClick={onCancel} disabled={saving}
-              style={{ padding: '9px 20px', background: 'transparent', color: 'var(--palette-neutral-500)', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
+              style={{ padding: '9px 20px', background: 'transparent', color: 'var(--text-tertiary)', border: '1px solid rgb(var(--ink-rgb) / 0.08)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
               Cancel
             </button>
             {saveDisabledReason && !saving && (
@@ -398,7 +398,7 @@ export function PreferenceCard({
       ) : pref.jobTypes.length > 0 ? (
         <PreferenceSummary pref={pref} />
       ) : (
-        <p style={{ color: 'var(--palette-neutral-500)', fontSize: '13px' }}>Not configured yet. Click Set Up to add your preferences.</p>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>Not configured yet. Click Set Up to add your preferences.</p>
       )}
     </div>
   )
@@ -409,19 +409,19 @@ function PreferenceSummary({ pref }: { pref: Preference }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <CheckCircleIcon />
-        <span style={{ color: 'var(--palette-neutral-600)', fontSize: '13px', fontWeight: 500 }}>Job Types:</span>
-        <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px' }}>{pref.jobTypes.join(', ')}</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>Job Types:</span>
+        <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{pref.jobTypes.join(', ')}</span>
       </div>
       {pref.jobCategories.length > 0 && (
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '1px' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '1px' }}>
             <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
           </svg>
           <div>
-            <span style={{ color: 'var(--palette-neutral-600)', fontSize: '13px', fontWeight: 500 }}>Categories: </span>
-            <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px' }}>{pref.jobCategories.join(', ')}</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>Categories: </span>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{pref.jobCategories.join(', ')}</span>
             {pref.jobSubcategories.length > 0 && (
-              <div style={{ color: 'var(--palette-neutral-500)', fontSize: '11px', marginTop: '2px' }}>
+              <div style={{ color: 'var(--text-tertiary)', fontSize: '11px', marginTop: '2px' }}>
                 Sub-categories: {pref.jobSubcategories.join(', ')}
               </div>
             )}
@@ -429,28 +429,28 @@ function PreferenceSummary({ pref }: { pref: Preference }) {
         </div>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
         </svg>
-        <span style={{ color: 'var(--palette-neutral-600)', fontSize: '13px', fontWeight: 500 }}>Location:</span>
-        <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px' }}>{displayLocation(pref.location)}</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>Location:</span>
+        <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{displayLocation(pref.location)}</span>
       </div>
       {pref.experienceLevel && pref.experienceLevel !== 'any' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
           </svg>
-          <span style={{ color: 'var(--palette-neutral-600)', fontSize: '13px', fontWeight: 500 }}>Experience:</span>
-          <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', textTransform: 'capitalize' }}>{pref.experienceLevel}</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>Experience:</span>
+          <span style={{ color: 'var(--text-secondary)', fontSize: '13px', textTransform: 'capitalize' }}>{pref.experienceLevel}</span>
         </div>
       )}
       {pref.includeRemote && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
             <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
           </svg>
-          <span style={{ color: 'var(--palette-neutral-400)', fontSize: '13px' }}>Remote jobs included</span>
+          <span style={{ color: 'var(--text-soft)', fontSize: '13px' }}>Remote jobs included</span>
         </div>
       )}
     </div>
@@ -461,19 +461,19 @@ export function ProfileCard({ email, university }: { email?: string; university:
   return (
     <div style={cardStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
         </svg>
-        <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 600 }}>Profile Information</span>
+        <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600 }}>Profile Information</span>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
         <div>
-          <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Email</p>
-          <p style={{ color: 'var(--palette-neutral-200)', fontSize: '12px' }}>{email || 'Not signed in'}</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Email</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{email || 'Not signed in'}</p>
         </div>
         <div>
-          <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>University</p>
-          <p style={{ color: 'var(--palette-neutral-200)', fontSize: '12px' }}>{university}</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>University</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{university}</p>
         </div>
       </div>
     </div>
@@ -503,32 +503,32 @@ export function ResumeCard({
     <div style={cardStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
         <UploadIcon />
-        <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 600 }}>Upload Your Resume</span>
+        <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600 }}>Upload Your Resume</span>
       </div>
-      <p style={{ color: 'var(--palette-neutral-600)', fontSize: '12px', marginBottom: '12px' }}>Upload your resume to get personalized job matches</p>
+      <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '12px' }}>Upload your resume to get personalized job matches</p>
       {resumeUploaded && (
         <div style={{ background: 'rgb(var(--palette-green-400-rgb) / 0.06)', border: '1px solid rgb(var(--palette-green-400-rgb) / 0.15)', borderRadius: '4px', padding: '10px 14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgb(var(--palette-white-rgb) / 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgb(var(--ink-rgb) / 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <CheckCircleIcon color="var(--palette-green-400)" />
           </div>
           <div>
-            <p style={{ color: 'var(--palette-neutral-200)', fontSize: '12px', fontWeight: 600 }}>Resume uploaded</p>
-            <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>Your resume has been processed and saved</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600 }}>Resume uploaded</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Your resume has been processed and saved</p>
           </div>
         </div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
         {RESUME_NOTE_ROWS.map((text) => (
           <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <CheckCircleIcon color="var(--palette-neutral-700)" />
-            <span style={{ color: 'var(--palette-neutral-500)', fontSize: '13px' }}>{text}</span>
+            <CheckCircleIcon color="var(--text-subtle)" />
+            <span style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>{text}</span>
           </div>
         ))}
       </div>
       <input type="file" accept=".pdf" id="resume-file" style={{ display: 'none' }} onChange={onFileChange} />
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
         <button onClick={() => document.getElementById('resume-file')?.click()} disabled={uploading}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgb(var(--palette-white-rgb) / 0.07)', color: 'var(--palette-neutral-200)', border: '1px solid rgb(var(--palette-white-rgb) / 0.12)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.7 : 1 }}>
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgb(var(--ink-rgb) / 0.07)', color: 'var(--text-secondary)', border: '1px solid rgb(var(--ink-rgb) / 0.12)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.7 : 1 }}>
           <UploadIcon />{uploading ? 'Uploading...' : resumeUploaded ? 'Update Resume' : 'Upload Resume'}
         </button>
         {resumeUploaded && (
@@ -549,31 +549,31 @@ export function NotificationsCard({ email }: { email?: string }) {
     <div>
       <div style={cardStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
           </svg>
-          <span style={{ color: 'var(--palette-neutral-200)', fontSize: '13px', fontWeight: 600 }}>Notification Preferences</span>
+          <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600 }}>Notification Preferences</span>
         </div>
-        <div style={{ background: 'var(--palette-neutral-850)', borderRadius: '4px', padding: '12px 14px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', border: '1px solid rgb(var(--palette-white-rgb) / 0.06)' }}>
+        <div style={{ background: 'var(--surface-panel)', borderRadius: '4px', padding: '12px 14px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', border: '1px solid rgb(var(--ink-rgb) / 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '30px', height: '30px', borderRadius: '4px', background: 'rgb(var(--palette-white-rgb) / 0.05)', border: '1px solid rgb(var(--palette-white-rgb) / 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--palette-neutral-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ width: '30px', height: '30px', borderRadius: '4px', background: 'rgb(var(--ink-rgb) / 0.05)', border: '1px solid rgb(var(--ink-rgb) / 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
               </svg>
             </div>
             <div>
-              <p style={{ color: 'var(--palette-neutral-200)', fontSize: '12px', fontWeight: 500 }}>Email Notifications</p>
-              <p style={{ color: 'var(--palette-neutral-600)', fontSize: '11px' }}>Receive job alerts via email at {email}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 }}>Email Notifications</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Receive job alerts via email at {email}</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '4px' }}>
-                <CheckCircleIcon color="var(--palette-neutral-600)" /><span style={{ color: 'var(--palette-neutral-600)', fontSize: '12px' }}>Active</span>
+                <CheckCircleIcon color="var(--text-muted)" /><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Active</span>
               </div>
             </div>
           </div>
-          <span style={{ padding: '4px 12px', background: 'rgb(var(--palette-white-rgb) / 0.07)', color: 'var(--palette-neutral-200)', border: '1px solid rgb(var(--palette-white-rgb) / 0.12)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, flexShrink: 0 }}>Enabled</span>
+          <span style={{ padding: '4px 12px', background: 'rgb(var(--ink-rgb) / 0.07)', color: 'var(--text-secondary)', border: '1px solid rgb(var(--ink-rgb) / 0.12)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, flexShrink: 0 }}>Enabled</span>
         </div>
       </div>
       <button onClick={() => { setStatus('saved'); setTimeout(() => setStatus('idle'), 2000) }}
-        style={{ padding: '10px 20px', background: 'rgb(var(--palette-white-rgb) / 0.07)', color: 'var(--palette-neutral-200)', border: '1px solid rgb(var(--palette-white-rgb) / 0.12)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}>
+        style={{ padding: '10px 20px', background: 'rgb(var(--ink-rgb) / 0.07)', color: 'var(--text-secondary)', border: '1px solid rgb(var(--ink-rgb) / 0.12)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}>
         {status === 'saved' ? 'Saved!' : 'Save Notification Settings'}
       </button>
     </div>
