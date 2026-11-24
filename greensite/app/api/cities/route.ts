@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/db/supabase-admin'
 import { IRRELEVANT_FIELD_ID, jobsListingCutoff } from '@/lib/types/jobs'
+import { FIELDS, Field, TIMEFRAME_DAYS, analyticsCutoff, fieldToCategory } from '@/lib/types/analytics'
 
 /**
  * GET /api/cities               -> cities with any posting in job_postings_ingest
- *                                  (Analytics)
+ *   &category=tech&timeframe=1year  optionally narrowed to one Analytics field
+ *                                  and timeframe (Analytics)
  * GET /api/cities?scope=listed  -> cities with postings the Jobs page actually
  *                                  lists: recent, not initial load, not the
  *                                  irrelevant field (Jobs)
@@ -26,7 +28,8 @@ function parseScope(value: string | null): Scope {
 }
 
 export async function GET(request: NextRequest) {
-  const scope = parseScope(request.nextUrl.searchParams.get('scope'))
+  const params = request.nextUrl.searchParams
+  const scope = parseScope(params.get('scope'))
 
   // Mirrors the always-on filters in fetchJobs (lib/services/jobs.ts).
   const listedFilters = {
@@ -35,9 +38,16 @@ export async function GET(request: NextRequest) {
     p_exclude_field_id: IRRELEVANT_FIELD_ID,
   }
 
+  // Mirrors getAnalytics (lib/services/analytics.ts): selected field + timeframe.
+  const analyticsFilters: { p_category?: string; p_since?: string } = {}
+  const field = params.get('category')
+  if (field && FIELDS.includes(field as Field)) analyticsFilters.p_category = fieldToCategory(field as Field)
+  const timeframe = params.get('timeframe')
+  if (timeframe && timeframe in TIMEFRAME_DAYS) analyticsFilters.p_since = analyticsCutoff(timeframe).toISOString()
+
   const { data: jobRows, error: jobError } = await supabaseAdmin.rpc(
     'get_job_locations',
-    scope === 'listed' ? listedFilters : {},
+    scope === 'listed' ? listedFilters : scope === 'jobs' ? analyticsFilters : {},
   )
   if (jobError) {
     console.error('[api/cities] get_job_locations failed:', jobError)

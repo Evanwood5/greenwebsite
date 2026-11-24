@@ -2,6 +2,8 @@
 // when the API fails, so a broken endpoint surfaces as an error instead of an
 // empty dropdown.
 
+import type { Field } from '@/lib/types/analytics'
+
 async function getCities(url: string): Promise<string[]> {
   const res = await fetch(url)
   const body = await res.json().catch(() => ({}))
@@ -11,9 +13,10 @@ async function getCities(url: string): Promise<string[]> {
   return Array.isArray(body.cities) ? body.cities : []
 }
 
-/** Cities with any job posting (Analytics). */
-export function fetchJobCities(): Promise<string[]> {
-  return getCities('/api/cities')
+/** Cities with postings in the given Analytics field and timeframe. */
+export function fetchAnalyticsCities(field: Field, timeframe: string): Promise<string[]> {
+  const params = new URLSearchParams({ category: field, timeframe })
+  return getCities(`/api/cities?${params}`)
 }
 
 /** Cities with postings the Jobs page lists (recent, not initial load, relevant field). */
