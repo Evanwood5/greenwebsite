@@ -3,31 +3,30 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
-import { Mode, SignUpPath, Org } from '@/lib/types/auth'
+import { Mode, Org } from '@/lib/types/auth'
 import { signIn, signUp } from '@/lib/services/auth'
 import { listOrgs } from '@/lib/services/profile'
-import { panelCardStyle,parseMetadataOrgId } from '@/lib/utils/auth'
+import { panelCardStyle, parseMetadataOrgId } from '@/lib/utils/auth'
 import {
   AuthHeader,
   AuthSwitcher,
-  DecorativeBackground,
   FormField,
   MessageBanner,
   ModeTabs,
   OrgDropdown,
-  SignUpPathSelector,
   SubmitButton,
+  TermsCheckbox,
 } from './components'
 
 export default function AuthPage() {
   const [mode, setMode] = useState<Mode>('signin')
-  const [signUpPath, setSignUpPath] = useState<SignUpPath>('school')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [orgs, setOrgs] = useState<Org[]>([])
   const [orgsLoading, setOrgsLoading] = useState(false)
   const [orgId, setOrgId] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'error' | 'success'>('error')
@@ -35,40 +34,35 @@ export default function AuthPage() {
 
   const isSignUp = mode === 'signup'
 
+  // Derive signUpPath from orgId selection
+  const signUpPath = orgId === 'none' || orgId === '' ? 'none' : 'school'
+
   const selectedOrg = useMemo(
     () => orgs.find((o) => String(o.id) === orgId) ?? null,
     [orgs, orgId],
   )
 
+  // Load orgs whenever user is on sign-up
   useEffect(() => {
-    if (!isSignUp || signUpPath !== 'school' || orgs.length > 0) return
+    if (!isSignUp || orgs.length > 0) return
     let cancelled = false
     setOrgsLoading(true)
     listOrgs()
-      .then((rows) => {
-        if (cancelled) return
-        setOrgs(rows)
-      })
+      .then((rows) => { if (!cancelled) setOrgs(rows) })
       .catch(() => {
         if (cancelled) return
         setMessageType('error')
         setMessage('Could not load organizations. Please try again.')
       })
-      .finally(() => {
-        if (!cancelled) setOrgsLoading(false)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [isSignUp, signUpPath, orgs.length])
+      .finally(() => { if (!cancelled) setOrgsLoading(false) })
+    return () => { cancelled = true }
+  }, [isSignUp, orgs.length])
 
   // Restore auth mode from URL when page loads.
   useEffect(() => {
     if (typeof window === 'undefined') return
     const urlMode = new URLSearchParams(window.location.search).get('mode')
-    if (urlMode === 'signup') {
-      setMode('signup')
-    }
+    if (urlMode === 'signup') setMode('signup')
   }, [])
 
   // Keep URL in sync so refresh preserves current mode.
@@ -88,14 +82,8 @@ export default function AuthPage() {
     setMessage('')
     setPassword('')
     setConfirmPassword('')
-    if (next === 'signin') {
-      setSignUpPath('school')
-    }
-  }
-
-  const chooseSignUpPath = (nextPath: SignUpPath) => {
-    setSignUpPath(nextPath)
-    setMessage('')
+    setTermsAccepted(false)
+    setOrgId('')
   }
 
   const syncProfileOrgId = async (userId: string, accessToken: string, orgId: number | null) => {
@@ -133,11 +121,9 @@ export default function AuthPage() {
             const parsed = parseMetadataOrgId(res.user.metadata.org_id)
             if (parsed !== null) orgIdForSync = parsed
           }
-
           if (orgIdForSync !== undefined) {
             await syncProfileOrgId(res.user.id, res.session.access_token, orgIdForSync)
           }
-
           router.push('/jobs')
         } else if (res.user) {
           router.push('/jobs')
@@ -145,7 +131,12 @@ export default function AuthPage() {
         return
       }
 
-      // Sign up flow
+      // Sign up validations
+      if (!termsAccepted) {
+        setMessageType('error')
+        setMessage('Please agree to the Terms of Service and Privacy Policy.')
+        return
+      }
       if (password.length < 8) {
         setMessageType('error')
         setMessage('Password must be at least 8 characters.')
@@ -161,21 +152,7 @@ export default function AuthPage() {
         sign_up_path: signUpPath,
       }
 
-      if (signUpPath === 'school') {
-        if (!selectedOrg) {
-          setMessageType('error')
-          setMessage('Please select your school organization.')
-          return
-        }
-
-        const emailDomain = email.split('@')[1]?.toLowerCase().trim()
-        const orgDomain = selectedOrg.email_domain.toLowerCase().trim()
-        if (!emailDomain || emailDomain !== orgDomain) {
-          setMessageType('error')
-          setMessage(`Email must end with @${orgDomain} to join ${selectedOrg.org_name}.`)
-          return
-        }
-
+      if (signUpPath === 'school' && selectedOrg) {
         signUpMetadata.org_id = selectedOrg.id
         signUpMetadata.org_name = selectedOrg.org_name
       } else {
@@ -192,8 +169,7 @@ export default function AuthPage() {
         setMessageType('error')
         setMessage(res.message)
       } else if (res.requiresConfirmation) {
-        setMessageType('success')
-        setMessage('Account created! Check your email to confirm your address before signing in.')
+        router.push(`/auth/confirm?email=${encodeURIComponent(email)}`)
       } else if (res.session && res.user) {
         const orgIdForSync = signUpPath === 'school' && selectedOrg ? selectedOrg.id : null
         await syncProfileOrgId(res.user.id, res.session.access_token, orgIdForSync)
@@ -210,20 +186,19 @@ export default function AuthPage() {
   }
 
   const emailPlaceholder = isSignUp
-    ? signUpPath === 'school'
-      ? selectedOrg
-        ? `you@${selectedOrg.org_name}`
-        : 'student@university.edu'
-      : 'you@example.com'
+    ? 'you@example.com'
     : 'you@example.com'
 
+  const signUpReady = !isSignUp || (
+    email.length > 0 &&
+    password.length >= 8 &&
+    confirmPassword.length > 0 &&
+    termsAccepted
+  )
+
   const submitLabel = loading
-    ? isSignUp
-      ? 'Creating account...'
-      : 'Signing in...'
-    : isSignUp
-      ? 'Create Account'
-      : 'Sign In'
+    ? isSignUp ? 'Creating account...' : 'Signing in...'
+    : isSignUp ? 'Create Account' : 'Sign In'
 
   return (
     <div className="theme-auth" style={{ minHeight: '100vh', background: 'var(--surface-app)', display: 'flex', flexDirection: 'column' }}>
@@ -239,26 +214,13 @@ export default function AuthPage() {
           overflowY: 'visible',
         }}
       >
-        <DecorativeBackground />
-
         <div className="w-full max-w-[520px] mx-auto relative z-10">
           <section style={{ ...panelCardStyle, padding: '32px 32px 28px' }}>
-            <AuthHeader mode={mode} signUpPath={signUpPath} />
+            <AuthHeader mode={mode} />
 
             <ModeTabs mode={mode} onChange={switchMode} />
 
             <form onSubmit={handleSubmit}>
-              {isSignUp && <SignUpPathSelector path={signUpPath} onChange={chooseSignUpPath} />}
-
-              {isSignUp && signUpPath === 'school' && (
-                <OrgDropdown
-                  orgs={orgs}
-                  selectedOrgId={orgId}
-                  loading={orgsLoading}
-                  onSelect={setOrgId}
-                />
-              )}
-
               <FormField
                 label="Email"
                 type="email"
@@ -295,9 +257,22 @@ export default function AuthPage() {
                 />
               )}
 
+              {isSignUp && (
+                <OrgDropdown
+                  orgs={orgs}
+                  selectedOrgId={orgId}
+                  loading={orgsLoading}
+                  onSelect={setOrgId}
+                />
+              )}
+
+              {isSignUp && (
+                <TermsCheckbox accepted={termsAccepted} onChange={setTermsAccepted} />
+              )}
+
               {message && <MessageBanner message={message} type={messageType} />}
 
-              <SubmitButton loading={loading} label={submitLabel} />
+              <SubmitButton loading={loading} label={submitLabel} disabled={!signUpReady} />
             </form>
 
             {!isSignUp && (

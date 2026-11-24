@@ -21,7 +21,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 cursor-pointer group">
           <Image src="/finally.png" alt="Greenify logo" width={26} height={26} />
-          <span className="text-[22px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Greenify</span>
+          <span className="text-[22px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Greenify</span><span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--palette-orange-500)', border: '1.5px solid var(--palette-orange-500)', borderRadius: '5px', padding: '1px 5px', marginLeft: '4px', verticalAlign: 'middle' }}>BETA</span>
         </Link>
 
         {/* Center nav links with dropdowns */}

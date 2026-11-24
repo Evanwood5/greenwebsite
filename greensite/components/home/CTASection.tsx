@@ -10,13 +10,22 @@ export default function CTASection() {
         <p className="text-[13px] font-semibold" style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.85)' }}>
           &copy; 2026 Greenify LLC
         </p>
-        <a
-          href="/terms"
-          className="text-[13px] font-semibold transition-opacity hover:opacity-70"
-          style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.85)' }}
-        >
-          Terms of Service
-        </a>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <a
+            href="/privacy"
+            className="text-[13px] font-semibold transition-opacity hover:opacity-70"
+            style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.85)' }}
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="/terms"
+            className="text-[13px] font-semibold transition-opacity hover:opacity-70"
+            style={{ color: 'rgb(var(--palette-forest-800-rgb) / 0.85)' }}
+          >
+            Terms of Service
+          </a>
+        </div>
       </div>
     </footer>
   )
