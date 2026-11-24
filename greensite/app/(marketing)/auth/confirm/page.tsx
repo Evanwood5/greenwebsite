@@ -35,6 +35,13 @@ function ConfirmContent() {
       setError(verifyError.message)
       setLoading(false)
     } else {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ terms_accepted_at: new Date().toISOString() })
+          .eq('user_id', user.id)
+      }
       router.push('/jobs')
     }
   }
@@ -61,7 +68,7 @@ function ConfirmContent() {
         color: 'var(--text-secondary)',
         lineHeight: 1.5,
       }}>
-        ⚠️ Email may take up to 4 minutes to arrive. Please be patient — also check your <strong>junk/spam</strong> folder.
+        ⚠️ Emails can take up to 4 minutes — please be patient. If you don&apos;t see it, check your junk or spam folder.
       </div>
 
       <form onSubmit={handleSubmit}>
