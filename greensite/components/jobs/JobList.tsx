@@ -28,7 +28,7 @@ function ExternalLinkIcon() {
 
 function BriefcaseIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--palette-green-500)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-brand)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="7" width="20" height="14" rx="2" />
       <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
     </svg>
@@ -77,12 +77,12 @@ function postedAgo(dateStr: string): string {
 
 function JobTypeBadge({ type }: { type: string }) {
   const styles: Record<string, React.CSSProperties> = {
-    'Full Time':  { background: 'rgb(var(--palette-blue-400-rgb) / 0.08)',  color: 'var(--palette-blue-400)', border: '1px solid rgb(var(--palette-blue-400-rgb) / 0.2)' },
+    'Full Time':  { background: 'rgb(var(--palette-blue-400-rgb) / 0.08)',  color: 'var(--text-info)', border: '1px solid rgb(var(--palette-blue-400-rgb) / 0.2)' },
     'Part Time':  { background: 'rgb(var(--palette-orange-500-rgb) / 0.08)',  color: 'var(--palette-orange-500)', border: '1px solid rgb(var(--palette-orange-500-rgb) / 0.2)' },
-    'Contract':   { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--palette-purple-400)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' },
-    'Internship': { background: 'rgb(var(--palette-amber-400-rgb) / 0.08)',  color: 'var(--palette-amber-400)', border: '1px solid rgb(var(--palette-amber-400-rgb) / 0.2)' },
+    'Contract':   { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--text-violet)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' },
+    'Internship': { background: 'rgb(var(--palette-amber-400-rgb) / 0.08)',  color: 'var(--text-warning)', border: '1px solid rgb(var(--palette-amber-400-rgb) / 0.2)' },
   }
-  const s = styles[type] ?? { background: 'rgb(var(--palette-green-500-rgb) / 0.06)', color: 'var(--palette-green-500)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)' }
+  const s = styles[type] ?? { background: 'rgb(var(--palette-green-500-rgb) / 0.06)', color: 'var(--text-brand)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)' }
   return (
     <span style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '4px', fontSize: '10px', fontWeight: 500, whiteSpace: 'nowrap', ...s }}>
       {type}
@@ -94,15 +94,15 @@ function LevelBadge({ level }: { level: string }) {
   const normalized = level.toLowerCase()
   let style: React.CSSProperties
   if (normalized.includes('entry') || normalized.includes('junior')) {
-    style = { background: 'rgb(var(--palette-green-500-rgb) / 0.08)', color: 'var(--palette-green-500)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.2)' }
+    style = { background: 'rgb(var(--palette-green-500-rgb) / 0.08)', color: 'var(--text-brand)', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.2)' }
   } else if (normalized.includes('moderate')) {
-    style = { background: 'rgb(var(--palette-red-300-rgb) / 0.06)', color: 'var(--palette-red-300)', border: '1px solid rgb(var(--palette-red-300-rgb) / 0.14)' }
+    style = { background: 'rgb(var(--palette-red-300-rgb) / 0.06)', color: 'var(--text-danger-soft)', border: '1px solid rgb(var(--palette-red-300-rgb) / 0.14)' }
   } else if (normalized.includes('advanced')) {
     style = { background: 'rgb(var(--palette-red-500-rgb) / 0.08)', color: 'var(--palette-red-500)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.18)' }
   } else if (normalized.includes('mid') || normalized.includes('associate')) {
-    style = { background: 'rgb(var(--palette-blue-400-rgb) / 0.08)', color: 'var(--palette-blue-400)', border: '1px solid rgb(var(--palette-blue-400-rgb) / 0.2)' }
+    style = { background: 'rgb(var(--palette-blue-400-rgb) / 0.08)', color: 'var(--text-info)', border: '1px solid rgb(var(--palette-blue-400-rgb) / 0.2)' }
   } else if (normalized.includes('senior') || normalized.includes('lead') || normalized.includes('principal')) {
-    style = { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--palette-purple-400)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' }
+    style = { background: 'rgb(var(--palette-purple-400-rgb) / 0.08)', color: 'var(--text-violet)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.2)' }
   } else {
     style = { background: 'rgb(var(--palette-neutral-500-rgb) / 0.1)', color: 'var(--text-tertiary)', border: '1px solid rgb(var(--palette-neutral-500-rgb) / 0.2)' }
   }
@@ -181,7 +181,7 @@ export function DarkJobCard({
       {matchScore !== undefined && (
         <div style={{
           position: 'absolute', top: '12px', right: '12px',
-          background: 'rgb(var(--palette-green-500-rgb) / 0.08)', color: 'var(--palette-green-500)',
+          background: 'rgb(var(--palette-green-500-rgb) / 0.08)', color: 'var(--text-brand)',
           fontSize: '10px', fontWeight: 600, padding: '2px 7px',
           borderRadius: '4px', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.15)',
         }}>
@@ -299,7 +299,7 @@ function inferCategory(title: string | null): JobCategory {
 
 const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string; bg: string }> = {
   tech: {
-    color: 'var(--palette-blue-400)',
+    color: 'var(--text-info)',
     bg: 'rgb(var(--palette-blue-400-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -318,7 +318,7 @@ const CATEGORY_META: Record<JobCategory, { icon: React.ReactNode; color: string;
     ),
   },
   business: {
-    color: 'var(--palette-purple-400)',
+    color: 'var(--text-violet)',
     bg: 'rgb(var(--palette-purple-400-rgb) / 0.08)',
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -475,7 +475,7 @@ function JobTableRow({ job, isLast, index, fieldCategoryMap, fieldSubCategoryMap
               style={{
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 width: '28px', height: '28px', background: 'rgb(var(--palette-green-500-rgb) / 0.1)',
-                color: 'var(--palette-green-500)', borderRadius: '5px',
+                color: 'var(--text-brand)', borderRadius: '5px',
                 textDecoration: 'none', border: '1px solid rgb(var(--palette-green-500-rgb) / 0.2)',
                 transition: 'background 150ms', flexShrink: 0,
               }}

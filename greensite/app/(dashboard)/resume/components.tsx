@@ -66,7 +66,7 @@ export function ResumeCard({
     <div style={card}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={resumeUploaded ? 'var(--palette-green-400)' : 'var(--text-muted)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={resumeUploaded ? 'var(--text-success)' : 'var(--text-muted)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
           </svg>
           <span style={{ color: resumeUploaded ? 'var(--text-secondary)' : 'var(--text-tertiary)', fontSize: '12px', fontWeight: 500 }}>
@@ -87,7 +87,7 @@ export function ResumeCard({
             <button
               onClick={onRemove}
               disabled={removing}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: 'rgb(var(--palette-red-500-rgb) / 0.07)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.18)', borderRadius: '4px', fontSize: '11px', fontWeight: 500, cursor: removing ? 'not-allowed' : 'pointer', opacity: removing ? 0.6 : 1 }}>
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: 'rgb(var(--palette-red-500-rgb) / 0.07)', color: 'var(--text-danger)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.18)', borderRadius: '4px', fontSize: '11px', fontWeight: 500, cursor: removing ? 'not-allowed' : 'pointer', opacity: removing ? 0.6 : 1 }}>
               <TrashIcon />{removing ? 'Removing...' : 'Remove'}
             </button>
           )}
@@ -182,7 +182,7 @@ function PrefEditor({ pref, onChange, michiganCities }: {
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
           <p style={{ ...sectionLabel, marginBottom: 0 }}>Categories</p>
-          <span style={{ fontSize: '9px', fontWeight: 600, padding: '1px 5px', borderRadius: '3px', background: 'rgb(var(--palette-red-500-rgb) / 0.12)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.25)' }}>required</span>
+          <span style={{ fontSize: '9px', fontWeight: 600, padding: '1px 5px', borderRadius: '3px', background: 'rgb(var(--palette-red-500-rgb) / 0.12)', color: 'var(--text-danger)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.25)' }}>required</span>
         </div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
           {categories.map(cat => (
@@ -208,7 +208,7 @@ function PrefEditor({ pref, onChange, michiganCities }: {
           </div>
         )}
         {pref.jobCategories.length === 0 && (
-          <p style={{ color: 'var(--palette-red-400)', fontSize: '11px' }}>Select at least one category to save</p>
+          <p style={{ color: 'var(--text-danger)', fontSize: '11px' }}>Select at least one category to save</p>
         )}
       </div>
 
@@ -313,7 +313,7 @@ export function PreferenceCard({
                 {hasPrefs ? 'Edit' : 'Set Up'}
               </button>
               {hasPrefs && (
-                <button onClick={onRemove} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: 'rgb(var(--palette-red-500-rgb) / 0.07)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.18)', borderRadius: '4px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
+                <button onClick={onRemove} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: 'rgb(var(--palette-red-500-rgb) / 0.07)', color: 'var(--text-danger)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.18)', borderRadius: '4px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
                   <TrashIcon />Delete
                 </button>
               )}
@@ -332,8 +332,8 @@ export function PreferenceCard({
                   style={{ padding: '5px 12px', background: 'transparent', color: 'var(--text-tertiary)', border: '1px solid rgb(var(--ink-rgb) / 0.07)', borderRadius: '4px', fontWeight: 500, fontSize: '11px', cursor: 'pointer' }}>
                   Cancel
                 </button>
-                {saveDisabledReason && !saving && <span style={{ color: 'var(--palette-red-400)', fontSize: '11px' }}>{saveDisabledReason}</span>}
-                {saveMsg && <span style={{ color: saveMsg === 'Saved!' ? 'var(--palette-green-400)' : 'var(--palette-red-400)', fontSize: '11px' }}>{saveMsg}</span>}
+                {saveDisabledReason && !saving && <span style={{ color: 'var(--text-danger)', fontSize: '11px' }}>{saveDisabledReason}</span>}
+                {saveMsg && <span style={{ color: saveMsg === 'Saved!' ? 'var(--text-success)' : 'var(--text-danger)', fontSize: '11px' }}>{saveMsg}</span>}
               </div>
             </>
           ) : hasPrefs ? (

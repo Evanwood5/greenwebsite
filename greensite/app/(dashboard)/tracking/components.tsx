@@ -248,8 +248,8 @@ export function CityMultiSelect({ value, onChange, options }: {
                     {!isAll && (
                       <span style={{
                         width: '14px', height: '14px', borderRadius: '3px', flexShrink: 0,
-                        border: `1px solid ${isActive ? 'var(--palette-purple-400)' : 'rgb(var(--ink-rgb) / 0.2)'}`,
-                        background: isActive ? 'var(--palette-purple-400)' : 'transparent',
+                        border: `1px solid ${isActive ? 'var(--text-violet)' : 'rgb(var(--ink-rgb) / 0.2)'}`,
+                        background: isActive ? 'var(--text-violet)' : 'transparent',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
                         {isActive && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--accent-contrast)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
@@ -270,12 +270,12 @@ export function CityMultiSelect({ value, onChange, options }: {
               display: 'inline-flex', alignItems: 'center', gap: '4px',
               padding: '3px 8px', borderRadius: '4px',
               background: 'rgb(var(--palette-purple-400-rgb) / 0.12)', border: '1px solid rgb(var(--palette-purple-400-rgb) / 0.3)',
-              color: 'var(--palette-purple-300)', fontSize: '11px',
+              color: 'var(--text-violet-soft)', fontSize: '11px',
             }}>
               {city}
               <button onClick={() => toggle(city)}
                 style={{
-                  background: 'none', border: 'none', color: 'var(--palette-purple-300)', cursor: 'pointer',
+                  background: 'none', border: 'none', color: 'var(--text-violet-soft)', cursor: 'pointer',
                   padding: 0, lineHeight: 1, fontSize: '12px',
                 }}>
                 ×
@@ -457,7 +457,7 @@ export function CompanyInput({ value, onChange, onSelect, valid, error, options,
             onClick={() => onChange('')}
             aria-label="Clear selected company"
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '18px', height: '18px', borderRadius: '3px', background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', padding: 0, transition: 'color 150ms' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--palette-red-400)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-danger)' }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-tertiary)' }}
           >
             <XIcon size={10} />
@@ -543,7 +543,7 @@ export function TrackCompanyCard({
           href="/analytics"
           style={{
             display: 'flex', alignItems: 'center', gap: '4px',
-            color: 'var(--palette-purple-400)', fontSize: '11px', fontWeight: 600,
+            color: 'var(--text-violet)', fontSize: '11px', fontWeight: 600,
             textDecoration: 'none', whiteSpace: 'nowrap',
             transition: 'opacity 150ms',
           }}
@@ -558,7 +558,7 @@ export function TrackCompanyCard({
       </div>
 
       <CompanyInput value={company} onChange={onCompanyChange} onSelect={onCompanySelect} valid={companyValid} error={error} options={companyOptions} loading={companyLoading} />
-      {error && <p style={{ color: 'var(--palette-red-400)', fontSize: '11px', marginBottom: '8px' }}>{error}</p>}
+      {error && <p style={{ color: 'var(--text-danger)', fontSize: '11px', marginBottom: '8px' }}>{error}</p>}
 
       {(companyValid && company) && (
         <>
@@ -697,7 +697,7 @@ function TrackedCompanyItem({ company, onRemove }: { company: TrackedCompany; on
         <span style={{ color: 'var(--text-subtle)', fontSize: '10px' }}>{new Date(company.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
         <button onClick={() => onRemove(company.id)}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', borderRadius: '4px', background: 'transparent', border: '1px solid transparent', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 150ms' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgb(var(--palette-red-400-rgb) / 0.1)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgb(var(--palette-red-400-rgb) / 0.2)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--palette-red-400)' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgb(var(--palette-red-400-rgb) / 0.1)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgb(var(--palette-red-400-rgb) / 0.2)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-danger)' }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)' }}
           aria-label={`Remove ${company.company_name}`}>
           <XIcon size={10} />

@@ -226,7 +226,7 @@ export function FilterPanel({
           options={[
             { label: 'All Categories', value: '' },
             {
-              label: 'Tech', value: 'Tech', iconColor: 'var(--palette-blue-400)',
+              label: 'Tech', value: 'Tech', iconColor: 'var(--text-info)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
             },
             {
@@ -238,7 +238,7 @@ export function FilterPanel({
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>,
             },
             {
-              label: 'Business', value: 'Business', iconColor: 'var(--palette-purple-400)',
+              label: 'Business', value: 'Business', iconColor: 'var(--text-violet)',
               icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
             },
             {
@@ -309,9 +309,9 @@ export function FilterPanel({
 
 export function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <div style={{ background: 'rgb(var(--palette-red-500-rgb) / 0.08)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: 'var(--palette-red-300)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div style={{ background: 'rgb(var(--palette-red-500-rgb) / 0.08)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', padding: '12px 14px', marginBottom: '20px', color: 'var(--text-danger-soft)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
       {message}
-      <button onClick={onRetry} style={{ marginLeft: 'auto', color: 'var(--palette-red-400)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
+      <button onClick={onRetry} style={{ marginLeft: 'auto', color: 'var(--text-danger)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '12px' }}>
         Try again
       </button>
     </div>

@@ -82,13 +82,13 @@ export default function SavedJobsPage()
         {/* Stat cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
           <StatCard label="Total Saved" count={counts.total}     color="var(--text-soft)" />
-          <StatCard label="Applied"     count={counts.applied}   color="var(--palette-blue-400)" />
+          <StatCard label="Applied"     count={counts.applied}   color="var(--text-info)" />
           <StatCard label="Interview"   count={counts.interview} color="var(--palette-orange-400)" />
-          <StatCard label="Offer"       count={counts.offer}     color="var(--palette-green-400)" />
+          <StatCard label="Offer"       count={counts.offer}     color="var(--text-success)" />
         </div>
 
         {error && (
-          <div style={{ background: 'rgb(var(--palette-red-400-rgb) / 0.06)', border: '1px solid rgb(var(--palette-red-400-rgb) / 0.2)', borderRadius: '4px', padding: '14px', marginBottom: '16px', color: 'var(--palette-red-300)', fontSize: '13px' }}>
+          <div style={{ background: 'rgb(var(--palette-red-400-rgb) / 0.06)', border: '1px solid rgb(var(--palette-red-400-rgb) / 0.2)', borderRadius: '4px', padding: '14px', marginBottom: '16px', color: 'var(--text-danger-soft)', fontSize: '13px' }}>
             {error}
           </div>
         )}

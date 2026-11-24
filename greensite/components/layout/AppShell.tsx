@@ -3,15 +3,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useSyncExternalStore } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/db/supabase'
 import { TermsGate } from './TermsGate'
 import { needsTermsAcceptance } from '@/lib/utils/terms'
+import {
+  readDashboardTheme,
+  setDashboardTheme,
+  subscribeDashboardTheme,
+  type DashboardTheme,
+} from '@/lib/utils/dashboardTheme'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
   '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--surface-panel)' },
-  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--surface-panel)' },
+  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--text-violet)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--surface-panel)' },
 }
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -100,6 +106,23 @@ function ChevronDownIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  )
+}
+
+function SunIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+  )
+}
+
+function MoonIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
     </svg>
   )
 }
@@ -199,6 +222,11 @@ export default function AppShell({ children }: AppShellProps) {
     router.push('/')
   }
 
+  // Server render and first client render use 'dark'; the real value (set by the
+  // inline script in app/layout.tsx) is picked up right after hydration.
+  const theme = useSyncExternalStore<DashboardTheme>(subscribeDashboardTheme, readDashboardTheme, () => 'dark')
+  const nextTheme: DashboardTheme = theme === 'dark' ? 'light' : 'dark'
+
   const sidebarWidth = collapsed ? 60 : 200
 
   return (
@@ -269,7 +297,38 @@ export default function AppShell({ children }: AppShellProps) {
           )}
         </div>
 
-        <div style={{ marginLeft: 'auto', position: 'relative' }} ref={profileMenuRef}>
+        <button
+          type="button"
+          onClick={() => setDashboardTheme(nextTheme)}
+          aria-label={`Switch to ${nextTheme} mode`}
+          title={`Switch to ${nextTheme} mode`}
+          style={{
+            marginLeft: 'auto',
+            width: '34px',
+            height: '34px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--surface-hover)',
+            border: '1px solid var(--border-default)',
+            borderRadius: '8px',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'var(--surface-active)'
+            e.currentTarget.style.borderColor = 'var(--border-strong)'
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'var(--surface-hover)'
+            e.currentTarget.style.borderColor = 'var(--border-default)'
+          }}
+        >
+          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
+
+        <div style={{ marginLeft: '8px', position: 'relative' }} ref={profileMenuRef}>
           <button
             onClick={() => setProfileMenuOpen(o => !o)}
             style={{
@@ -371,7 +430,7 @@ export default function AppShell({ children }: AppShellProps) {
                   padding: '10px 16px',
                   background: 'transparent',
                   border: 'none',
-                  color: 'var(--palette-red-400)',
+                  color: 'var(--text-danger)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   textAlign: 'left',

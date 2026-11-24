@@ -77,7 +77,7 @@ export default function DashboardPage() {
         {loading ? (
           <div style={{ color: 'var(--text-muted)', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Loading...</div>
         ) : !data ? (
-          <div style={{ color: 'var(--palette-red-400)', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Failed to load data</div>
+          <div style={{ color: 'var(--text-danger)', paddingTop: 80, textAlign: 'center', fontSize: 13 }}>Failed to load data</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 

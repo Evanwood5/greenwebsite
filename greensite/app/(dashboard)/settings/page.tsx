@@ -24,7 +24,7 @@ export default function SettingsPage() {
             <h1 style={{ color: 'var(--text-strong)', fontSize: '18px', fontWeight: 600, marginBottom: '2px', letterSpacing: '-0.02em' }}>Settings</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Manage your account and notifications</p>
           </div>
-          <button onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 14px', background: 'transparent', border: '1px solid rgb(var(--palette-red-400-rgb) / 0.3)', borderRadius: '4px', color: 'var(--palette-red-400)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', flexShrink: 0 }}
+          <button onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '8px 14px', background: 'transparent', border: '1px solid rgb(var(--palette-red-400-rgb) / 0.3)', borderRadius: '4px', color: 'var(--text-danger)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', flexShrink: 0 }}
             onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-red-400-rgb) / 0.07)')}
             onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
           >

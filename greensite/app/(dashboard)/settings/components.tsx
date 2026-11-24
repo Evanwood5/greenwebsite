@@ -145,7 +145,7 @@ export function PrefEditor({
           </p>
           <span style={{
             fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '4px',
-            background: 'rgb(var(--palette-red-500-rgb) / 0.12)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.25)',
+            background: 'rgb(var(--palette-red-500-rgb) / 0.12)', color: 'var(--text-danger)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.25)',
           }}>
             Required
           </span>
@@ -213,10 +213,10 @@ export function PrefEditor({
             padding: '10px 12px', borderRadius: '4px',
             background: 'rgb(var(--palette-red-500-rgb) / 0.07)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)',
           }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--palette-red-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            <p style={{ color: 'var(--palette-red-400)', fontSize: '12px' }}>
+            <p style={{ color: 'var(--text-danger)', fontSize: '12px' }}>
               Select at least one category to save your preferences
             </p>
           </div>
@@ -355,7 +355,7 @@ export function PreferenceCard({
             </button>
           )}
           {pref.jobTypes.length > 0 && !isEditing && (
-            <button onClick={onRemove} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgb(var(--palette-red-500-rgb) / 0.08)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={onRemove} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgb(var(--palette-red-500-rgb) / 0.08)', color: 'var(--text-danger)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
               <TrashIcon />Delete
             </button>
           )}
@@ -385,14 +385,14 @@ export function PreferenceCard({
               Cancel
             </button>
             {saveDisabledReason && !saving && (
-              <span style={{ color: 'var(--palette-red-400)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--palette-red-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <span style={{ color: 'var(--text-danger)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
                 {saveDisabledReason}
               </span>
             )}
-            {saveMsg && <span style={{ color: saveMsg === 'Saved!' ? 'var(--palette-green-400)' : 'var(--palette-red-400)', fontSize: '13px' }}>{saveMsg}</span>}
+            {saveMsg && <span style={{ color: saveMsg === 'Saved!' ? 'var(--text-success)' : 'var(--text-danger)', fontSize: '13px' }}>{saveMsg}</span>}
           </div>
         </>
       ) : pref.jobTypes.length > 0 ? (
@@ -509,7 +509,7 @@ export function ResumeCard({
       {resumeUploaded && (
         <div style={{ background: 'rgb(var(--palette-green-400-rgb) / 0.06)', border: '1px solid rgb(var(--palette-green-400-rgb) / 0.15)', borderRadius: '4px', padding: '10px 14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgb(var(--ink-rgb) / 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <CheckCircleIcon color="var(--palette-green-400)" />
+            <CheckCircleIcon color="var(--text-success)" />
           </div>
           <div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600 }}>Resume uploaded</p>
@@ -533,7 +533,7 @@ export function ResumeCard({
         </button>
         {resumeUploaded && (
           <button onClick={onRemove} disabled={removing}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgb(var(--palette-red-500-rgb) / 0.08)', color: 'var(--palette-red-400)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: removing ? 'not-allowed' : 'pointer', opacity: removing ? 0.7 : 1 }}>
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgb(var(--palette-red-500-rgb) / 0.08)', color: 'var(--text-danger)', border: '1px solid rgb(var(--palette-red-500-rgb) / 0.2)', borderRadius: '4px', fontWeight: 600, fontSize: '13px', cursor: removing ? 'not-allowed' : 'pointer', opacity: removing ? 0.7 : 1 }}>
             <TrashIcon />{removing ? 'Removing...' : 'Remove Resume'}
           </button>
         )}
