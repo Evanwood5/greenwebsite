@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Mode, SignUpPath, Org } from '@/lib/types/auth'
+import { Mode, Org } from '@/lib/types/auth'
 import { labelStyle, inputStyle } from '@/lib/utils/auth'
 
 const ORG_CHUNK_SIZE = 8
@@ -61,29 +61,9 @@ export function CheckIcon() {
   )
 }
 
-export function DecorativeBackground() {
-  return (
-    <>
-      <div
-        className="absolute right-0 top-0 bottom-0 hidden lg:block"
-        style={{ width: '360px', background: 'var(--palette-forest-800)' }}
-        aria-hidden
-      >
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            backgroundImage: 'radial-gradient(circle, rgb(var(--palette-white-rgb) / 0.18) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-      </div>
 
-    </>
-  )
-}
 
-export function AuthHeader({ mode, signUpPath }: { mode: Mode; signUpPath: SignUpPath }) {
+export function AuthHeader({ mode }: { mode: Mode }) {
   const isSignUp = mode === 'signup'
   return (
     <div>
@@ -99,14 +79,12 @@ export function AuthHeader({ mode, signUpPath }: { mode: Mode; signUpPath: SignU
       >
         Greenify Access
       </p>
-      <h1 style={{ color: 'var(--palette-forest-700)', fontSize: '32px', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '6px', minHeight: '35px' }}>
+      <h1 style={{ color: 'var(--palette-forest-700)', fontSize: '32px', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '6px' }}>
         {isSignUp ? 'Create your account' : 'Welcome back'}
       </h1>
-      <p style={{ color: 'var(--palette-forest-500)', fontSize: '14px', lineHeight: 1.6, marginBottom: '22px', minHeight: '42px' }}>
+      <p style={{ color: 'var(--palette-forest-500)', fontSize: '14px', lineHeight: 1.6, marginBottom: '22px' }}>
         {isSignUp
-          ? signUpPath === 'school'
-            ? 'Use your school email for campus-aware matching and early opportunities.'
-            : 'Not in school right now? You can still join with a personal email.'
+          ? 'Join Greenify to discover job opportunities and get AI-powered matches.'
           : 'Sign in to manage your matches, saved jobs, and preferences.'}
       </p>
     </div>
@@ -142,51 +120,6 @@ export function ModeTabs({ mode, onChange }: { mode: Mode; onChange: (m: Mode) =
   )
 }
 
-export function SignUpPathSelector({ path, onChange }: { path: SignUpPath; onChange: (p: SignUpPath) => void }) {
-  return (
-    <div style={{ marginBottom: '16px' }}>
-      <p style={labelStyle}>How are you joining?</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-        <button
-          type="button"
-          onClick={() => onChange('school')}
-          style={{
-            border: path === 'school' ? '2px solid var(--palette-forest-600)' : '1px solid rgb(var(--palette-forest-800-rgb) / 0.2)',
-            borderRadius: '12px',
-            background: path === 'school' ? 'rgb(var(--palette-forest-600-rgb) / 0.16)' : 'var(--palette-cream-150)',
-            color: 'var(--palette-forest-700)',
-            textAlign: 'left',
-            padding: '12px 14px',
-            cursor: 'pointer',
-            position: 'relative',
-            boxShadow: path === 'school' ? '0 2px 8px rgb(var(--palette-forest-600-rgb) / 0.15)' : 'none',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <p style={{ fontSize: '14px', fontWeight: 800, margin: 0 }}>School Email</p>
-            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--palette-forest-600)', color: 'var(--palette-white)', padding: '2px 6px', borderRadius: '4px' }}>Recommended</span>
-          </div>
-        </button>
-        <button
-          type="button"
-          onClick={() => onChange('none')}
-          style={{
-            border: path === 'none' ? '1px solid var(--palette-forest-600)' : '1px solid rgb(var(--palette-forest-800-rgb) / 0.2)',
-            borderRadius: '12px',
-            background: path === 'none' ? 'rgb(var(--palette-forest-600-rgb) / 0.12)' : 'var(--palette-cream-150)',
-            color: 'var(--palette-forest-700)',
-            textAlign: 'left',
-            padding: '12px 14px',
-            cursor: 'pointer',
-          }}
-        >
-          <p style={{ fontSize: '14px', fontWeight: 800, margin: 0 }}>No Organization</p>
-        </button>
-      </div>
-    </div>
-  )
-}
-
 export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
   orgs: Org[]
   selectedOrgId: string
@@ -201,6 +134,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
   const searchRef = useRef<HTMLInputElement>(null)
 
   const selectedOrg = orgs.find((o) => String(o.id) === selectedOrgId) ?? null
+  const isNone = selectedOrgId === 'none'
 
   const filteredOrgs = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -208,7 +142,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
     return orgs.filter(
       (o) =>
         o.org_name?.toLowerCase().includes(q) ||
-        o.email_domain?.toLowerCase().includes(q),
+        false,
     )
   }, [orgs, query])
   const visibleOrgs = filteredOrgs.slice(0, visibleLimit)
@@ -247,7 +181,6 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
     if (loading || loadingMore || hiddenCount <= 0) return
     const nearBottom = scrollTop + clientHeight >= scrollHeight - 16
     if (!nearBottom) return
-
     setLoadingMore(true)
     window.setTimeout(() => {
       setVisibleLimit((current) => Math.min(current + ORG_CHUNK_SIZE, filteredOrgs.length))
@@ -255,9 +188,15 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
     }, 140)
   }
 
+  const displayLabel = isNone
+    ? 'No school affiliation'
+    : selectedOrg
+      ? selectedOrg.org_name
+      : 'Select your school (optional)'
+
   return (
     <div style={{ marginBottom: '18px' }}>
-      <label style={labelStyle}>School Organization</label>
+      <label style={labelStyle}>School Organization <span style={{ color: 'var(--palette-forest-600)', fontWeight: 500 }}>(current or alum)</span></label>
       <div ref={menuRef} style={{ position: 'relative' }}>
         <button
           type="button"
@@ -283,12 +222,11 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                   {selectedOrg.org_name}
                 </span>
                 <span style={{ color: 'var(--palette-forest-500)', fontSize: '12px' }}>
-                  @{selectedOrg.email_domain}
                 </span>
               </>
             ) : (
-              <span style={{ color: 'var(--palette-forest-500)', fontSize: '14px' }}>
-                Select your school
+              <span style={{ color: isNone ? 'var(--palette-forest-700)' : 'var(--palette-forest-500)', fontSize: '14px', fontWeight: isNone ? 600 : 400 }}>
+                {displayLabel}
               </span>
             )}
           </span>
@@ -313,16 +251,44 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
               flexDirection: 'column',
             }}
           >
+            {/* None option */}
+            <button
+              type="button"
+              role="option"
+              aria-selected={isNone}
+              onClick={() => { onSelect('none'); setOpen(false) }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '9px',
+                background: isNone ? 'rgb(var(--palette-forest-600-rgb) / 0.12)' : 'transparent',
+                border: 'none',
+                borderBottom: '1px solid rgb(var(--palette-forest-800-rgb) / 0.1)',
+                marginBottom: '4px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                color: 'var(--palette-forest-600)',
+                fontSize: '14px',
+                fontWeight: 600,
+              }}
+              onMouseEnter={(e) => { if (!isNone) e.currentTarget.style.background = 'rgb(var(--palette-forest-800-rgb) / 0.06)' }}
+              onMouseLeave={(e) => { if (!isNone) e.currentTarget.style.background = 'transparent' }}
+            >
+              No school affiliation
+              {isNone && <CheckIcon />}
+            </button>
+
             <div style={{ position: 'relative', padding: '4px 4px 8px 4px' }}>
               <SearchIcon />
               <input
                 ref={searchRef}
                 type="text"
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value)
-                  setVisibleLimit(ORG_CHUNK_SIZE)
-                }}
+                onChange={(e) => { setQuery(e.target.value); setVisibleLimit(ORG_CHUNK_SIZE) }}
                 placeholder="Search schools..."
                 style={{
                   width: '100%',
@@ -337,6 +303,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                 }}
               />
             </div>
+
             <div
               style={{ maxHeight: '240px', overflowY: 'auto' }}
               onScroll={(e) => {
@@ -357,10 +324,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                     type="button"
                     role="option"
                     aria-selected={active}
-                    onClick={() => {
-                      onSelect(String(o.id))
-                      setOpen(false)
-                    }}
+                    onClick={() => { onSelect(String(o.id)); setOpen(false) }}
                     style={{
                       width: '100%',
                       display: 'flex',
@@ -376,19 +340,14 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
                       color: 'var(--palette-forest-700)',
                       fontSize: '14px',
                     }}
-                    onMouseEnter={(e) => {
-                      if (!active) e.currentTarget.style.background = 'rgb(var(--palette-forest-800-rgb) / 0.06)'
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!active) e.currentTarget.style.background = 'transparent'
-                    }}
+                    onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'rgb(var(--palette-forest-800-rgb) / 0.06)' }}
+                    onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent' }}
                   >
                     <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                       <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {o.org_name}
                       </span>
                       <span style={{ color: 'var(--palette-forest-500)', fontSize: '12px' }}>
-                        @{o.email_domain}
                       </span>
                     </span>
                     {active && <CheckIcon />}
@@ -406,8 +365,7 @@ export function OrgDropdown({ orgs, selectedOrgId, loading, onSelect }: {
       </div>
       {selectedOrg && (
         <p style={{ color: 'var(--palette-forest-500)', fontSize: '12px', marginTop: '6px' }}>
-          Your email must end with @{selectedOrg.email_domain}  
-        </p>  
+        </p>
       )}
     </div>
   )
@@ -427,7 +385,7 @@ export function FormField({ label, type, value, onChange, placeholder, autoCompl
 }) {
   return (
     <div style={{ marginBottom }}>
-      <label style={labelStyle}>{label}</label>
+      <label style={labelStyle}>{label}{required && <span style={{ color: 'var(--palette-rust-600)', marginLeft: '3px' }}>*</span>}</label>
       <input
         type={type}
         required={required}
@@ -439,6 +397,30 @@ export function FormField({ label, type, value, onChange, placeholder, autoCompl
         style={inputStyle}
       />
       {hint && <p style={{ color: 'var(--palette-forest-500)', fontSize: '12px', marginTop: '6px' }}>{hint}</p>}
+    </div>
+  )
+}
+
+export function TermsCheckbox({ accepted, onChange }: { accepted: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '20px' }}>
+      <input
+        type="checkbox"
+        id="terms-checkbox"
+        checked={accepted}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{ marginTop: '2px', width: '15px', height: '15px', flexShrink: 0, accentColor: 'var(--palette-forest-700)', cursor: 'pointer' }}
+      />
+      <label htmlFor="terms-checkbox" style={{ color: 'var(--palette-forest-500)', fontSize: '13px', lineHeight: 1.5, cursor: 'pointer' }}>
+        <span style={{ color: 'var(--palette-rust-600)', marginRight: '3px' }}>*</span>I agree to the{' '}
+        <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--palette-blue-500)', textDecoration: 'none', fontWeight: 600 }}>
+          Terms of Service
+        </a>
+        {' '}and{' '}
+        <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--palette-blue-500)', textDecoration: 'none', fontWeight: 600 }}>
+          Privacy Policy
+        </a>
+      </label>
     </div>
   )
 }
@@ -461,11 +443,11 @@ export function MessageBanner({ message, type }: { message: string; type: 'error
   )
 }
 
-export function SubmitButton({ loading, label }: { loading: boolean; label: string }) {
+export function SubmitButton({ loading, label, disabled }: { loading: boolean; label: string; disabled?: boolean }) {
   return (
     <button
       type="submit"
-      disabled={loading}
+      disabled={loading || disabled}
       style={{
         width: '100%',
         padding: '13px',
@@ -476,7 +458,7 @@ export function SubmitButton({ loading, label }: { loading: boolean; label: stri
         fontWeight: 700,
         border: 'none',
         cursor: loading ? 'not-allowed' : 'pointer',
-        opacity: loading ? 0.72 : 1,
+        opacity: loading || disabled ? 0.5 : 1,
       }}
     >
       {label}
@@ -488,7 +470,7 @@ export function AuthSwitcher({ mode, onSwitch }: { mode: Mode; onSwitch: (m: Mod
   const isSignUp = mode === 'signup'
   return (
     <p style={{ color: 'var(--palette-forest-500)', fontSize: '14px', textAlign: 'center' }}>
-      {isSignUp ? 'Already have an account?' : "Need an account?"}{' '}
+      {isSignUp ? 'Already have an account?' : 'Need an account?'}{' '}
       <button
         type="button"
         onClick={() => onSwitch(isSignUp ? 'signin' : 'signup')}

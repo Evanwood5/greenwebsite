@@ -1,29 +1,18 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AppShell from '@/components/layout/AppShell'
-import { getProfile } from '@/lib/services/profile'
-import { sectionHeadingStyle, sectionSubStyle, getUniversityFromDomain } from '@/lib/utils/settings'
+import { sectionHeadingStyle, sectionSubStyle } from '@/lib/utils/settings'
 import { ProfileCard, NotificationsCard } from './components'
 
 export default function SettingsPage() {
   const { user, signOut } = useAuth()
   const router = useRouter()
-  const [orgDomain, setOrgDomain] = useState<string | null | undefined>(undefined)
+  useEffect(() => {}, [])
 
-  const loadProfile = useCallback(async () => {
-    if (!user?.id) return
-    const info = await getProfile(user.id)
-    setOrgDomain(info.orgDomain)
-  }, [user?.id])
-
-  useEffect(() => {
-    if (user?.id) loadProfile()
-  }, [user?.id, loadProfile])
-
-  const university = orgDomain === undefined ? '—' : getUniversityFromDomain(orgDomain)
+  const university = '—'
 
   async function handleSignOut() { await signOut(); router.push('/') }
 

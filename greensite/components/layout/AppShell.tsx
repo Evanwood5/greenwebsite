@@ -244,7 +244,7 @@ export default function AppShell({ children }: AppShellProps) {
                 fontFamily: "'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', monospace",
               }}>
                 Dashboard
-              </span>
+              </span><span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--palette-orange-500)', border: '1.5px solid var(--palette-orange-500)', borderRadius: '5px', padding: '1px 5px', marginLeft: '6px', verticalAlign: 'middle' }}>BETA</span>
             </div>
           )}
         </div>

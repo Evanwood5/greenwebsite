@@ -1,0 +1,26 @@
+import { LegalSection } from '@/lib/types/terms'
+import { paragraphsOf } from '@/lib/utils/privacy'
+
+export function PrivacyHeader({ lastUpdated }: { lastUpdated: string }) {
+  return (
+    <>
+      <h1 className="text-4xl font-extrabold mb-2" style={{ color: 'var(--palette-forest-700)', letterSpacing: '-0.03em' }}>
+        Privacy Policy
+      </h1>
+      <p className="text-[13px] mb-12" style={{ color: 'var(--palette-forest-300)' }}>Last updated: {lastUpdated}</p>
+    </>
+  )
+}
+
+export function PrivacySection({ section }: { section: LegalSection }) {
+  return (
+    <div className="mb-10">
+      <h2 className="text-[16px] font-bold mb-2" style={{ color: 'var(--palette-forest-700)' }}>{section.title}</h2>
+      {paragraphsOf(section.body).map((paragraph, i) => (
+        <p key={i} className="text-[14px] leading-relaxed mb-3" style={{ color: 'var(--palette-forest-400)' }}>
+          {paragraph}
+        </p>
+      ))}
+    </div>
+  )
+}
