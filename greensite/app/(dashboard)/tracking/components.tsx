@@ -142,10 +142,12 @@ export function DropdownSelect({ value, onChange, options, placeholder, disabled
   )
 }
 
-export function CityMultiSelect({ value, onChange, options }: {
+export function CityMultiSelect({ value, onChange, options, disabled = false, disabledLabel = 'Select a company first' }: {
   value: string[]
   onChange: (v: string[]) => void
   options: DropdownOption[]
+  disabled?: boolean
+  disabledLabel?: string
 }) {
   const [open, setOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -178,7 +180,9 @@ export function CityMultiSelect({ value, onChange, options }: {
     }
   }
 
-  const buttonLabel = value.length === 0
+  const buttonLabel = disabled
+    ? disabledLabel
+    : value.length === 0
     ? 'All Cities'
     : value.length === 1
       ? value[0]
@@ -188,8 +192,11 @@ export function CityMultiSelect({ value, onChange, options }: {
     <div>
       <div ref={ref} style={{ position: 'relative', width: '100%' }}>
         <button
+          type="button"
+          disabled={disabled}
           onClick={() => { setSearchQuery(''); setOpen(o => !o) }}
           style={{
+            opacity: disabled ? 0.5 : 1,
             width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '7px 10px', borderRadius: '4px',
             border: value.length
@@ -199,7 +206,7 @@ export function CityMultiSelect({ value, onChange, options }: {
               ? 'rgb(var(--ink-rgb) / 0.07)'
               : open ? 'rgb(var(--ink-rgb) / 0.06)' : 'rgb(var(--ink-rgb) / 0.03)',
             color: value.length ? 'var(--text-secondary)' : open ? 'var(--text-secondary)' : 'var(--text-muted)',
-            fontSize: '12px', cursor: 'pointer', textAlign: 'left',
+            fontSize: '12px', cursor: disabled ? 'not-allowed' : 'pointer', textAlign: 'left',
             transition: 'border-color 150ms, background 150ms, color 150ms', gap: '6px',
           }}
         >
@@ -594,6 +601,7 @@ export function TrackCompanyCard({
                 value={filters.location ? [filters.location] : []}
                 onChange={v => onFilterChange({ location: v[v.length - 1] ?? '' })}
                 options={cityOptions}
+                disabled={!companyValid}
               />
             </div>
           </div>

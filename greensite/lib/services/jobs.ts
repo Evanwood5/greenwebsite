@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/db/supabase'
-import { IRRELEVANT_FIELD_ID, FilterOptions, Job, JobPage } from '@/lib/types/jobs'
+import { IRRELEVANT_FIELD_ID, FilterOptions, Job, JobPage, jobsListingCutoff } from '@/lib/types/jobs'
 
 // All database calls related to fetching and filtering job postings,
 // resolving field ids, and saved-job membership.
@@ -34,7 +34,7 @@ export async function fetchJobs(filters: FilterOptions, fieldIds: number[], from
     .from('job_postings_ingest')
     .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+    .gte('created_at', jobsListingCutoff().toISOString())
     .neq('job_field_id', IRRELEVANT_FIELD_ID)
     .eq('is_initial_load', false)
 

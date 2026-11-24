@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { getAnalytics, getSubcategoryTrends } from '@/lib/services/analytics'
+import { fetchJobCities } from '@/lib/services/cities'
 import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption } from '@/lib/types/analytics'
 import {
   FieldSelector,
@@ -24,13 +25,9 @@ export default function DashboardPage() {
   const [trendLoading, setTrendLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/cities')
-      .then((r) => r.json())
-      .then((d) => {
-        const fetched = (d.cities ?? []).map((c: string) => ({ value: c, label: c }))
-        setCities([{ value: '', label: 'All Cities' }, ...fetched])
-      })
-      .catch(() => {})
+    fetchJobCities()
+      .then((list) => setCities([{ value: '', label: 'All Cities' }, ...list.map((c) => ({ value: c, label: c }))]))
+      .catch((err) => console.error('Failed to load cities:', err))
   }, [])
 
   const requestRef = useRef(0)

@@ -1,22 +1,30 @@
-import { supabase } from '@/lib/db/supabase'
+import { NextRequest, NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/db/supabase-admin'
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const company = searchParams.get('company')
+/**
+ * GET /api/companies/locations?company=<exact company_name>
+ * Cities where the given company has job postings. Used by the Tracking page,
+ * where the company is always picked from the /api/companies/list options,
+ * so the name is matched exactly.
+ *
+ * Response: { cities: string[] }, sorted alphabetically.
+ */
 
-  if (!company || company.trim().length < 2) {
-    return Response.json({ cities: [] })
+const CACHE_HEADERS = { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
+
+export async function GET(request: NextRequest) {
+  const company = request.nextUrl.searchParams.get('company')?.trim()
+
+  if (!company) {
+    return NextResponse.json({ cities: [] })
   }
 
-  const { data, error } = await supabase
-    .from('job_postings_ingest')
-    .select('city')
-    .ilike('company_name', `%${company.trim()}%`)
-    .not('city', 'is', null)
-    .neq('city', '')
+  const { data, error } = await supabaseAdmin.rpc('get_job_locations', { p_company: company })
+  if (error) {
+    console.error('[api/companies/locations] get_job_locations failed:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 
-  if (error) return Response.json({ cities: [] })
-
-  const cities = [...new Set(data.map((r: any) => r.city).filter(Boolean))].sort()
-  return Response.json({ cities })
+  const cities = (data as { city: string }[]).map((r) => r.city)
+  return NextResponse.json({ cities }, { headers: CACHE_HEADERS })
 }
