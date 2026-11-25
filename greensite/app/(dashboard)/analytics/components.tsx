@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, LabelList, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Field, City, Company, CityOption, SubcategoryCount } from '@/lib/types/analytics'
 
 const FIELDS: { id: Field; label: string; icon: React.ReactNode }[] = [
@@ -625,7 +625,7 @@ export function TopHiringCompaniesList({ data, title }: { data: Company[]; title
               }}>
                 {company.jobCount}
               </div>
-              <div style={{ fontSize: 11, color: "var(--text-success)", fontWeight: 600 }}>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>
                 {percentage}%
               </div>
             </div>
@@ -737,7 +737,7 @@ export function TopCitiesChart({ data, title }: { data: City[]; title: string })
                 style={{
                   width: `${barWidth}%`,
                   height: "100%",
-                  background: "rgb(var(--palette-blue-500-rgb) / 0.55)",
+                  background: "rgb(var(--ink-rgb) / 0.14)",
                   borderRadius: 2,
                   transition: "width 0.3s ease",
                 }}
@@ -918,173 +918,4 @@ export function SubcategoryTrendChart({
       </ResponsiveContainer>
     </div>
   );
-}
-
-// ── Breakdown charts (job type pie, experience level bars) ────────────────
-
-interface BreakdownSlice {
-  key: string
-  label: string
-  value: number
-  color: string
-}
-
-// Normalizes DB values like "Full Time", "full-time", "FULL_TIME" to "full time".
-function normalizeKey(raw: string): string {
-  return raw.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim()
-}
-
-function buildSlices(
-  counts: Record<string, number> | undefined,
-  defs: { key: string; label: string; color: string }[],
-): BreakdownSlice[] {
-  const totals: Record<string, number> = {}
-  Object.entries(counts ?? {}).forEach(([raw, count]) => {
-    const key = normalizeKey(raw)
-    totals[key] = (totals[key] || 0) + count
-  })
-  return defs.map((d) => ({ ...d, value: totals[d.key] || 0 }))
-}
-
-const JOB_TYPE_DEFS = [
-  { key: 'full time', label: 'Full-time', color: 'var(--palette-green-500)' },
-  { key: 'part time', label: 'Part-time', color: 'var(--palette-blue-500)' },
-  { key: 'internship', label: 'Internship', color: 'var(--palette-amber-500)' },
-]
-
-const EXPERIENCE_DEFS = [
-  { key: 'moderate', label: 'Moderate', color: 'var(--palette-green-500)' },
-  { key: 'advanced', label: 'Advanced', color: 'var(--palette-blue-500)' },
-]
-
-const cardStyle: React.CSSProperties = {
-  background: 'var(--surface-raised)',
-  borderRadius: 4,
-  border: '1px solid rgb(var(--ink-rgb) / 0.06)',
-  padding: 16,
-  color: 'var(--text-secondary)',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-}
-
-const cardTitleStyle: React.CSSProperties = {
-  fontSize: 9,
-  fontWeight: 700,
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  color: 'var(--text-muted)',
-  marginBottom: 12,
-}
-
-function BreakdownTooltip({
-  active,
-  payload,
-  total,
-}: {
-  active?: boolean
-  payload?: { payload: BreakdownSlice }[]
-  total: number
-}) {
-  if (!active || !payload?.length) return null
-  const slice = payload[0].payload
-  const pct = total > 0 ? Math.round((slice.value / total) * 100) : 0
-  return (
-    <div style={{
-      background: 'var(--surface-panel)',
-      border: '1px solid var(--chart-tooltip-border)',
-      borderRadius: 6,
-      padding: '8px 12px',
-      boxShadow: '0 8px 32px rgb(var(--shadow-rgb) / 0.5)',
-      pointerEvents: 'none',
-      fontSize: 12,
-    }}>
-      <span style={{ color: slice.color, fontWeight: 600 }}>{slice.label}</span>
-      <span style={{ color: 'var(--text-strong)', fontWeight: 600, marginLeft: 8 }}>{slice.value}</span>
-      <span style={{ color: 'var(--text-muted)', marginLeft: 6 }}>{pct}%</span>
-    </div>
-  )
-}
-
-function EmptyChart() {
-  return (
-    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: 'var(--text-muted)', minHeight: 160 }}>
-      No data for this selection
-    </div>
-  )
-}
-
-export function JobTypePieChart({ jobTypes, title }: { jobTypes: Record<string, number>; title: string }) {
-  const slices = buildSlices(jobTypes, JOB_TYPE_DEFS)
-  const total = slices.reduce((sum, s) => sum + s.value, 0)
-  const visible = slices.filter((s) => s.value > 0)
-
-  return (
-    <div style={cardStyle}>
-      <p style={cardTitleStyle}>{title}</p>
-      {total === 0 ? <EmptyChart /> : (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 16, minHeight: 180 }}>
-          <div style={{ flex: '1 1 0', minWidth: 0, height: 180 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={visible}
-                  dataKey="value"
-                  nameKey="label"
-                  innerRadius="55%"
-                  outerRadius="90%"
-                  paddingAngle={visible.length > 1 ? 2 : 0}
-                  stroke="var(--surface-raised)"
-                  strokeWidth={2}
-                  isAnimationActive={false}
-                >
-                  {visible.map((s) => <Cell key={s.key} fill={s.color} />)}
-                </Pie>
-                <Tooltip content={<BreakdownTooltip total={total} />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }}>
-            {slices.map((s) => (
-              <div key={s.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
-                <span style={{ width: 8, height: 8, borderRadius: 2, background: s.color, flexShrink: 0 }} />
-                <span style={{ color: 'var(--text-secondary)', minWidth: 64 }}>{s.label}</span>
-                <span style={{ color: 'var(--text-strong)', fontWeight: 700, minWidth: 24, textAlign: 'right' }}>{s.value}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: 11, minWidth: 30, textAlign: 'right' }}>
-                  {Math.round((s.value / total) * 100)}%
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export function ExperienceLevelChart({ experienceLevels, title }: { experienceLevels: Record<string, number>; title: string }) {
-  const slices = buildSlices(experienceLevels, EXPERIENCE_DEFS)
-  const total = slices.reduce((sum, s) => sum + s.value, 0)
-
-  return (
-    <div style={cardStyle}>
-      <p style={cardTitleStyle}>{title}</p>
-      {total === 0 ? <EmptyChart /> : (
-        <div style={{ flex: 1, minHeight: 200 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={slices} margin={{ top: 20, right: 8, left: 8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
-              <XAxis dataKey="label" stroke="var(--chart-axis)" tick={{ fill: 'var(--chart-axis)', fontSize: 11 }} tickLine={false} />
-              <YAxis hide allowDecimals={false} />
-              <Tooltip content={<BreakdownTooltip total={total} />} cursor={{ fill: 'rgb(var(--ink-rgb) / 0.04)' }} />
-              <Bar dataKey="value" radius={[3, 3, 0, 0]} maxBarSize={72} isAnimationActive={false}>
-                {slices.map((s) => <Cell key={s.key} fill={s.color} />)}
-                <LabelList dataKey="value" position="top" style={{ fill: 'var(--text-strong)', fontSize: 12, fontWeight: 700 }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </div>
-  )
 }
