@@ -86,6 +86,7 @@ html {
   --palette-red-300: #fca5a5;
   --palette-red-400: #f87171;
   --palette-red-500: #ef4444;
+  --palette-red-600: #dc2626;
   --palette-red-800: #991b1b;
 
   /* orange */
@@ -98,6 +99,7 @@ html {
   --palette-amber-400: #fbbf24;
   --palette-amber-500: #f59e0b;
   --palette-amber-600: #d97706;
+  --palette-amber-700: #b45309;
 
   /* yellow */
   --palette-yellow-500: #eab308;
@@ -216,6 +218,87 @@ html {
   --status-info: var(--palette-blue-400);
 
   --overlay: rgb(var(--palette-black-rgb) / 0.5);
+
+  /* Dashboard-only roles. These let the dashboard switch between dark and
+     light mode by redefining variables instead of editing components. */
+  --ink-rgb: var(--palette-white-rgb);              /* translucent foreground: borders, hovers, fills */
+  --shadow-rgb: var(--palette-black-rgb);           /* box-shadow color */
+  --surface-app-rgb: var(--palette-neutral-950-rgb);
+  --surface-raised-rgb: var(--palette-neutral-800-rgb);
+  --surface-card: var(--palette-neutral-900);
+  --text-soft: var(--palette-neutral-400);
+  --chart-axis: var(--palette-neutral-475);
+  --chart-grid: var(--palette-neutral-720);
+  --chart-tooltip-border: var(--palette-neutral-750);
+
+  /* Status / category text colors (pastel on dark, deeper shades on light). */
+  --text-danger: var(--palette-red-400);
+  --text-danger-soft: var(--palette-red-300);
+  --text-success: var(--palette-green-400);
+  --text-brand: var(--palette-green-500);
+  --text-info: var(--palette-blue-400);
+  --text-info-soft: var(--palette-blue-300);
+  --text-violet: var(--palette-purple-400);
+  --text-violet-soft: var(--palette-purple-300);
+  --text-warning: var(--palette-amber-400);
+}
+
+/* Dashboard light mode. Toggled from the AppShell header, which sets
+   data-dashboard-theme on <html> (see lib/utils/dashboardTheme.ts).
+   Scoped to .theme-dashboard so marketing and auth pages are unaffected. */
+html[data-dashboard-theme="light"] .theme-dashboard {
+  --surface-app: var(--palette-white);
+  --surface-panel: var(--palette-neutral-100);
+  --surface-raised: var(--palette-white);
+  --surface-elevated: var(--palette-white);
+  --surface-card: var(--palette-white);
+  --surface-hover: rgb(var(--palette-black-rgb) / 0.04);
+  --surface-active: rgb(var(--palette-black-rgb) / 0.06);
+  --surface-app-rgb: var(--palette-white-rgb);
+  --surface-raised-rgb: var(--palette-white-rgb);
+
+  --text-primary: var(--palette-neutral-900);
+  --text-strong: var(--palette-neutral-900);
+  --text-secondary: var(--palette-neutral-700);
+  --text-soft: var(--palette-neutral-600);
+  --text-tertiary: var(--palette-neutral-500);
+  --text-muted: var(--palette-neutral-475);
+  --text-subtle: var(--palette-neutral-400);
+  --text-inverse: var(--palette-white);
+
+  --border-subtle: rgb(var(--palette-black-rgb) / 0.06);
+  --border-default: rgb(var(--palette-black-rgb) / 0.1);
+  --border-strong: rgb(var(--palette-black-rgb) / 0.18);
+
+  --accent: var(--palette-green-600);
+  --accent-hover: var(--palette-green-650);
+  --accent-contrast: var(--palette-white);
+
+  --status-danger: var(--palette-red-600);
+  --status-danger-soft: var(--palette-red-600);
+  --status-success: var(--palette-green-700);
+  --status-warning: var(--palette-amber-600);
+  --status-info: var(--palette-blue-600);
+
+  --overlay: rgb(var(--palette-black-rgb) / 0.4);
+
+  /* Translucent foreground flips from white to black at the same opacity. */
+  --ink-rgb: var(--palette-black-rgb);
+  /* Softer gray shadows; components keep their existing alpha values. */
+  --shadow-rgb: var(--palette-neutral-500-rgb);
+  --chart-axis: var(--palette-neutral-500);
+  --chart-grid: var(--palette-neutral-200);
+  --chart-tooltip-border: var(--palette-neutral-200);
+
+  --text-danger: var(--palette-red-600);
+  --text-danger-soft: var(--palette-red-500);
+  --text-success: var(--palette-green-700);
+  --text-brand: var(--palette-green-600);
+  --text-info: var(--palette-blue-600);
+  --text-info-soft: var(--palette-blue-500);
+  --text-violet: var(--palette-violet-600);
+  --text-violet-soft: var(--palette-violet-500);
+  --text-warning: var(--palette-amber-700);
 }
 
 /* Dark marketing surfaces (homepage, AI-powered hero). */

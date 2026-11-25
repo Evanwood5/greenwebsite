@@ -183,10 +183,10 @@ export default function JobsPage() {
   }
 
   const statCards = [
-    { label: 'Past 30 Days', value: loading ? '...' : newThisMonthCount.toLocaleString(), color: 'var(--palette-green-400)' },
-    { label: 'Past 7 Days',  value: loading ? '...' : newThisWeekCount.toLocaleString(),  color: 'var(--palette-blue-300)' },
+    { label: 'Past 30 Days', value: loading ? '...' : newThisMonthCount.toLocaleString(), color: 'var(--text-success)' },
+    { label: 'Past 7 Days',  value: loading ? '...' : newThisWeekCount.toLocaleString(),  color: 'var(--text-info-soft)' },
     { label: 'Saved Jobs',   value: savedJobIds.size.toString(),                          color: 'var(--palette-orange-400)' },
-    { label: 'Tracking',     value: '0',                                                  color: 'var(--palette-purple-300)' },
+    { label: 'Tracking',     value: '0',                                                  color: 'var(--text-violet-soft)' },
   ]
 
   if (authLoading) {

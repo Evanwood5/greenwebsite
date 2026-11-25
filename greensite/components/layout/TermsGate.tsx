@@ -21,7 +21,7 @@ export function TermsGate({ userId, onAccepted }: { userId: string; onAccepted: 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgb(0 0 0 / 0.6)',
+      background: 'rgb(var(--palette-black-rgb) / 0.6)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '20px',
     }}>
@@ -31,7 +31,7 @@ export function TermsGate({ userId, onAccepted }: { userId: string; onAccepted: 
         padding: '32px',
         maxWidth: '480px',
         width: '100%',
-        boxShadow: '0 24px 48px rgb(0 0 0 / 0.3)',
+        boxShadow: '0 24px 48px rgb(var(--shadow-rgb) / 0.3)',
       }}>
         <h2 style={{ color: 'var(--text-primary)', fontSize: '20px', fontWeight: 700, marginBottom: '10px' }}>
           Updated Terms of Service
@@ -69,7 +69,7 @@ export function TermsGate({ userId, onAccepted }: { userId: string; onAccepted: 
             borderRadius: '12px',
             border: 'none',
             background: 'var(--palette-forest-800)',
-            color: 'var(--palette-white)',
+            color: 'var(--accent-contrast)',
             fontSize: '15px',
             fontWeight: 700,
             cursor: !accepted || loading ? 'not-allowed' : 'pointer',

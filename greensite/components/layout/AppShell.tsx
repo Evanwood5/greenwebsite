@@ -3,15 +3,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useSyncExternalStore } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/db/supabase'
 import { TermsGate } from './TermsGate'
 import { needsTermsAcceptance } from '@/lib/utils/terms'
+import {
+  readDashboardTheme,
+  setDashboardTheme,
+  subscribeDashboardTheme,
+  type DashboardTheme,
+} from '@/lib/utils/dashboardTheme'
 
 const BADGE_COLORS: Record<string, { bg: string; text: string; border: string; shadow: string }> = {
-  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--palette-neutral-850)' },
-  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--palette-purple-400)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--palette-neutral-850)' },
+  '/resume':   { bg: 'rgb(var(--palette-red-500-rgb) / 0.15)',   text: 'var(--palette-red-500)', border: 'rgb(var(--palette-red-500-rgb) / 0.35)',   shadow: 'var(--surface-panel)' },
+  '/tracking': { bg: 'rgb(var(--palette-violet-500-rgb) / 0.18)',  text: 'var(--text-violet)', border: 'rgb(var(--palette-violet-500-rgb) / 0.45)',  shadow: 'var(--surface-panel)' },
 }
 
 function BriefcaseIcon({ size = 18 }: { size?: number }) {
@@ -100,6 +106,23 @@ function ChevronDownIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  )
+}
+
+function SunIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+  )
+}
+
+function MoonIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
     </svg>
   )
 }
@@ -199,6 +222,11 @@ export default function AppShell({ children }: AppShellProps) {
     router.push('/')
   }
 
+  // Server render and first client render use 'dark'; the real value (set by the
+  // inline script in app/layout.tsx) is picked up right after hydration.
+  const theme = useSyncExternalStore<DashboardTheme>(subscribeDashboardTheme, readDashboardTheme, () => 'dark')
+  const nextTheme: DashboardTheme = theme === 'dark' ? 'light' : 'dark'
+
   const sidebarWidth = collapsed ? 60 : 200
 
   return (
@@ -210,7 +238,7 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Full-width top navbar */}
       <header style={{
         height: HEADER_HEIGHT,
-        background: 'rgb(var(--palette-neutral-950-rgb) / 0.85)',
+        background: 'rgb(var(--surface-app-rgb) / 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
@@ -254,9 +282,9 @@ export default function AppShell({ children }: AppShellProps) {
 
           {!collapsed && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '1px', height: '16px', background: 'rgb(var(--palette-white-rgb) / 0.1)' }} />
+              <div style={{ width: '1px', height: '16px', background: 'rgb(var(--ink-rgb) / 0.1)' }} />
               <span style={{
-                color: 'rgb(var(--palette-white-rgb) / 0.45)',
+                color: 'rgb(var(--ink-rgb) / 0.45)',
                 fontWeight: 500,
                 fontSize: '14px',
                 letterSpacing: '0.12em',
@@ -269,7 +297,38 @@ export default function AppShell({ children }: AppShellProps) {
           )}
         </div>
 
-        <div style={{ marginLeft: 'auto', position: 'relative' }} ref={profileMenuRef}>
+        <button
+          type="button"
+          onClick={() => setDashboardTheme(nextTheme)}
+          aria-label={`Switch to ${nextTheme} mode`}
+          title={`Switch to ${nextTheme} mode`}
+          style={{
+            marginLeft: 'auto',
+            width: '34px',
+            height: '34px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--surface-hover)',
+            border: '1px solid var(--border-default)',
+            borderRadius: '8px',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'var(--surface-active)'
+            e.currentTarget.style.borderColor = 'var(--border-strong)'
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'var(--surface-hover)'
+            e.currentTarget.style.borderColor = 'var(--border-default)'
+          }}
+        >
+          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
+
+        <div style={{ marginLeft: '8px', position: 'relative' }} ref={profileMenuRef}>
           <button
             onClick={() => setProfileMenuOpen(o => !o)}
             style={{
@@ -277,15 +336,15 @@ export default function AppShell({ children }: AppShellProps) {
               alignItems: 'center',
               gap: '8px',
               padding: '4px 8px 4px 12px',
-              background: profileMenuOpen ? 'rgb(var(--palette-white-rgb) / 0.07)' : 'rgb(var(--palette-white-rgb) / 0.03)',
-              border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
+              background: profileMenuOpen ? 'rgb(var(--ink-rgb) / 0.07)' : 'rgb(var(--ink-rgb) / 0.03)',
+              border: '1px solid rgb(var(--ink-rgb) / 0.1)',
               borderRadius: '8px',
               cursor: 'pointer',
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
             onMouseOver={(e) => {
               if (!profileMenuOpen) {
-                e.currentTarget.style.background = 'rgb(var(--palette-white-rgb) / 0.07)'
+                e.currentTarget.style.background = 'rgb(var(--ink-rgb) / 0.07)'
                 e.currentTarget.style.borderColor = 'var(--border-strong)'
               }
             }}
@@ -298,7 +357,7 @@ export default function AppShell({ children }: AppShellProps) {
           >
             {user?.email && (
               <span style={{
-                color: 'rgb(var(--palette-white-rgb) / 0.7)',
+                color: 'rgb(var(--ink-rgb) / 0.7)',
                 fontSize: '12px',
                 fontWeight: 500,
                 letterSpacing: '0.01em',
@@ -315,11 +374,11 @@ export default function AppShell({ children }: AppShellProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'rgb(var(--palette-white-rgb) / 0.75)',
+              color: 'rgb(var(--ink-rgb) / 0.75)',
             }}>
               <UserIcon size={13} />
             </div>
-            <div style={{ color: 'rgb(var(--palette-white-rgb) / 0.2)', marginRight: '2px' }}>
+            <div style={{ color: 'rgb(var(--ink-rgb) / 0.2)', marginRight: '2px' }}>
               <ChevronDownIcon size={11} />
             </div>
           </button>
@@ -329,19 +388,19 @@ export default function AppShell({ children }: AppShellProps) {
               position: 'absolute',
               top: '42px',
               right: 0,
-              background: 'rgb(var(--palette-neutral-800-rgb) / 0.95)',
+              background: 'rgb(var(--surface-raised-rgb) / 0.95)',
               backdropFilter: 'blur(16px)',
-              border: '1px solid rgb(var(--palette-white-rgb) / 0.1)',
+              border: '1px solid rgb(var(--ink-rgb) / 0.1)',
               borderRadius: '12px',
               overflow: 'hidden',
               minWidth: '180px',
-              boxShadow: '0 12px 32px rgb(var(--palette-black-rgb) / 0.4)',
+              boxShadow: '0 12px 32px rgb(var(--shadow-rgb) / 0.4)',
               zIndex: 100,
               animation: 'fadeIn 0.2s ease-out',
             }}>
               <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
                 <p style={{ color: 'var(--text-strong)', fontSize: '12px', fontWeight: 600, marginBottom: '2px' }}>{user?.email?.split('@')[0]}</p>
-                <p style={{ color: 'rgb(var(--palette-white-rgb) / 0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
+                <p style={{ color: 'rgb(var(--ink-rgb) / 0.4)', fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</p>
               </div>
               <Link
                 href="/settings"
@@ -351,11 +410,11 @@ export default function AppShell({ children }: AppShellProps) {
                   alignItems: 'center',
                   gap: '10px',
                   padding: '10px 16px',
-                  color: 'var(--palette-neutral-200)',
+                  color: 'var(--text-secondary)',
                   fontSize: '13px',
                   textDecoration: 'none',
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--palette-white-rgb) / 0.05)')}
+                onMouseOver={(e) => (e.currentTarget.style.background = 'rgb(var(--ink-rgb) / 0.05)')}
                 onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <GearIcon size={14} />
@@ -371,7 +430,7 @@ export default function AppShell({ children }: AppShellProps) {
                   padding: '10px 16px',
                   background: 'transparent',
                   border: 'none',
-                  color: 'var(--palette-red-400)',
+                  color: 'var(--text-danger)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   textAlign: 'left',
@@ -524,7 +583,7 @@ export default function AppShell({ children }: AppShellProps) {
             ))}
           </nav>
 
-          <div style={{ padding: '10px 12px', borderTop: '1px solid rgb(var(--palette-white-rgb) / 0.05)' }}>
+          <div style={{ padding: '10px 12px', borderTop: '1px solid rgb(var(--ink-rgb) / 0.05)' }}>
             <button
               onClick={() => setCollapsed(!collapsed)}
               style={{
@@ -536,14 +595,14 @@ export default function AppShell({ children }: AppShellProps) {
                 borderRadius: '7px',
                 background: 'transparent',
                 border: 'none',
-                color: 'rgb(var(--palette-white-rgb) / 0.35)',
+                color: 'rgb(var(--ink-rgb) / 0.35)',
                 fontSize: '13px',
                 fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'color 150ms',
               }}
-              onMouseOver={(e) => { e.currentTarget.style.color = 'rgb(var(--palette-white-rgb) / 0.7)' }}
-              onMouseOut={(e) => { e.currentTarget.style.color = 'rgb(var(--palette-white-rgb) / 0.35)' }}
+              onMouseOver={(e) => { e.currentTarget.style.color = 'rgb(var(--ink-rgb) / 0.7)' }}
+              onMouseOut={(e) => { e.currentTarget.style.color = 'rgb(var(--ink-rgb) / 0.35)' }}
             >
               {!collapsed && <span>Collapse</span>}
               {collapsed ? <ChevronsRightIcon /> : <ChevronsLeftIcon />}
