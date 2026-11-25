@@ -953,8 +953,9 @@ const JOB_TYPE_DEFS = [
 ]
 
 const EXPERIENCE_DEFS = [
-  { key: 'moderate', label: 'Moderate', color: 'var(--palette-green-500)' },
-  { key: 'advanced', label: 'Advanced', color: 'var(--palette-blue-500)' },
+  // Same reds as the level badges on the main dashboard (components/jobs/JobList.tsx).
+  { key: 'moderate', label: 'Moderate', color: 'var(--palette-red-300)' },
+  { key: 'advanced', label: 'Advanced', color: 'var(--palette-red-500)' },
 ]
 
 const cardStyle: React.CSSProperties = {
@@ -1023,8 +1024,8 @@ export function JobTypePieChart({ jobTypes, title }: { jobTypes: Record<string, 
     <div style={cardStyle}>
       <p style={cardTitleStyle}>{title}</p>
       {total === 0 ? <EmptyChart /> : (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 16, minHeight: 180 }}>
-          <div style={{ flex: '1 1 0', minWidth: 0, height: 180 }}>
+        <div style={{ flex: 1, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 16, minHeight: 180 }}>
+          <div style={{ flex: '1 1 140px', minWidth: 0, height: 180 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

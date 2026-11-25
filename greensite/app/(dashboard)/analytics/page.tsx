@@ -21,8 +21,10 @@ import {
 const rowStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'stretch' }
 const mainColStyle: React.CSSProperties = { flex: '2 1 520px', minWidth: 0 }
 const sideColStyle: React.CSSProperties = { flex: '1 1 300px', minWidth: 0 }
-// When the list beside the chart is hidden, keep the chart at its 1/3 width.
-const soloSideColStyle: React.CSSProperties = { flex: '0 1 calc((100% - 14px) / 3)', minWidth: 'min(300px, 100%)' }
+// With a city selected (no cities list), everything fits in one row:
+// companies ~1/2, level bars ~1/4, job type pie ~1/4.
+const compactMainColStyle: React.CSSProperties = { flex: '2 1 440px', minWidth: 0 }
+const compactSideColStyle: React.CSSProperties = { flex: '1 1 280px', minWidth: 0 }
 
 export default function DashboardPage() {
   const [field, setField] = useState<'tech' | 'engineering' | 'business' | 'health' | 'science'>('tech')
@@ -96,37 +98,39 @@ export default function DashboardPage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-            <div style={rowStyle}>
-              <div style={mainColStyle}>
-                <TopHiringCompaniesList
-                  data={data.allCompanies}
-                  title="Top Hiring Companies"
-                />
-              </div>
-              <div style={sideColStyle}>
-                <ExperienceLevelChart
-                  experienceLevels={data.experienceLevels}
-                  title="Moderate vs Advanced"
-                />
-              </div>
-            </div>
-
-            <div style={rowStyle}>
-              {isAllCities && (
-                <div style={mainColStyle}>
-                  <TopCitiesChart
-                    data={data.allCities}
-                    title="Top Hiring Cities"
-                  />
+            {isAllCities ? (
+              <>
+                <div style={rowStyle}>
+                  <div style={mainColStyle}>
+                    <TopHiringCompaniesList data={data.allCompanies} title="Top Hiring Companies" />
+                  </div>
+                  <div style={sideColStyle}>
+                    <ExperienceLevelChart experienceLevels={data.experienceLevels} title="Moderate vs Advanced" />
+                  </div>
                 </div>
-              )}
-              <div style={isAllCities ? sideColStyle : soloSideColStyle}>
-                <JobTypePieChart
-                  jobTypes={data.jobTypes}
-                  title="Job Types"
-                />
+
+                <div style={rowStyle}>
+                  <div style={mainColStyle}>
+                    <TopCitiesChart data={data.allCities} title="Top Hiring Cities" />
+                  </div>
+                  <div style={sideColStyle}>
+                    <JobTypePieChart jobTypes={data.jobTypes} title="Job Types" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div style={rowStyle}>
+                <div style={compactMainColStyle}>
+                  <TopHiringCompaniesList data={data.allCompanies} title="Top Hiring Companies" />
+                </div>
+                <div style={compactSideColStyle}>
+                  <ExperienceLevelChart experienceLevels={data.experienceLevels} title="Moderate vs Advanced" />
+                </div>
+                <div style={compactSideColStyle}>
+                  <JobTypePieChart jobTypes={data.jobTypes} title="Job Types" />
+                </div>
               </div>
-            </div>
+            )}
 
             <div style={{ background: 'var(--surface-raised)', borderRadius: 4, padding: 14, border: '1px solid rgb(var(--ink-rgb) / 0.06)' }}>
               <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
