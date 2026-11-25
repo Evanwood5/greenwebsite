@@ -13,6 +13,7 @@ import {
 } from '@/lib/services/profile'
 import { getRecentMatchRows } from '@/lib/services/matches'
 import { fetchJobsByIds } from '@/lib/services/jobs'
+import { fetchAllMichiganCities } from '@/lib/services/cities'
 import {
   emptyPref,
   Preference,
@@ -46,10 +47,9 @@ export default function ResumePage() {
   const [michiganCities, setMichiganCities] = useState<string[]>([])
 
   useEffect(() => {
-    fetch('/api/cities')
-      .then(r => r.json())
-      .then(data => setMichiganCities(data.cities ?? []))
-      .catch(() => {})
+    fetchAllMichiganCities()
+      .then(setMichiganCities)
+      .catch(err => console.error('Failed to load cities:', err))
   }, [])
 
   const loadResumeStatus = useCallback(async () => {

@@ -6,6 +6,7 @@ import AppShell from '@/components/layout/AppShell'
 import JobList from '@/components/jobs/JobList'
 import { getFieldMaps, resolveFieldIds, fetchJobs, countJobsSince } from '@/lib/services/jobs'
 import { getSavedJobIds, toggleJobSaved } from '@/lib/services/savedJobs'
+import { fetchListedJobCities } from '@/lib/services/cities'
 import { JOBS_PER_PAGE, Job, FilterOptions, EMPTY_FILTERS } from '@/lib/types/jobs'
 import { StatCard, FilterPanel, ErrorBanner, LoadMoreButton } from './components'
 
@@ -45,10 +46,9 @@ export default function JobsPage() {
   const fieldIdCacheRef = useRef(new Map<string, number[]>())
 
   useEffect(() => {
-    fetch('/api/cities')
-      .then(r => r.json())
-      .then(data => setMichiganCities(data.cities ?? []))
-      .catch(() => {})
+    fetchListedJobCities()
+      .then(setMichiganCities)
+      .catch(err => console.error('Failed to load cities:', err))
   }, [])
 
   useEffect(() => {

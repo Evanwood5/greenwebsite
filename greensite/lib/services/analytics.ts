@@ -1,13 +1,12 @@
 import { supabase } from '@/lib/db/supabase'
-import { Field, AnalyticsData, SubcategoryTrendData, SubcategoryTrendRow, TIMEFRAME_DAYS } from '@/lib/types/analytics'
+import { Field, AnalyticsData, SubcategoryTrendData, SubcategoryTrendRow, TIMEFRAME_DAYS, analyticsCutoff } from '@/lib/types/analytics'
 
 // All database calls related to analytics data (trends, counties, subcategories).
 
 export async function getAnalytics(field: Field, location: string, timeframe: string): Promise<AnalyticsData> {
   const category = field.charAt(0).toUpperCase() + field.slice(1)
   const days = TIMEFRAME_DAYS[timeframe] ?? 365
-  const cutoffDate = new Date()
-  cutoffDate.setDate(cutoffDate.getDate() - days)
+  const cutoffDate = analyticsCutoff(timeframe)
 
   let query = supabase
     .from('job_postings_ingest')
@@ -144,8 +143,7 @@ export async function getSubcategoryTrends(
 ): Promise<SubcategoryTrendData> {
   const dbCategory = category.charAt(0).toUpperCase() + category.slice(1)
   const days = TIMEFRAME_DAYS[timeframe] ?? 365
-  const cutoffDate = new Date()
-  cutoffDate.setDate(cutoffDate.getDate() - days)
+  const cutoffDate = analyticsCutoff(timeframe)
 
   let query = supabase
     .from('job_postings_ingest')

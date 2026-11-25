@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     .gte('created_at', cutoffDate.toISOString())
 
   if (location) {
-    query = query.eq('city', location)
+    query = query.contains('locations', JSON.stringify([location]))
   }
 
   const { data: jobs, error } = await query

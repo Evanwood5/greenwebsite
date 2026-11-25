@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { useAuth } from '@/contexts/AuthContext'
 import { fetchSubfields } from '@/lib/services/fields'
+import { fetchCompanyCities } from '@/lib/services/cities'
 import {
   listTrackedCompanies,
   createTrackedCompany,
@@ -40,17 +41,6 @@ export default function TrackingPage() {
   const [matchedJobs, setMatchedJobs] = useState<Job[]>([])
   const [loadingJobs, setLoadingJobs] = useState(false)
   const [companyCities, setCompanyCities] = useState<string[]>([])
-  const [allCityOptions, setAllCityOptions] = useState<DropdownOption[]>([])
-
-  useEffect(() => {
-    fetch('/api/cities')
-      .then(r => r.json())
-      .then(data => setAllCityOptions([
-        { label: 'All Cities', value: '' },
-        ...(data.cities ?? []).map((c: string) => ({ label: c, value: c }))
-      ]))
-      .catch(() => setAllCityOptions([{ label: 'All Cities', value: '' }]))
-  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -103,19 +93,22 @@ export default function TrackingPage() {
       return
     }
     let cancelled = false
-    fetch(`/api/companies/locations?company=${encodeURIComponent(company)}`)
-      .then(r => r.json())
-      .then(data => { if (!cancelled) setCompanyCities(data.cities ?? []) })
-      .catch(() => { if (!cancelled) setCompanyCities([]) })
+    fetchCompanyCities(company)
+      .then(cities => { if (!cancelled) setCompanyCities(cities) })
+      .catch(err => {
+        console.error('Failed to load company cities:', err)
+        if (!cancelled) setCompanyCities([])
+      })
     return () => { cancelled = true }
   }, [company, companyValid])
 
   const atLimit = tracked.length >= MAX_TRACKED
   const activeFilterCount = [filters.category, filters.level, filters.jobType, filters.location, ...filters.city, ...filters.subcategories].filter(Boolean).length
   const canTrack = companyValid && !atLimit
-  const cityOptions: DropdownOption[] = companyCities.length > 0
+  // Cities come only from the selected company's postings; nothing until a company is picked.
+  const cityOptions: DropdownOption[] = companyValid
     ? [{ label: 'All Cities', value: '' }, ...companyCities.map(c => ({ label: c, value: c }))]
-    : allCityOptions
+    : []
   const [subcategoryList, setSubcategoryList] = useState<string[]>([])
   useEffect(() => {
     if (!filters.category) { setSubcategoryList([]); return }
