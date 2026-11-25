@@ -60,6 +60,30 @@ wrapper element; no route-group layouts were added.
 | `.theme-marketing-dark` | homepage root | black + white |
 | `.theme-marketing-light` | `Navbar`, contact, how-it-works, terms, AI-powered hero | cream + forest |
 | `.theme-auth` | auth page root | cream + forest |
+| `html[data-dashboard-theme="light"] .theme-dashboard` | toggle in the `AppShell` header | white + light gray |
+
+#### Dashboard light mode
+
+The dashboard header has a sun/moon toggle. It sets `data-dashboard-theme` on
+`<html>` and saves the choice in `localStorage` (`dashboardTheme`). An inline
+script in `app/layout.tsx` restores it before first paint. The logic lives in
+`lib/utils/dashboardTheme.ts`.
+
+For light mode to work, dashboard components must use the role variables, not
+raw `--palette-*` neutrals or white. Dashboard-only roles beyond the shared set:
+
+| Variable | Use |
+| --- | --- |
+| `--ink-rgb` | translucent foreground: `rgb(var(--ink-rgb) / 0.06)` borders, hovers, fills (white on dark, black on light) |
+| `--shadow-rgb` | box-shadow color |
+| `--surface-app-rgb`, `--surface-raised-rgb` | translucent surfaces (blurred header, dropdown) |
+| `--surface-card` | job cards |
+| `--text-soft` | text between secondary and tertiary |
+| `--chart-axis`, `--chart-grid`, `--chart-tooltip-border` | Recharts |
+| `--text-danger`, `--text-success`, `--text-brand`, `--text-info`, `--text-violet`, `--text-warning` (+ `-soft` variants) | status and category text |
+
+Use `--accent-contrast` (stays white) for text on a colored button and keep
+`--palette-black-rgb` for modal backdrops, which stay dark in both modes.
 
 Dark-surface layering is intentionally shallow: app (`neutral-950`), panel
 (`neutral-850`), and raised/elevated (`neutral-800`). Pass B collapsed the former
