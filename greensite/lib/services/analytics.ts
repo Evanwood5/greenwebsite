@@ -21,6 +21,7 @@ export async function getAnalytics(field: Field, location: string, timeframe: st
     `)
     .eq('job_field_counts.category', category)
     .gte('created_at', cutoffDate.toISOString())
+    .eq('is_initial_load', false)
 
   if (location) {
     query = query.contains('locations', JSON.stringify([location]))
@@ -158,6 +159,7 @@ export async function getSubcategoryTrends(
     `)
     .eq('job_field_counts.category', dbCategory)
     .gte('created_at', cutoffDate.toISOString())
+    .eq('is_initial_load', false)
 
   if (location) {
     query = query.contains('locations', JSON.stringify([location]))
