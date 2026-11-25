@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { getAnalytics, getSubcategoryTrends } from '@/lib/services/analytics'
+import { fetchAnalyticsCities } from '@/lib/services/cities'
 import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption } from '@/lib/types/analytics'
 import {
   FieldSelector,
@@ -23,15 +24,19 @@ export default function DashboardPage() {
   const [trend, setTrend] = useState<SubcategoryTrendData | null>(null)
   const [trendLoading, setTrendLoading] = useState(true)
 
+  // Only offer cities with postings in the selected field + timeframe. If the
+  // current city has none there, fall back to All Cities instead of showing empty charts.
   useEffect(() => {
-    fetch('/api/cities')
-      .then((r) => r.json())
-      .then((d) => {
-        const fetched = (d.cities ?? []).map((c: string) => ({ value: c, label: c }))
-        setCities([{ value: '', label: 'All Cities' }, ...fetched])
+    let cancelled = false
+    fetchAnalyticsCities(field, timeframe)
+      .then((list) => {
+        if (cancelled) return
+        setCities([{ value: '', label: 'All Cities' }, ...list.map((c) => ({ value: c, label: c }))])
+        setLocation((current) => (current && !list.includes(current) ? '' : current))
       })
-      .catch(() => {})
-  }, [])
+      .catch((err) => console.error('Failed to load cities:', err))
+    return () => { cancelled = true }
+  }, [field, timeframe])
 
   const requestRef = useRef(0)
 

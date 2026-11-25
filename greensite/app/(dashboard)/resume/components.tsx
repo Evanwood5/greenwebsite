@@ -124,6 +124,8 @@ function PrefEditor({ pref, onChange, michiganCities }: {
     }).catch(() => {})
   }, [])
   const selectedCities = pref.location ? pref.location.split(',').filter(Boolean) : []
+  // Keep previously saved cities visible (and uncheckable) even if they are no longer in the list.
+  const cityList = [...new Set([...michiganCities, ...selectedCities])].sort((a, b) => a.localeCompare(b))
 
   function toggleJobType(type: string) {
     if (pref.jobTypes.includes(type)) {
@@ -235,7 +237,7 @@ function PrefEditor({ pref, onChange, michiganCities }: {
             <input type="checkbox" checked={selectedCities.length === 0} onChange={() => toggleCity('')} style={{ accentColor: 'var(--text-secondary)', width: '12px', height: '12px', flexShrink: 0 }} />
             <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>All Michigan</span>
           </label>
-          {michiganCities.map(city => (
+          {cityList.map(city => (
             <label key={city} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '3px 4px', cursor: 'pointer' }}>
               <input type="checkbox" checked={selectedCities.includes(city)} onChange={() => toggleCity(city)} style={{ accentColor: 'var(--text-secondary)', width: '12px', height: '12px', flexShrink: 0 }} />
               <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>{city}</span>

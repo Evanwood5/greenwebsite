@@ -19,6 +19,21 @@ export const TIMEFRAME_DAYS: Record<string, number> = {
   '1year': 365,
 }
 
+export const FIELDS: Field[] = ['tech', 'engineering', 'business', 'health', 'science']
+
+/** 'tech' -> 'Tech', the form stored in job_field_counts.category. */
+export function fieldToCategory(field: Field): string {
+  return field.charAt(0).toUpperCase() + field.slice(1)
+}
+
+/** Earliest created_at included for a timeframe. Shared by the analytics
+ *  queries and the Analytics city dropdown so they always agree. */
+export function analyticsCutoff(timeframe: string): Date {
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - (TIMEFRAME_DAYS[timeframe] ?? 365))
+  return cutoff
+}
+
 
 export interface City {
   name: string
