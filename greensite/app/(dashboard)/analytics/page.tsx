@@ -108,7 +108,13 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div style={{ maxWidth: 1300, margin: '0 auto' }}>
-        <FieldSelector value={field} onChange={setField} />
+        {/* Hidden (but still taking up space) until the saved field is restored,
+            so the default Tech tab never flashes before switching. The key change
+            remounts the tabs once restored; otherwise their 180ms CSS transition
+            would visibly animate the highlight from Tech to the saved field. */}
+        <div style={{ visibility: fieldRestored ? 'visible' : 'hidden' }}>
+          <FieldSelector key={fieldRestored ? 'restored' : 'pending'} value={field} onChange={setField} />
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
           <LocationFilter value={location} onChange={setLocation} cities={cities} />
