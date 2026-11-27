@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { getAnalytics, getSubcategoryTrends } from '@/lib/services/analytics'
 import { fetchAnalyticsCities } from '@/lib/services/cities'
-import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption } from '@/lib/types/analytics'
+import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption, Field } from '@/lib/types/analytics'
 import {
   FieldSelector,
   LocationFilter,
@@ -26,8 +26,16 @@ const sideColStyle: React.CSSProperties = { flex: '1 1 300px', minWidth: 0 }
 const compactMainColStyle: React.CSSProperties = { flex: '2 1 440px', minWidth: 0 }
 const compactSideColStyle: React.CSSProperties = { flex: '1 1 280px', minWidth: 0 }
 
+// Remembers the last field the user viewed, so leaving and coming back to
+// analytics doesn't reset to Tech.
+const FIELD_STORAGE_KEY = 'analyticsField'
+const FIELDS: readonly Field[] = ['tech', 'engineering', 'business', 'health', 'science']
+const isField = (v: string | null): v is Field => v !== null && (FIELDS as readonly string[]).includes(v)
+
 export default function DashboardPage() {
-  const [field, setField] = useState<'tech' | 'engineering' | 'business' | 'health' | 'science'>('tech')
+  const [field, setField] = useState<Field>('tech')
+  // False until the saved field is read, so we don't fetch Tech and then refetch.
+  const [fieldRestored, setFieldRestored] = useState(false)
   const [location, setLocation] = useState('')
   const [timeframe, setTimeframe] = useState('1year')
   const [data, setData] = useState<AnalyticsData | null>(null)
@@ -38,7 +46,22 @@ export default function DashboardPage() {
 
   // Only offer cities with postings in the selected field + timeframe. If the
   // current city has none there, fall back to All Cities instead of showing empty charts.
+  // Read after mount (not during render) so server and client HTML match.
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem(FIELD_STORAGE_KEY)
+      if (isField(saved)) setField(saved)
+    } catch { /* storage unavailable: keep default */ }
+    setFieldRestored(true)
+  }, [])
+
+  useEffect(() => {
+    if (!fieldRestored) return
+    try { localStorage.setItem(FIELD_STORAGE_KEY, field) } catch { /* ignore */ }
+  }, [field, fieldRestored])
+
+  useEffect(() => {
+    if (!fieldRestored) return
     let cancelled = false
     fetchAnalyticsCities(field, timeframe)
       .then((list) => {
@@ -48,7 +71,7 @@ export default function DashboardPage() {
       })
       .catch((err) => console.error('Failed to load cities:', err))
     return () => { cancelled = true }
-  }, [field, timeframe])
+  }, [field, timeframe, fieldRestored])
 
   const requestRef = useRef(0)
 
@@ -76,8 +99,9 @@ export default function DashboardPage() {
   }, [field, location, timeframe])
 
   useEffect(() => {
+    if (!fieldRestored) return
     fetchAnalytics()
-  }, [fetchAnalytics])
+  }, [fetchAnalytics, fieldRestored])
 
   const isAllCities = !location
 
