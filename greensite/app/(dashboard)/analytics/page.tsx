@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import AppShell from '@/components/layout/AppShell'
 import { getAnalytics, getSubcategoryTrends } from '@/lib/services/analytics'
 import { fetchAnalyticsCities } from '@/lib/services/cities'
-import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption } from '@/lib/types/analytics'
+import { TIMEFRAMES, AnalyticsData, SubcategoryTrendData, CityOption, Field } from '@/lib/types/analytics'
 import {
   FieldSelector,
   LocationFilter,
@@ -12,10 +12,30 @@ import {
   TopHiringCompaniesList,
   TopCitiesChart,
   SubcategoryTrendChart,
+  JobTypePieChart,
+  ExperienceLevelChart,
 } from './components'
 
+// Two-column rows: the list takes ~2/3, the chart ~1/3. Columns wrap and
+// stack once the page is too narrow for both.
+const rowStyle: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'stretch' }
+const mainColStyle: React.CSSProperties = { flex: '2 1 520px', minWidth: 0 }
+const sideColStyle: React.CSSProperties = { flex: '1 1 300px', minWidth: 0 }
+// With a city selected (no cities list), everything fits in one row:
+// companies ~1/2, level bars ~1/4, job type pie ~1/4.
+const compactMainColStyle: React.CSSProperties = { flex: '2 1 440px', minWidth: 0 }
+const compactSideColStyle: React.CSSProperties = { flex: '1 1 280px', minWidth: 0 }
+
+// Remembers the last field the user viewed, so leaving and coming back to
+// analytics doesn't reset to Tech.
+const FIELD_STORAGE_KEY = 'analyticsField'
+const FIELDS: readonly Field[] = ['tech', 'engineering', 'business', 'health', 'science']
+const isField = (v: string | null): v is Field => v !== null && (FIELDS as readonly string[]).includes(v)
+
 export default function DashboardPage() {
-  const [field, setField] = useState<'tech' | 'engineering' | 'business' | 'health' | 'science'>('tech')
+  const [field, setField] = useState<Field>('tech')
+  // False until the saved field is read, so we don't fetch Tech and then refetch.
+  const [fieldRestored, setFieldRestored] = useState(false)
   const [location, setLocation] = useState('')
   const [timeframe, setTimeframe] = useState('1year')
   const [data, setData] = useState<AnalyticsData | null>(null)
@@ -26,7 +46,22 @@ export default function DashboardPage() {
 
   // Only offer cities with postings in the selected field + timeframe. If the
   // current city has none there, fall back to All Cities instead of showing empty charts.
+  // Read after mount (not during render) so server and client HTML match.
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem(FIELD_STORAGE_KEY)
+      if (isField(saved)) setField(saved)
+    } catch { /* storage unavailable: keep default */ }
+    setFieldRestored(true)
+  }, [])
+
+  useEffect(() => {
+    if (!fieldRestored) return
+    try { localStorage.setItem(FIELD_STORAGE_KEY, field) } catch { /* ignore */ }
+  }, [field, fieldRestored])
+
+  useEffect(() => {
+    if (!fieldRestored) return
     let cancelled = false
     fetchAnalyticsCities(field, timeframe)
       .then((list) => {
@@ -36,7 +71,7 @@ export default function DashboardPage() {
       })
       .catch((err) => console.error('Failed to load cities:', err))
     return () => { cancelled = true }
-  }, [field, timeframe])
+  }, [field, timeframe, fieldRestored])
 
   const requestRef = useRef(0)
 
@@ -64,15 +99,22 @@ export default function DashboardPage() {
   }, [field, location, timeframe])
 
   useEffect(() => {
+    if (!fieldRestored) return
     fetchAnalytics()
-  }, [fetchAnalytics])
+  }, [fetchAnalytics, fieldRestored])
 
   const isAllCities = !location
 
   return (
     <AppShell>
       <div style={{ maxWidth: 1300, margin: '0 auto' }}>
-        <FieldSelector value={field} onChange={setField} />
+        {/* Hidden (but still taking up space) until the saved field is restored,
+            so the default Tech tab never flashes before switching. The key change
+            remounts the tabs once restored; otherwise their 180ms CSS transition
+            would visibly animate the highlight from Tech to the saved field. */}
+        <div style={{ visibility: fieldRestored ? 'visible' : 'hidden' }}>
+          <FieldSelector key={fieldRestored ? 'restored' : 'pending'} value={field} onChange={setField} />
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
           <LocationFilter value={location} onChange={setLocation} cities={cities} />
@@ -86,16 +128,38 @@ export default function DashboardPage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-            <TopHiringCompaniesList
-              data={data.allCompanies}
-              title="Top Hiring Companies"
-            />
+            {isAllCities ? (
+              <>
+                <div style={rowStyle}>
+                  <div style={mainColStyle}>
+                    <TopHiringCompaniesList data={data.allCompanies} title="Top Hiring Companies" />
+                  </div>
+                  <div style={sideColStyle}>
+                    <ExperienceLevelChart experienceLevels={data.experienceLevels} title="Moderate vs Advanced" />
+                  </div>
+                </div>
 
-            {isAllCities && (
-              <TopCitiesChart
-                data={data.allCities}
-                title="Top Hiring Cities"
-              />
+                <div style={rowStyle}>
+                  <div style={mainColStyle}>
+                    <TopCitiesChart data={data.allCities} title="Top Hiring Cities" />
+                  </div>
+                  <div style={sideColStyle}>
+                    <JobTypePieChart jobTypes={data.jobTypes} title="Job Types" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div style={rowStyle}>
+                <div style={compactMainColStyle}>
+                  <TopHiringCompaniesList data={data.allCompanies} title="Top Hiring Companies" />
+                </div>
+                <div style={compactSideColStyle}>
+                  <ExperienceLevelChart experienceLevels={data.experienceLevels} title="Moderate vs Advanced" />
+                </div>
+                <div style={compactSideColStyle}>
+                  <JobTypePieChart jobTypes={data.jobTypes} title="Job Types" />
+                </div>
+              </div>
             )}
 
             <div style={{ background: 'var(--surface-raised)', borderRadius: 4, padding: 14, border: '1px solid rgb(var(--ink-rgb) / 0.06)' }}>
